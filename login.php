@@ -60,7 +60,7 @@ if (isset($_SESSION['admin_id'])) {
             </div>
         </form>
         <div class="text-center mt-4">
-            <a href="index.php" class="text-decoration-none"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+            <a href="./" class="text-decoration-none"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
     </div>
 

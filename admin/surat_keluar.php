@@ -41,7 +41,7 @@ if (!$result) {
         <i class="fas fa-filter"></i> Filter & Ekspor
     </div>
     <div class="card-body">
-        <form method="GET" action="surat_keluar.php" class="row g-3 align-items-center">
+        <form method="GET" action="surat_keluar" class="row g-3 align-items-center">
             <div class="col-md-3">
                 <label for="dari" class="form-label">Dari Tanggal</label>
                 <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
@@ -56,7 +56,7 @@ if (!$result) {
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="surat_keluar.php" class="btn btn-secondary">Reset</a>
+                <a href="surat_keluar" class="btn btn-secondary">Reset</a>
             </div>
         </form>
         <hr>

@@ -13,7 +13,7 @@ if (!isset($_SESSION['admin_loggedin']) || $_SESSION['admin_loggedin'] !== true)
     // Simpan pesan untuk ditampilkan di halaman login
     // (opsional, tapi bisa membantu user)
     // session_destroy(); // Hapus session yang mungkin korup
-    header("Location: ../login.php?error=Anda harus login untuk mengakses halaman ini.");
+    header("Location: ../login?error=Anda harus login untuk mengakses halaman ini.");
     exit;
 }
 

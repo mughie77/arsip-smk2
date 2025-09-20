@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'add':
             if (!isset($_FILES['nama_file']) || $_FILES['nama_file']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/notulen.php?error=File wajib diunggah.");
+                header("Location: ../admin/notulen?error=File wajib diunggah.");
                 exit();
             }
 
             $upload_result = upload_file($_FILES['nama_file']);
             if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/notulen.php?error=" . urlencode($upload_result['message']));
+                header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
                 exit();
             }
             $nama_file = $upload_result['filename'];
@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_bind_param($stmt, "sss", $tanggal, $kegiatan, $nama_file);
 
             if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/notulen.php?success=Data berhasil ditambahkan.");
+                header("Location: ../admin/notulen?success=Data berhasil ditambahkan.");
             } else {
-                header("Location: ../admin/notulen.php?error=Gagal menyimpan data.");
+                header("Location: ../admin/notulen?error=Gagal menyimpan data.");
             }
             mysqli_stmt_close($stmt);
             break;
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
                 $upload_result = upload_file($_FILES['nama_file']);
                 if ($upload_result['status'] == 'error') {
-                    header("Location: ../admin/notulen.php?error=" . urlencode($upload_result['message']));
+                    header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
                     exit();
                 }
                 $nama_file_baru = $upload_result['filename'];
@@ -102,9 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_bind_param($stmt, "sssi", $tanggal, $kegiatan, $nama_file_baru, $id);
 
             if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/notulen.php?success=Data berhasil diperbarui.");
+                header("Location: ../admin/notulen?success=Data berhasil diperbarui.");
             } else {
-                header("Location: ../admin/notulen.php?error=Gagal memperbarui data.");
+                header("Location: ../admin/notulen?error=Gagal memperbarui data.");
             }
             mysqli_stmt_close($stmt);
             break;
@@ -127,14 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_bind_param($stmt, "i", $id);
 
     if(mysqli_stmt_execute($stmt)){
-        header("Location: ../admin/notulen.php?success=Data berhasil dihapus.");
+        header("Location: ../admin/notulen?success=Data berhasil dihapus.");
     } else {
-        header("Location: ../admin/notulen.php?error=Gagal menghapus data.");
+        header("Location: ../admin/notulen?error=Gagal menghapus data.");
     }
     mysqli_stmt_close($stmt);
 
 } else {
-    header("Location: ../admin/notulen.php");
+    header("Location: ../admin/notulen");
     exit();
 }
 

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validasi dasar: pastikan input tidak kosong
     if (empty($username) || empty($password)) {
-        header("Location: ../login.php?error=Username dan password tidak boleh kosong");
+        header("Location: ../login?error=Username dan password tidak boleh kosong");
         exit();
     }
 
@@ -54,21 +54,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $_SESSION['admin_username'] = $db_username;
 
                         // Redirect ke dashboard admin
-                        header("Location: ../admin/index.php");
+                        header("Location: ../admin");
                         exit();
                     } else {
                         // Password salah
-                        header("Location: ../login.php?error=Password yang Anda masukkan salah.");
+                        header("Location: ../login?error=Password yang Anda masukkan salah.");
                         exit();
                     }
                 }
             } else {
                 // Username tidak ditemukan
-                header("Location: ../login.php?error=Username tidak ditemukan.");
+                header("Location: ../login?error=Username tidak ditemukan.");
                 exit();
             }
         } else {
-            header("Location: ../login.php?error=Terjadi kesalahan sistem. Silakan coba lagi.");
+            header("Location: ../login?error=Terjadi kesalahan sistem. Silakan coba lagi.");
             exit();
         }
 
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
     // Jika diakses langsung, redirect ke halaman login
-    header("Location: ../login.php");
+    header("Location: ../login");
     exit();
 }
 ?>

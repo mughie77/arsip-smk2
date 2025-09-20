@@ -1,0 +1,14 @@
+# Aktifkan Modul Rewrite Apache
+RewriteEngine On
+
+# Aturan untuk menghapus ekstensi .php dari URL
+# 1. Jangan terapkan aturan pada file atau direktori yang sudah ada
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+# 2. Arahkan ulang permintaan ke file .php yang sesuai
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Aturan tambahan untuk URL yang lebih bersih (opsional tapi bagus)
+# Arahkan ulang /index.php ke /
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
+RewriteRule ^index\.php$ / [R=301,L]

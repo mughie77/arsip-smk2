@@ -46,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'add':
             if (!isset($_FILES['nama_file_pdf']) || $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/surat_keluar.php?error=File PDF wajib diunggah.");
+                header("Location: ../admin/surat_keluar?error=File PDF wajib diunggah.");
                 exit();
             }
 
             $upload_result = upload_file($_FILES['nama_file_pdf']);
             if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/surat_keluar.php?error=" . urlencode($upload_result['message']));
+                header("Location: ../admin/surat_keluar?error=" . urlencode($upload_result['message']));
                 exit();
             }
             $nama_file_pdf = $upload_result['filename'];
@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_bind_param($stmt, "sssssss", $nomor_arsip, $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $acc_kepada, $nama_file_pdf);
 
             if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/surat_keluar.php?success=Data berhasil ditambahkan.");
+                header("Location: ../admin/surat_keluar?success=Data berhasil ditambahkan.");
             } else {
-                header("Location: ../admin/surat_keluar.php?error=Gagal menyimpan data.");
+                header("Location: ../admin/surat_keluar?error=Gagal menyimpan data.");
             }
             mysqli_stmt_close($stmt);
             break;
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
-                    header("Location: ../admin/surat_keluar.php?error=" . urlencode($upload_result['message']));
+                    header("Location: ../admin/surat_keluar?error=" . urlencode($upload_result['message']));
                     exit();
                 }
                 $nama_file_pdf_baru = $upload_result['filename'];
@@ -101,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_bind_param($stmt, "ssssssi", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $acc_kepada, $nama_file_pdf_baru, $id);
 
             if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/surat_keluar.php?success=Data berhasil diperbarui.");
+                header("Location: ../admin/surat_keluar?success=Data berhasil diperbarui.");
             } else {
-                header("Location: ../admin/surat_keluar.php?error=Gagal memperbarui data.");
+                header("Location: ../admin/surat_keluar?error=Gagal memperbarui data.");
             }
             mysqli_stmt_close($stmt);
             break;
@@ -126,14 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_bind_param($stmt, "i", $id);
 
     if(mysqli_stmt_execute($stmt)){
-        header("Location: ../admin/surat_keluar.php?success=Data berhasil dihapus.");
+        header("Location: ../admin/surat_keluar?success=Data berhasil dihapus.");
     } else {
-        header("Location: ../admin/surat_keluar.php?error=Gagal menghapus data.");
+        header("Location: ../admin/surat_keluar?error=Gagal menghapus data.");
     }
     mysqli_stmt_close($stmt);
 
 } else {
-    header("Location: ../admin/surat_keluar.php");
+    header("Location: ../admin/surat_keluar");
     exit();
 }
 

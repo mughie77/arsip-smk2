@@ -32,7 +32,7 @@
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#lacakArsipModal">Lacak Arsip</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-outline-premium ms-lg-3" href="login.php">
+                        <a class="btn btn-outline-premium ms-lg-3" href="login">
                             <i class="fas fa-sign-in-alt"></i> Login Admin
                         </a>
                     </li>
@@ -166,11 +166,11 @@
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
 
-    <script>
+    <script defer>
     $(document).ready(function() {
         $('#formLacakArsip').on('submit', function(e) {
             e.preventDefault();

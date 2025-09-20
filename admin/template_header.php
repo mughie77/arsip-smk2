@@ -27,28 +27,28 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <!-- Sidebar -->
     <nav class="sidebar d-flex flex-column p-0">
         <div class="sidebar-header">
-            <a href="index.php">
+            <a href="./">
                 <i class="fas fa-archive"></i> Arsip<strong>Digital</strong>
             </a>
         </div>
         <ul class="nav flex-column flex-grow-1">
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="index.php">
+                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="./">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'surat_masuk.php') ? 'active' : ''; ?>" href="surat_masuk.php">
+                <a class="nav-link <?php echo ($current_page == 'surat_masuk.php') ? 'active' : ''; ?>" href="surat_masuk">
                     <i class="fas fa-envelope-open-text"></i> Surat Masuk
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'surat_keluar.php') ? 'active' : ''; ?>" href="surat_keluar.php">
+                <a class="nav-link <?php echo ($current_page == 'surat_keluar.php') ? 'active' : ''; ?>" href="surat_keluar">
                     <i class="fas fa-paper-plane"></i> Surat Keluar
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'notulen.php') ? 'active' : ''; ?>" href="notulen.php">
+                <a class="nav-link <?php echo ($current_page == 'notulen.php') ? 'active' : ''; ?>" href="notulen">
                     <i class="fas fa-file-alt"></i> Daftar Notulen
                 </a>
             </li>
@@ -56,7 +56,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
         <div class="mt-auto">
              <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="../logout.php">
+                    <a class="nav-link" href="../logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>
                 </li>

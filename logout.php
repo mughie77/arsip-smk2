@@ -11,6 +11,6 @@ $_SESSION = array();
 session_destroy();
 
 // Redirect ke halaman login dengan pesan sukses logout
-header("Location: login.php?message=Anda telah berhasil logout.");
+header("Location: login?message=Anda telah berhasil logout.");
 exit;
 ?>

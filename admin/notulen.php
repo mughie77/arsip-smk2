@@ -39,7 +39,7 @@ if (!$result) {
 <div class="card mb-4">
     <div class="card-header"><i class="fas fa-filter"></i> Filter & Ekspor</div>
     <div class="card-body">
-        <form method="GET" action="notulen.php" class="row g-3 align-items-center">
+        <form method="GET" action="notulen" class="row g-3 align-items-center">
             <div class="col-md-3">
                 <label for="dari" class="form-label">Dari Tanggal</label>
                 <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
@@ -54,7 +54,7 @@ if (!$result) {
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="notulen.php" class="btn btn-secondary">Reset</a>
+                <a href="notulen" class="btn btn-secondary">Reset</a>
             </div>
         </form>
         <hr>
