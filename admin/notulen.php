@@ -1,0 +1,186 @@
+<?php
+require_once 'template_header.php';
+require_once '../config/koneksi.php';
+
+// Logika Filter Tanggal
+$dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
+$sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
+
+$query = "SELECT * FROM notulen";
+if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
+    $query .= " WHERE tanggal BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+}
+$query .= " ORDER BY tanggal DESC";
+
+$result = mysqli_query($koneksi, $query);
+
+if (!$result) {
+    die("Query Error: " . mysqli_error($koneksi));
+}
+?>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Daftar Notulen</h1>
+</div>
+
+<!-- Area Filter dan Ekspor -->
+<div class="card mb-4">
+    <div class="card-header"><i class="fas fa-filter"></i> Filter & Ekspor</div>
+    <div class="card-body">
+        <form method="GET" action="notulen.php" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <label for="dari" class="form-label">Dari Tanggal</label>
+                <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
+            </div>
+            <div class="col-md-4">
+                <label for="sampai" class="form-label">Sampai Tanggal</label>
+                <input type="date" class="form-control" id="sampai" name="sampai" value="<?php echo $sampai_tanggal; ?>">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Filter</button>
+                <a href="notulen.php" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+        <hr>
+        <div class="mt-3">
+            <p class="fw-bold">Ekspor Data</p>
+            <a href="../core/export_xlsx.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
+            </a>
+            <a href="../core/export_zip.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>" class="btn btn-info text-white">
+                <i class="fas fa-file-archive"></i> Download Arsip (ZIP)
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-table"></i> Daftar Notulen Rapat/Kegiatan</span>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#notulenModal" id="btnTambah">
+            <i class="fas fa-plus"></i> Tambah Data
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Kegiatan</th>
+                        <th>Berkas</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($result) > 0) : ?>
+                        <?php $no = 1; ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                            <tr>
+                                <td><?php echo $no++; ?></td>
+                                <td><?php echo date('d-m-Y', strtotime($row['tanggal'])); ?></td>
+                                <td><?php echo htmlspecialchars($row['kegiatan']); ?></td>
+                                <td>
+                                    <a href="../uploads/notulen/<?php echo htmlspecialchars($row['nama_file']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </a>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <a href="../core/notulen_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else : ?>
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada data yang ditemukan.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tambah/Edit Notulen -->
+<div class="modal fade" id="notulenModal" tabindex="-1" aria-labelledby="notulenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="notulenForm" action="../core/notulen_aksi.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notulenModalLabel">Tambah Notulen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="id">
+                    <input type="hidden" name="action" id="action" value="add">
+
+                    <div class="mb-3">
+                        <label for="kegiatan" class="form-label">Nama Kegiatan</label>
+                        <input type="text" class="form-control" id="kegiatan" name="kegiatan" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tanggal" class="form-label">Tanggal Kegiatan</label>
+                        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nama_file" class="form-label">Unggah Berkas (PDF, DOC, DOCX)</label>
+                        <input class="form-control" type="file" id="nama_file" name="nama_file" accept=".pdf,.doc,.docx">
+                        <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#btnTambah').on('click', function() {
+        $('#notulenModalLabel').text('Tambah Notulen');
+        $('#notulenForm')[0].reset();
+        $('#action').val('add');
+        $('#id').val('');
+    });
+
+    $('.btn-edit').on('click', function() {
+        var id = $(this).data('id');
+
+        $('#notulenModalLabel').text('Edit Notulen');
+        $('#action').val('edit');
+        $('#id').val(id);
+
+        $.ajax({
+            url: '../core/notulen_fetch.php',
+            type: 'POST',
+            data: { id: id },
+            dataType: 'json',
+            success: function(data) {
+                if(data.status === 'success') {
+                    $('#kegiatan').val(data.data.kegiatan);
+                    $('#tanggal').val(data.data.tanggal);
+                    $('#notulenModal').modal('show');
+                } else {
+                    alert('Gagal mengambil data: ' + data.message);
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
+            }
+        });
+    });
+});
+</script>
+
+<?php
+require_once 'template_footer.php';
+?>

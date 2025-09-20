@@ -1,0 +1,84 @@
+<?php
+// Memulai session dan memeriksa status login
+require_once 'cek_sesi.php';
+
+// Mendapatkan path skrip saat ini untuk menandai menu aktif
+$current_page = basename($_SERVER['SCRIPT_NAME']);
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Arsip Digital</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-0">
+        <div class="sidebar-header">
+            <a href="index.php">
+                <i class="fas fa-archive"></i> Arsip<strong>Digital</strong>
+            </a>
+        </div>
+        <ul class="nav flex-column flex-grow-1">
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="index.php">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'surat_masuk.php') ? 'active' : ''; ?>" href="surat_masuk.php">
+                    <i class="fas fa-envelope-open-text"></i> Surat Masuk
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'surat_keluar.php') ? 'active' : ''; ?>" href="surat_keluar.php">
+                    <i class="fas fa-paper-plane"></i> Surat Keluar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'notulen.php') ? 'active' : ''; ?>" href="notulen.php">
+                    <i class="fas fa-file-alt"></i> Daftar Notulen
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto">
+             <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="../logout.php">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </nav>
+    <!-- End Sidebar -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <button class="btn btn-outline-secondary d-lg-none" type="button" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ms-auto">
+                    <span class="navbar-text">
+                        Selamat datang, <strong><?php echo htmlspecialchars($_SESSION['admin_username']); ?></strong>
+                    </span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <!-- Konten halaman akan dimulai di sini -->

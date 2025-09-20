@@ -1,0 +1,230 @@
+/* File: assets/css/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa; /* Warna latar belakang netral */
+}
+
+/* === Skema Warna Premium === */
+:root {
+    --primary-color: #0A2647; /* Biru Tua */
+    --secondary-color: #144272;
+    --accent-color: #FFD700; /* Emas */
+    --light-color: #FFFFFF;
+    --dark-text-color: #333;
+    --light-text-color: #f1f1f1;
+}
+
+/* === Halaman Login === */
+.login-page {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/background.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    background: var(--light-color);
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box .logo {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-box .logo h2 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.login-box .logo i {
+    color: var(--accent-color);
+}
+
+.login-box .form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+}
+
+.btn-login {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--light-color);
+    font-weight: 600;
+    padding: 0.75rem;
+}
+
+.btn-login:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--light-color);
+}
+
+
+/* === Halaman Publik (Beranda) === */
+.navbar-brand {
+    font-weight: 700;
+    color: var(--primary-color) !important;
+}
+
+.navbar-brand i {
+    color: var(--accent-color);
+}
+
+.btn-outline-premium {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-outline-premium:hover {
+    color: var(--light-color);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+#hero-slider .carousel-item {
+    height: 90vh;
+    min-height: 450px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#hero-slider .carousel-caption {
+    background: rgba(10, 38, 71, 0.7); /* Latar belakang transparan biru tua */
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title h2 {
+    color: var(--primary-color);
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.section-title h2::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--accent-color);
+    bottom: 0;
+    left: calc(50% - 30px);
+}
+
+.feature-box {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    background: var(--light-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.feature-box .icon {
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+/* === Footer === */
+.footer {
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
+    padding: 2rem 0;
+    text-align: center;
+}
+
+/* === Admin Layout === */
+.sidebar {
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
+    min-height: 100vh;
+}
+.sidebar .nav-link {
+    color: #adb5bd;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+}
+.sidebar .nav-link.active, .sidebar .nav-link:hover {
+    color: var(--light-color);
+    background-color: var(--secondary-color);
+}
+.sidebar .nav-link i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+.sidebar .sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--secondary-color);
+}
+.sidebar .sidebar-header a {
+    color: var(--light-color);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.main-content {
+    width: 100%;
+    padding: 2rem;
+}
+
+.card-statistic {
+    border-left: 5px solid var(--accent-color);
+}
+
+.table-responsive {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+.btn-warning {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--primary-color);
+}
+.btn-warning:hover {
+    opacity: 0.9;
+}
+.page-link {
+    color: var(--primary-color);
+}
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.modal-header {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
