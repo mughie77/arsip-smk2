@@ -2,15 +2,26 @@
 require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
-// Logika Filter Tanggal
+// Logika Filter dan Pencarian
 $dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
 $sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
+$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
 
 $query = "SELECT * FROM surat_masuk";
+$where_clauses = [];
+
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    // Tambahkan klausa WHERE untuk memfilter berdasarkan rentang tanggal
-    $query .= " WHERE tanggal_diterima BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+    $where_clauses[] = "tanggal_diterima BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
 }
+
+if (!empty($keyword)) {
+    $where_clauses[] = "(nomor_arsip LIKE '%$keyword%' OR nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR asal_surat LIKE '%$keyword%')";
+}
+
+if (count($where_clauses) > 0) {
+    $query .= " WHERE " . implode(' AND ', $where_clauses);
+}
+
 $query .= " ORDER BY tanggal_diterima DESC";
 
 $result = mysqli_query($koneksi, $query);
@@ -31,27 +42,31 @@ if (!$result) {
     </div>
     <div class="card-body">
         <form method="GET" action="surat_masuk.php" class="row g-3 align-items-center">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="dari" class="form-label">Dari Tanggal</label>
                 <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="sampai" class="form-label">Sampai Tanggal</label>
                 <input type="date" class="form-control" id="sampai" name="sampai" value="<?php echo $sampai_tanggal; ?>">
             </div>
-            <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Filter</button>
+            <div class="col-md-4">
+                <label for="keyword" class="form-label">Kata Kunci</label>
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no arsip, no surat, perihal..." value="<?php echo htmlspecialchars($keyword); ?>">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Cari</button>
                 <a href="surat_masuk.php" class="btn btn-secondary">Reset</a>
             </div>
         </form>
         <hr>
         <div class="mt-3">
             <p class="fw-bold">Ekspor Data</p>
-            <!-- Tombol ekspor akan memicu skrip ekspor dengan parameter filter yang sama -->
-            <a href="../core/export_xlsx.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>" class="btn btn-success">
+            <!-- Tombol ekspor akan memicu skrip ekspor dengan parameter filter dan pencarian yang sama -->
+            <a href="../core/export_xlsx.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
                 <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
             </a>
-            <a href="../core/export_zip.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>" class="btn btn-info text-white">
+            <a href="../core/export_zip.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-info text-white">
                 <i class="fas fa-file-archive"></i> Download Arsip (ZIP)
             </a>
         </div>

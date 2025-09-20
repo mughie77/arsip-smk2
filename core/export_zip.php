@@ -8,44 +8,72 @@ require_once '../admin/cek_sesi.php';
 $jenis = isset($_GET['jenis']) ? $_GET['jenis'] : '';
 $dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
 $sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
+$keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
 
 // --- Konfigurasi berdasarkan jenis data ---
-$sql = "";
+$table = "";
 $upload_folder = "";
 $file_column = "";
 $date_column = "";
+$search_columns = [];
 
 switch ($jenis) {
     case 'surat_masuk':
-        $sql = "SELECT nama_file_pdf FROM surat_masuk";
+        $table = "surat_masuk";
         $upload_folder = "../uploads/surat_masuk/";
         $file_column = 'nama_file_pdf';
         $date_column = 'tanggal_diterima';
+        $search_columns = ['nomor_arsip', 'nomor_surat', 'perihal', 'asal_surat'];
         break;
     case 'surat_keluar':
-        $sql = "SELECT nama_file_pdf FROM surat_keluar";
+        $table = "surat_keluar";
         $upload_folder = "../uploads/surat_keluar/";
         $file_column = 'nama_file_pdf';
         $date_column = 'tanggal_kirim';
+        $search_columns = ['nomor_arsip', 'nomor_surat', 'perihal', 'tujuan_surat'];
         break;
     case 'notulen':
-        $sql = "SELECT nama_file FROM notulen";
+        $table = "notulen";
         $upload_folder = "../uploads/notulen/";
         $file_column = 'nama_file';
         $date_column = 'tanggal';
+        $search_columns = ['kegiatan'];
         break;
     default:
         die("Jenis arsip tidak valid.");
 }
 
-// --- Terapkan filter tanggal jika ada ---
+// --- Bangun Query secara dinamis ---
+$sql = "SELECT $file_column FROM $table";
+$where_clauses = [];
+$params = [];
+$types = "";
+
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    $sql .= " WHERE $date_column BETWEEN ? AND ?";
+    $where_clauses[] = "$date_column BETWEEN ? AND ?";
+    $params[] = $dari_tanggal;
+    $params[] = $sampai_tanggal;
+    $types .= "ss";
+}
+
+if (!empty($keyword)) {
+    $search_parts = [];
+    $like_keyword = "%" . $keyword . "%";
+    foreach ($search_columns as $col) {
+        $search_parts[] = "$col LIKE ?";
+        $params[] = $like_keyword;
+        $types .= "s";
+    }
+    $where_clauses[] = "(" . implode(' OR ', $search_parts) . ")";
+}
+
+if (count($where_clauses) > 0) {
+    $sql .= " WHERE " . implode(' AND ', $where_clauses);
 }
 
 $stmt = mysqli_prepare($koneksi, $sql);
-if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    mysqli_stmt_bind_param($stmt, "ss", $dari_tanggal, $sampai_tanggal);
+if (count($params) > 0) {
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
 }
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
