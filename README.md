@@ -22,10 +22,22 @@ Selamat datang di Sistem Informasi Arsip Surat dan Notulensi Digital. Aplikasi i
 - **Bahasa Pemrograman**: PHP 8+ (Native)
 - **Database**: MySQL / MariaDB
 - **Frontend**: HTML5, CSS3, Bootstrap 5
-- **JavaScript**: Native JS & jQuery
-- **Library PHP**:
+- **JavaScript**: Native JS, jQuery, dan Chart.js untuk grafik.
+- **Library PHP (via Composer)**:
     - `phpoffice/phpspreadsheet` untuk ekspor ke XLSX.
-- **Server**: Apache (dengan `mod_rewrite` aktif direkomendasikan)
+- **Web Server**: Apache dengan modul `mod_rewrite` aktif sangat direkomendasikan untuk fungsionalitas URL bersih.
+
+## 📋 Minimal Spesifikasi
+
+Untuk menjalankan aplikasi ini, pastikan server Anda memenuhi persyaratan minimum berikut:
+
+- **PHP**: Versi **8.0** atau yang lebih baru.
+- **Web Server**: **Apache** dengan `mod_rewrite` diaktifkan.
+- **Database**: **MySQL** atau **MariaDB**.
+- **Ekstensi PHP**:
+    - `mysqli` (untuk koneksi database)
+    - `zip` (untuk fitur ekspor ke .zip)
+- **Alat Bantu**: **Composer** 2+ untuk manajemen dependensi.
 
 ## 🚀 Petunjuk Instalasi
 

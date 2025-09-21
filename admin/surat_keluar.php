@@ -2,20 +2,31 @@
 require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
-// Logika Filter dan Pencarian
+// Logika Filter dan Pencarian yang Aman dengan Prepared Statements
 $dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
 $sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
-$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
+$keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
 
 $query = "SELECT * FROM surat_keluar";
 $where_clauses = [];
+$params = [];
+$types = '';
 
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    $where_clauses[] = "tanggal_kirim BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+    $where_clauses[] = "tanggal_kirim BETWEEN ? AND ?";
+    $params[] = $dari_tanggal;
+    $params[] = $sampai_tanggal;
+    $types .= 'ss';
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(nomor_arsip LIKE '%$keyword%' OR nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
+    $like_keyword = "%" . $keyword . "%";
+    $where_clauses[] = "(nomor_arsip LIKE ? OR nomor_surat LIKE ? OR perihal LIKE ? OR tujuan_surat LIKE ?)";
+    // Tambahkan parameter untuk setiap placeholder LIKE
+    for ($i = 0; $i < 4; $i++) {
+        $params[] = $like_keyword;
+        $types .= 's';
+    }
 }
 
 if (count($where_clauses) > 0) {
@@ -24,10 +35,21 @@ if (count($where_clauses) > 0) {
 
 $query .= " ORDER BY tanggal_kirim DESC";
 
-$result = mysqli_query($koneksi, $query);
+$stmt = mysqli_prepare($koneksi, $query);
+
+if (!$stmt) {
+    die("Query Error (prepare): " . mysqli_error($koneksi));
+}
+
+if (count($params) > 0) {
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
+}
+
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 if (!$result) {
-    die("Query Error: " . mysqli_error($koneksi));
+    die("Query Error (execute): " . mysqli_stmt_error($stmt));
 }
 ?>
 
