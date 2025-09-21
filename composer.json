@@ -1,0 +1,25 @@
+{
+    "name": "arsip/digital",
+    "description": "Sistem Informasi Arsip Surat dan Notulensi Digital",
+    "type": "project",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Jules",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "phpoffice/phpspreadsheet": "^1.29"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    }
+}
