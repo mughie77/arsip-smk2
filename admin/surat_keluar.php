@@ -31,6 +31,22 @@ if (!$result) {
 }
 ?>
 
+<?php
+// Tampilkan pesan sukses atau error jika ada
+if (isset($_GET['success'])) {
+    echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+    echo htmlspecialchars($_GET['success']);
+    echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    echo '</div>';
+}
+if (isset($_GET['error'])) {
+    echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+    echo htmlspecialchars($_GET['error']);
+    echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    echo '</div>';
+}
+?>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Surat Keluar</h1>
 </div>
