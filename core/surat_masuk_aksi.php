@@ -102,38 +102,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // --- AKSI EDIT DATA ---
         case 'edit':
             $id = intval($safe_post['id']);
-            $nama_file_pdf_lama = '';
 
-            // Langkah 1: Ambil nama file yang saat ini ada di database untuk referensi
-            $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
-            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-            mysqli_stmt_execute($stmt_get_file);
-            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-            if($row = mysqli_fetch_assoc($result_get_file)){
-                $nama_file_pdf_lama = $row['nama_file_pdf'];
-            }
-            mysqli_stmt_close($stmt_get_file);
+            // Inisialisasi query dan parameter
+            $sql_parts = [
+                "nomor_surat=?",
+                "perihal=?",
+                "asal_surat=?",
+                "tanggal_diterima=?",
+                "acc_kepada=?"
+            ];
+            $params = [
+                $nomor_surat,
+                $perihal,
+                $asal_surat,
+                $tanggal_diterima,
+                $acc_kepada
+            ];
+            $types = "sssss";
 
-            $nama_file_pdf_baru = $nama_file_pdf_lama;
-
-            // Langkah 2: Cek apakah user mengunggah file baru
+            // Cek apakah ada file baru yang diunggah
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
-                // Jika ya, proses upload file baru
+                // Ambil nama file lama untuk dihapus
+                $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
+                $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
+                mysqli_stmt_bind_param($stmt_get_file, "i", $id);
+                mysqli_stmt_execute($stmt_get_file);
+                $result_get_file = mysqli_stmt_get_result($stmt_get_file);
+                if ($row = mysqli_fetch_assoc($result_get_file)) {
+                    delete_old_file($row['nama_file_pdf']);
+                }
+                mysqli_stmt_close($stmt_get_file);
+
+                // Unggah file baru
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
                     header("Location: ../admin/surat_masuk?error=" . urlencode($upload_result['message']));
                     exit();
                 }
-                $nama_file_pdf_baru = $upload_result['filename'];
-                // Langkah 3: Hapus file lama setelah file baru berhasil diunggah
-                delete_old_file($nama_file_pdf_lama);
+
+                // Tambahkan field file ke query
+                $sql_parts[] = "nama_file_pdf=?";
+                $params[] = $upload_result['filename'];
+                $types .= "s";
             }
 
-            // Langkah 4: Update data di database dengan prepared statement
-            $sql = "UPDATE surat_masuk SET nomor_surat=?, perihal=?, asal_surat=?, tanggal_diterima=?, acc_kepada=?, nama_file_pdf=? WHERE id=?";
+            // Tambahkan ID ke parameter
+            $params[] = $id;
+            $types .= "i";
+
+            // Bangun query final
+            $sql = "UPDATE surat_masuk SET " . implode(", ", $sql_parts) . " WHERE id=?";
+
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "ssssssi", $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf_baru, $id);
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_masuk?success=Data berhasil diperbarui.");
