@@ -18,12 +18,15 @@
 <!-- Chart.js for graphs (can be deferred as it's likely not a dependency for inline scripts) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-<!-- Custom Admin JS (jika diperlukan) -->
-<script defer>
-// Logika untuk toggle sidebar di tampilan mobile (jika diperlukan)
-// document.getElementById("sidebarToggle").addEventListener("click", function() {
-//     document.querySelector(".sidebar").classList.toggle("toggled");
-// });
+<!-- Custom Admin JS -->
+<script>
+$(document).ready(function() {
+    // Logika untuk toggle sidebar
+    $('#sidebarToggle').on('click', function() {
+        $('.sidebar').toggleClass('toggled');
+        $('.main-content').toggleClass('toggled');
+    });
+});
 </script>
 
 </body>
