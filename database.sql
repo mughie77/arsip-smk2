@@ -41,12 +41,10 @@ CREATE TABLE `surat_masuk` (
 --
 CREATE TABLE `surat_keluar` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nomor_arsip` varchar(100) NOT NULL,
   `nomor_surat` varchar(100) NOT NULL,
   `perihal` varchar(255) NOT NULL,
   `tujuan_surat` varchar(255) NOT NULL,
   `tanggal_kirim` date NOT NULL,
-  `acc_kepada` varchar(255) DEFAULT NULL,
   `nama_file_pdf` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

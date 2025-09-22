@@ -56,10 +56,21 @@ if (!file_exists($filepath)) {
 }
 
 // Sajikan file ke browser
-// Dapatkan tipe MIME untuk keamanan
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mime_type = finfo_file($finfo, $filepath);
-finfo_close($finfo);
+// Dapatkan tipe MIME untuk keamanan. Gunakan fallback jika finfo tidak tersedia.
+if (function_exists('finfo_open')) {
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $filepath);
+    finfo_close($finfo);
+} else {
+    // Fallback sederhana jika fileinfo extension tidak aktif
+    $extension = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
+    $mime_map = [
+        'pdf'  => 'application/pdf',
+        'doc'  => 'application/msword',
+        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    $mime_type = $mime_map[$extension] ?? 'application/octet-stream';
+}
 
 header('Content-Type: ' . $mime_type);
 header('Content-Disposition: inline; filename="' . basename($filepath) . '"');

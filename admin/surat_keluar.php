@@ -15,7 +15,7 @@ if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(nomor_arsip LIKE '%$keyword%' OR nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
+    $where_clauses[] = "(nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
 }
 
 if (count($where_clauses) > 0) {
@@ -86,7 +86,6 @@ if (!$result) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Nomor Arsip</th>
                         <th>Nomor Surat</th>
                         <th>Perihal</th>
                         <th>Tujuan Surat</th>
@@ -101,7 +100,6 @@ if (!$result) {
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
                                 <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
                                 <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
                                 <td><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
