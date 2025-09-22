@@ -41,6 +41,7 @@ CREATE TABLE `surat_masuk` (
 --
 CREATE TABLE `surat_keluar` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nomor_arsip` varchar(100) NOT NULL,
   `nomor_surat` varchar(100) NOT NULL,
   `perihal` varchar(255) NOT NULL,
   `tujuan_surat` varchar(255) NOT NULL,

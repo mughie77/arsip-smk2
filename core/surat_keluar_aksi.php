@@ -55,10 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
             $nama_file_pdf = $upload_result['filename'];
+            $nomor_arsip = generate_nomor_arsip('SK');
 
-            $sql = "INSERT INTO surat_keluar (nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO surat_keluar (nomor_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "sssss", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf);
+            mysqli_stmt_bind_param($stmt, "ssssss", $nomor_arsip, $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_keluar?success=Data berhasil ditambahkan.");
@@ -70,57 +71,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = intval($safe_post['id']);
+            $nama_file_pdf_lama = '';
 
-            // Inisialisasi query dan parameter
-            $sql_parts = [
-                "nomor_surat=?",
-                "perihal=?",
-                "tujuan_surat=?",
-                "tanggal_kirim=?"
-            ];
-            $params = [
-                $nomor_surat,
-                $perihal,
-                $tujuan_surat,
-                $tanggal_kirim
-            ];
-            $types = "ssss";
+            $sql_get_file = "SELECT nama_file_pdf FROM surat_keluar WHERE id=?";
+            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
+            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
+            mysqli_stmt_execute($stmt_get_file);
+            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
+            if($row = mysqli_fetch_assoc($result_get_file)){
+                $nama_file_pdf_lama = $row['nama_file_pdf'];
+            }
+            mysqli_stmt_close($stmt_get_file);
 
-            // Cek apakah ada file baru yang diunggah
+            $nama_file_pdf_baru = $nama_file_pdf_lama;
+
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
-                // Ambil nama file lama untuk dihapus
-                $sql_get_file = "SELECT nama_file_pdf FROM surat_keluar WHERE id=?";
-                $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-                mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-                mysqli_stmt_execute($stmt_get_file);
-                $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-                if ($row = mysqli_fetch_assoc($result_get_file)) {
-                    delete_old_file($row['nama_file_pdf']);
-                }
-                mysqli_stmt_close($stmt_get_file);
-
-                // Unggah file baru
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
                     header("Location: ../admin/surat_keluar?error=" . urlencode($upload_result['message']));
                     exit();
                 }
-
-                // Tambahkan field file ke query
-                $sql_parts[] = "nama_file_pdf=?";
-                $params[] = $upload_result['filename'];
-                $types .= "s";
+                $nama_file_pdf_baru = $upload_result['filename'];
+                delete_old_file($nama_file_pdf_lama);
             }
 
-            // Tambahkan ID ke parameter
-            $params[] = $id;
-            $types .= "i";
-
-            // Bangun query final
-            $sql = "UPDATE surat_keluar SET " . implode(", ", $sql_parts) . " WHERE id=?";
-
+            $sql = "UPDATE surat_keluar SET nomor_surat=?, perihal=?, tujuan_surat=?, tanggal_kirim=?, nama_file_pdf=? WHERE id=?";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, $types, ...$params);
+            mysqli_stmt_bind_param($stmt, "sssssi", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf_baru, $id);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_keluar?success=Data berhasil diperbarui.");

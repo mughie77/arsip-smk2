@@ -15,7 +15,7 @@ if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
+    $where_clauses[] = "(nomor_arsip LIKE '%$keyword%' OR nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
 }
 
 if (count($where_clauses) > 0) {
@@ -52,7 +52,7 @@ if (!$result) {
             </div>
             <div class="col-md-4">
                 <label for="keyword" class="form-label">Kata Kunci</label>
-                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no surat, perihal, tujuan..." value="<?php echo htmlspecialchars($keyword); ?>">
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no arsip, no surat, perihal..." value="<?php echo htmlspecialchars($keyword); ?>">
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">Cari</button>
@@ -86,6 +86,7 @@ if (!$result) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
+                        <th>Nomor Arsip</th>
                         <th>Nomor Surat</th>
                         <th>Perihal</th>
                         <th>Tujuan Surat</th>
@@ -100,6 +101,7 @@ if (!$result) {
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
                                 <td><?php echo $no++; ?></td>
+                                <td><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
                                 <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
                                 <td><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
@@ -121,7 +123,7 @@ if (!$result) {
                         <?php endwhile; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="7" class="text-center">Tidak ada data yang ditemukan.</td>
+                            <td colspan="8" class="text-center">Tidak ada data yang ditemukan.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

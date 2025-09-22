@@ -50,11 +50,11 @@
                         <h4 class="mb-0"><i class="fas fa-search"></i> Lacak Status Arsip Anda</h4>
                     </div>
                     <div class="card-body">
-                        <p>Masukkan Nomor Arsip atau Nomor Surat untuk melihat detail dan status dokumen.</p>
+                        <p>Masukkan Nomor Arsip yang Anda terima untuk melihat detail dan status dokumen.</p>
                         <form action="lacak_arsip.php" method="GET">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="nomor_lacak" placeholder="Contoh: SM-20240520-XXX atau KBI/24/V/001" required>
-                                <button class="btn btn-primary" type="submit">Lacak</button>
+                                <input type="text" class="form-control" name="nomor_arsip" placeholder="Contoh: SM-20240520-001" required>
+                                <button class="btn btn-primary" type="submit">Lacak Arsip</button>
                             </div>
                         </form>
 
@@ -62,21 +62,21 @@
                             <?php
                             require_once 'config/koneksi.php';
 
-                            if (isset($_GET['nomor_lacak']) && !empty($_GET['nomor_lacak'])) {
-                                $nomor_lacak = mysqli_real_escape_string($koneksi, $_GET['nomor_lacak']);
+                            if (isset($_GET['nomor_arsip']) && !empty($_GET['nomor_arsip'])) {
+                                $nomor_arsip = mysqli_real_escape_string($koneksi, $_GET['nomor_arsip']);
 
                                 $sql = "
                                     (SELECT
                                         id, nomor_arsip, nomor_surat, perihal, asal_surat AS pihak_terkait, tanggal_diterima AS tanggal, nama_file_pdf, 'Surat Masuk' as jenis
-                                    FROM surat_masuk WHERE nomor_arsip = ? OR nomor_surat = ?)
+                                    FROM surat_masuk WHERE nomor_arsip = ?)
                                     UNION
                                     (SELECT
-                                        id, NULL as nomor_arsip, nomor_surat, perihal, tujuan_surat AS pihak_terkait, tanggal_kirim AS tanggal, nama_file_pdf, 'Surat Keluar' as jenis
-                                    FROM surat_keluar WHERE nomor_surat = ?)
+                                        id, nomor_arsip, nomor_surat, perihal, tujuan_surat AS pihak_terkait, tanggal_kirim AS tanggal, nama_file_pdf, 'Surat Keluar' as jenis
+                                    FROM surat_keluar WHERE nomor_arsip = ?)
                                 ";
 
                                 if ($stmt = mysqli_prepare($koneksi, $sql)) {
-                                    mysqli_stmt_bind_param($stmt, "sss", $nomor_lacak, $nomor_lacak, $nomor_lacak);
+                                    mysqli_stmt_bind_param($stmt, "ss", $nomor_arsip, $nomor_arsip);
                                     mysqli_stmt_execute($stmt);
                                     $result = mysqli_stmt_get_result($stmt);
 
@@ -95,14 +95,12 @@
                                                 <hr>
                                                 <table class="table table-borderless table-sm">
                                                     <tbody>
-                                                        <?php if (!empty($data['nomor_arsip'])) : ?>
-                                                            <tr>
-                                                                <th style="width: 150px;">Nomor Arsip</th>
-                                                                <td>: <?php echo htmlspecialchars($data['nomor_arsip']); ?></td>
-                                                            </tr>
-                                                        <?php endif; ?>
                                                         <tr>
-                                                            <th style="width: 150px;">Jenis Arsip</th>
+                                                            <th style="width: 150px;">Nomor Arsip</th>
+                                                            <td>: <?php echo htmlspecialchars($data['nomor_arsip']); ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Jenis Arsip</th>
                                                             <td>: <span class="badge bg-info"><?php echo htmlspecialchars($data['jenis']); ?></span></td>
                                                         </tr>
                                                         <tr>
@@ -126,7 +124,7 @@
                                         </div>
                             <?php
                                     } else {
-                                        echo '<div class="alert alert-danger"><i class="fas fa-times-circle"></i> Arsip dengan nomor <strong>' . htmlspecialchars($nomor_lacak) . '</strong> tidak ditemukan.</div>';
+                                        echo '<div class="alert alert-danger"><i class="fas fa-times-circle"></i> Arsip dengan nomor <strong>' . htmlspecialchars($nomor_arsip) . '</strong> tidak ditemukan.</div>';
                                     }
                                     mysqli_stmt_close($stmt);
                                 } else {

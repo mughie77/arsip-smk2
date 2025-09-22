@@ -73,53 +73,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = intval($safe_post['id']);
+            $nama_file_lama = '';
 
-            // Inisialisasi query dan parameter
-            $sql_parts = [
-                "tanggal=?",
-                "kegiatan=?"
-            ];
-            $params = [
-                $tanggal,
-                $kegiatan
-            ];
-            $types = "ss";
+            $sql_get_file = "SELECT nama_file FROM notulen WHERE id=?";
+            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
+            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
+            mysqli_stmt_execute($stmt_get_file);
+            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
+            if($row = mysqli_fetch_assoc($result_get_file)){
+                $nama_file_lama = $row['nama_file'];
+            }
+            mysqli_stmt_close($stmt_get_file);
 
-            // Cek apakah ada file baru yang diunggah
+            $nama_file_baru = $nama_file_lama;
+
             if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
-                // Ambil nama file lama untuk dihapus
-                $sql_get_file = "SELECT nama_file FROM notulen WHERE id=?";
-                $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-                mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-                mysqli_stmt_execute($stmt_get_file);
-                $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-                if ($row = mysqli_fetch_assoc($result_get_file)) {
-                    delete_old_file($row['nama_file']);
-                }
-                mysqli_stmt_close($stmt_get_file);
-
-                // Unggah file baru
                 $upload_result = upload_file($_FILES['nama_file']);
                 if ($upload_result['status'] == 'error') {
                     header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
                     exit();
                 }
-
-                // Tambahkan field file ke query
-                $sql_parts[] = "nama_file=?";
-                $params[] = $upload_result['filename'];
-                $types .= "s";
+                $nama_file_baru = $upload_result['filename'];
+                delete_old_file($nama_file_lama);
             }
 
-            // Tambahkan ID ke parameter
-            $params[] = $id;
-            $types .= "i";
-
-            // Bangun query final
-            $sql = "UPDATE notulen SET " . implode(", ", $sql_parts) . " WHERE id=?";
-
+            $sql = "UPDATE notulen SET tanggal=?, kegiatan=?, nama_file=? WHERE id=?";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, $types, ...$params);
+            mysqli_stmt_bind_param($stmt, "sssi", $tanggal, $kegiatan, $nama_file_baru, $id);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/notulen?success=Data berhasil diperbarui.");
