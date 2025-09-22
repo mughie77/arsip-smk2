@@ -55,9 +55,19 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <i class="fas fa-file-alt"></i> Daftar Notulen
                 </a>
             </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="klasifikasi_surat.php">
+                            <i class="fas fa-tags"></i> Klasifikasi Surat
+                        </a>
+                    </li>
         </ul>
         <div class="mt-auto">
              <ul class="nav flex-column">
+                 <li class="nav-item">
+                    <a class="nav-link" href="pengaturan.php">
+                        <i class="fas fa-cog"></i> Pengaturan
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../logout">
                         <i class="fas fa-sign-out-alt"></i> Logout

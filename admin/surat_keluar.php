@@ -7,22 +7,24 @@ $dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
 $sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
 $keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
 
-$query = "SELECT * FROM surat_keluar";
+$query = "SELECT sk.*, ks.kode as kode_klasifikasi, ks.jenis_surat
+          FROM surat_keluar sk
+          LEFT JOIN klasifikasi_surat ks ON sk.klasifikasi_id = ks.id";
 $where_clauses = [];
 
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    $where_clauses[] = "tanggal_kirim BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+    $where_clauses[] = "sk.tanggal_kirim BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR tujuan_surat LIKE '%$keyword%')";
+    $where_clauses[] = "(sk.kode_arsip LIKE '%$keyword%' OR sk.nomor_surat LIKE '%$keyword%' OR sk.perihal LIKE '%$keyword%' OR sk.tujuan_surat LIKE '%$keyword%')";
 }
 
 if (count($where_clauses) > 0) {
     $query .= " WHERE " . implode(' AND ', $where_clauses);
 }
 
-$query .= " ORDER BY tanggal_kirim DESC";
+$query .= " ORDER BY sk.tanggal_kirim DESC";
 
 $result = mysqli_query($koneksi, $query);
 
@@ -86,10 +88,11 @@ if (!$result) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Nomor Surat</th>
+                        <th>Kode Arsip</th>
                         <th>Perihal</th>
-                        <th>Tujuan Surat</th>
-                        <th>Tanggal Kirim</th>
+                        <th>Tujuan</th>
+                        <th>Nomor Surat</th>
+                        <th>Tgl. Kirim</th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
@@ -100,24 +103,25 @@ if (!$result) {
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
                                 <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
-                                <td><?php echo htmlspecialchars($row['perihal']); ?></td>
+                                <td class="fw-bold"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
+                                <td>
+                                    <?php echo htmlspecialchars($row['perihal']); ?>
+                                    <br>
+                                    <small class="text-muted"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></small>
+                                </td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
+                                <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td>
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
-                                        <a href="../uploads/surat_keluar/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
-                                            <i class="fas fa-eye"></i> Lihat
+                                        <a href="../uploads/surat_keluar/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm" title="Lihat Berkas">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                    <?php else : ?>
-                                        <span class="text-muted">No File</span>
                                     <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <a href="../core/surat_keluar_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    <a href="../core/surat_keluar_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
@@ -149,9 +153,24 @@ if (!$result) {
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="klasifikasi_id" class="form-label">Klasifikasi Surat</label>
+                            <select class="form-select" id="klasifikasi_id" name="klasifikasi_id" required>
+                                <option value="">-- Pilih Klasifikasi --</option>
+                                <?php
+                                $q_klasifikasi = mysqli_query($koneksi, "SELECT * FROM klasifikasi_surat ORDER BY jenis_surat ASC");
+                                while ($klas = mysqli_fetch_assoc($q_klasifikasi)) {
+                                    echo "<option value='{$klas['id']}'>{$klas['kode']} - {$klas['jenis_surat']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="nomor_surat" class="form-label">Nomor Surat</label>
                             <input type="text" class="form-control" id="nomor_surat" name="nomor_surat" required>
+                            <small class="form-text text-muted">Contoh: 001/A/UNDANGAN/X/2024</small>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="tujuan_surat" class="form-label">Tujuan Surat</label>
                             <input type="text" class="form-control" id="tujuan_surat" name="tujuan_surat" required>
@@ -171,6 +190,7 @@ if (!$result) {
                         <label for="nama_file_pdf" class="form-label">Unggah Berkas (PDF, max 3MB)</label>
                         <input class="form-control" type="file" id="nama_file_pdf" name="nama_file_pdf" accept=".pdf">
                         <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
+                        <input type="hidden" name="nama_file_pdf_existing" id="nama_file_pdf_existing">
                     </div>
 
                 </div>
@@ -211,6 +231,8 @@ $(document).ready(function() {
                     $('#tujuan_surat').val(data.data.tujuan_surat);
                     $('#perihal').val(data.data.perihal);
                     $('#tanggal_kirim').val(data.data.tanggal_kirim);
+                    $('#klasifikasi_id').val(data.data.klasifikasi_id);
+                    $('#nama_file_pdf_existing').val(data.data.nama_file_pdf); // Simpan nama file lama
                     $('#suratKeluarModal').modal('show');
                 } else {
                     alert('Gagal mengambil data: ' + data.message);
