@@ -44,17 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     switch ($action) {
         case 'add':
-            if (!isset($_FILES['nama_file_pdf']) || $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/surat_keluar?error=File PDF wajib diunggah.");
-                exit();
+            $nama_file_pdf = ''; // Default value jika tidak ada file
+            if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
+                $upload_result = upload_file($_FILES['nama_file_pdf']);
+                if ($upload_result['status'] == 'error') {
+                    header("Location: ../admin/surat_keluar?error=" . urlencode($upload_result['message']));
+                    exit();
+                }
+                $nama_file_pdf = $upload_result['filename'];
             }
 
-            $upload_result = upload_file($_FILES['nama_file_pdf']);
-            if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/surat_keluar?error=" . urlencode($upload_result['message']));
-                exit();
-            }
-            $nama_file_pdf = $upload_result['filename'];
             $nomor_arsip = generate_nomor_arsip('SK');
 
             $sql = "INSERT INTO surat_keluar (nomor_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?)";

@@ -47,17 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     switch ($action) {
         case 'add':
-            if (!isset($_FILES['nama_file']) || $_FILES['nama_file']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/notulen?error=File wajib diunggah.");
-                exit();
+            $nama_file = ''; // Default value jika tidak ada file
+            if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
+                $upload_result = upload_file($_FILES['nama_file']);
+                if ($upload_result['status'] == 'error') {
+                    header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
+                    exit();
+                }
+                $nama_file = $upload_result['filename'];
             }
-
-            $upload_result = upload_file($_FILES['nama_file']);
-            if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
-                exit();
-            }
-            $nama_file = $upload_result['filename'];
 
             $sql = "INSERT INTO notulen (tanggal, kegiatan, nama_file) VALUES (?, ?, ?)";
             $stmt = mysqli_prepare($koneksi, $sql);

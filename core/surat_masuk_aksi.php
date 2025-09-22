@@ -71,19 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // --- AKSI TAMBAH DATA ---
         // --- AKSI TAMBAH DATA ---
         case 'add':
-            // Validasi: File wajib ada saat menambah data baru.
-            if (!isset($_FILES['nama_file_pdf']) || $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/surat_masuk?error=File PDF wajib diunggah.");
-                exit();
+            $nama_file_pdf = ''; // Default value jika tidak ada file
+            // Cek apakah ada file yang diunggah dan tidak ada error
+            if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
+                // Proses upload file
+                $upload_result = upload_file($_FILES['nama_file_pdf']);
+                if ($upload_result['status'] == 'error') {
+                    header("Location: ../admin/surat_masuk?error=" . urlencode($upload_result['message']));
+                    exit();
+                }
+                $nama_file_pdf = $upload_result['filename'];
             }
 
-            // Proses upload file
-            $upload_result = upload_file($_FILES['nama_file_pdf']);
-            if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/surat_masuk?error=" . urlencode($upload_result['message']));
-                exit();
-            }
-            $nama_file_pdf = $upload_result['filename'];
             $nomor_arsip = generate_nomor_arsip('SM'); // Buat nomor arsip unik
 
             // Query INSERT dengan prepared statement untuk keamanan
