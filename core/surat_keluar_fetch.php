@@ -11,7 +11,7 @@ $response = ['status' => 'error', 'message' => 'Permintaan tidak valid.'];
 if (isset($_POST['id'])) {
     $id = intval($_POST['id']);
 
-    $query = "SELECT * FROM surat_keluar WHERE id = ?";
+    $query = "SELECT nomor_surat, tujuan_surat, perihal, tanggal_kirim FROM surat_keluar WHERE id = ?";
     if ($stmt = mysqli_prepare($koneksi, $query)) {
         mysqli_stmt_bind_param($stmt, "i", $id);
 

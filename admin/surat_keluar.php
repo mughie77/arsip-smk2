@@ -91,7 +91,6 @@ if (!$result) {
                         <th>Perihal</th>
                         <th>Tujuan Surat</th>
                         <th>Tanggal Kirim</th>
-                        <th>Acc Kepada</th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
@@ -107,7 +106,6 @@ if (!$result) {
                                 <td><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
-                                <td><?php echo htmlspecialchars($row['acc_kepada']); ?></td>
                                 <td>
                                     <a href="../uploads/surat_keluar/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
                                         <i class="fas fa-eye"></i> Lihat
@@ -125,7 +123,7 @@ if (!$result) {
                         <?php endwhile; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="9" class="text-center">Tidak ada data yang ditemukan.</td>
+                            <td colspan="8" class="text-center">Tidak ada data yang ditemukan.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -165,10 +163,6 @@ if (!$result) {
                         <div class="col-md-6 mb-3">
                             <label for="tanggal_kirim" class="form-label">Tanggal Kirim</label>
                             <input type="date" class="form-control" id="tanggal_kirim" name="tanggal_kirim" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="acc_kepada" class="form-label">Acc Kepada</label>
-                            <input type="text" class="form-control" id="acc_kepada" name="acc_kepada">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -215,7 +209,6 @@ $(document).ready(function() {
                     $('#tujuan_surat').val(data.data.tujuan_surat);
                     $('#perihal').val(data.data.perihal);
                     $('#tanggal_kirim').val(data.data.tanggal_kirim);
-                    $('#acc_kepada').val(data.data.acc_kepada);
                     $('#suratKeluarModal').modal('show');
                 } else {
                     alert('Gagal mengambil data: ' + data.message);

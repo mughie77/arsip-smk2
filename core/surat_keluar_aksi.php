@@ -41,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $perihal = $safe_post['perihal'];
     $tujuan_surat = $safe_post['tujuan_surat'];
     $tanggal_kirim = $safe_post['tanggal_kirim'];
-    $acc_kepada = $safe_post['acc_kepada'];
 
     switch ($action) {
         case 'add':
@@ -58,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nama_file_pdf = $upload_result['filename'];
             $nomor_arsip = generate_nomor_arsip('SK');
 
-            $sql = "INSERT INTO surat_keluar (nomor_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, acc_kepada, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO surat_keluar (nomor_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "sssssss", $nomor_arsip, $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $acc_kepada, $nama_file_pdf);
+            mysqli_stmt_bind_param($stmt, "ssssss", $nomor_arsip, $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_keluar?success=Data berhasil ditambahkan.");
@@ -96,9 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 delete_old_file($nama_file_pdf_lama);
             }
 
-            $sql = "UPDATE surat_keluar SET nomor_surat=?, perihal=?, tujuan_surat=?, tanggal_kirim=?, acc_kepada=?, nama_file_pdf=? WHERE id=?";
+            $sql = "UPDATE surat_keluar SET nomor_surat=?, perihal=?, tujuan_surat=?, tanggal_kirim=?, nama_file_pdf=? WHERE id=?";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "ssssssi", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $acc_kepada, $nama_file_pdf_baru, $id);
+            mysqli_stmt_bind_param($stmt, "sssssi", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf_baru, $id);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_keluar?success=Data berhasil diperbarui.");
