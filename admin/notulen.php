@@ -98,9 +98,13 @@ if (!$result) {
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal'])); ?></td>
                                 <td><?php echo htmlspecialchars($row['kegiatan']); ?></td>
                                 <td>
-                                    <a href="../uploads/notulen/<?php echo htmlspecialchars($row['nama_file']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
-                                        <i class="fas fa-eye"></i> Lihat
-                                    </a>
+                                    <?php if (!empty($row['nama_file'])) : ?>
+                                        <a href="../core/view_berkas.php?type=notulen&id=<?php echo $row['id']; ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                            <i class="fas fa-eye"></i> Lihat
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">No File</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">

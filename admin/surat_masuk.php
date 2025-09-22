@@ -110,9 +110,13 @@ if (!$result) {
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_diterima'])); ?></td>
                                 <td><?php echo htmlspecialchars($row['acc_kepada']); ?></td>
                                 <td>
-                                    <a href="../uploads/surat_masuk/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
-                                        <i class="fas fa-eye"></i> Lihat
-                                    </a>
+                                    <?php if (!empty($row['nama_file_pdf'])) : ?>
+                                        <a href="../core/view_berkas.php?type=surat_masuk&id=<?php echo $row['id']; ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                            <i class="fas fa-eye"></i> Lihat
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">No File</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
