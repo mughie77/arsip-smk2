@@ -55,11 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
             $nama_file_pdf = $upload_result['filename'];
-            $nomor_arsip = generate_nomor_arsip('SK');
 
-            $sql = "INSERT INTO surat_keluar (nomor_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO surat_keluar (nomor_surat, perihal, tujuan_surat, tanggal_kirim, nama_file_pdf) VALUES (?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "ssssss", $nomor_arsip, $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf);
+            mysqli_stmt_bind_param($stmt, "sssss", $nomor_surat, $perihal, $tujuan_surat, $tanggal_kirim, $nama_file_pdf);
 
             if(mysqli_stmt_execute($stmt)){
                 header("Location: ../admin/surat_keluar?success=Data berhasil ditambahkan.");
