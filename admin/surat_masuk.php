@@ -111,7 +111,7 @@ if (!$result) {
                                 <td><?php echo htmlspecialchars($row['acc_kepada']); ?></td>
                                 <td>
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
-                                        <a href="../core/view_berkas.php?type=surat_masuk&id=<?php echo $row['id']; ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                        <a href="../uploads/surat_masuk/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
                                         </a>
                                     <?php else : ?>
