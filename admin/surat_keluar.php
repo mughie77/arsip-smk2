@@ -252,6 +252,12 @@ if (isset($_SESSION['error_message'])) {
 
 <script>
 $(document).ready(function() {
+    // Inisialisasi Select2 pada dropdown di dalam modal
+    $('#klasifikasi_id').select2({
+        theme: 'bootstrap-5',
+        dropdownParent: $('#suratKeluarModal')
+    });
+
     $('#btnTambah').on('click', function() {
         $('#suratKeluarModalLabel').text('Tambah Surat Keluar');
         $('#suratKeluarForm')[0].reset();

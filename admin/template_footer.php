@@ -15,6 +15,8 @@
 
 <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- Chart.js for graphs (can be deferred as it's likely not a dependency for inline scripts) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
