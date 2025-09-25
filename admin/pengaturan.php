@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
@@ -16,6 +17,17 @@ if (!$pengaturan) {
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Pengaturan Data Sekolah</h1>
 </div>
+
+<?php
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="alert alert-success">' . $_SESSION['success_message'] . '</div>';
+    unset($_SESSION['success_message']);
+}
+if (isset($_SESSION['error_message'])) {
+    echo '<div class="alert alert-danger">' . $_SESSION['error_message'] . '</div>';
+    unset($_SESSION['error_message']);
+}
+?>
 
 <?php
 // Tampilkan pesan sukses atau error jika ada
