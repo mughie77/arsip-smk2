@@ -2,7 +2,27 @@
 require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
-$query = "SELECT * FROM klasifikasi_surat ORDER BY kode ASC";
+// Pagination and Search Logic
+$limit = 20; // Data per halaman
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
+
+// Query untuk menghitung total data
+$count_query = "SELECT COUNT(*) as total FROM klasifikasi_surat";
+if (!empty($keyword)) {
+    $count_query .= " WHERE kode LIKE '%$keyword%' OR jenis_surat LIKE '%$keyword%'";
+}
+$count_result = mysqli_query($koneksi, $count_query);
+$total_data = mysqli_fetch_assoc($count_result)['total'];
+$total_pages = ceil($total_data / $limit);
+
+// Query untuk mengambil data dengan limit dan offset
+$query = "SELECT * FROM klasifikasi_surat";
+if (!empty($keyword)) {
+    $query .= " WHERE kode LIKE '%$keyword%' OR jenis_surat LIKE '%$keyword%'";
+}
+$query .= " ORDER BY kode ASC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($koneksi, $query);
 
 if (!$result) {
@@ -25,6 +45,21 @@ if (isset($_SESSION['error_message'])) {
 }
 ?>
 
+<div class="card mb-4">
+    <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
+    <div class="card-body">
+        <form method="GET" action="klasifikasi_surat.php" class="row g-3 align-items-center">
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari berdasarkan Kode atau Jenis Surat..." value="<?php echo htmlspecialchars($keyword); ?>">
+            </div>
+            <div class="col-md-2 d-flex">
+                <button type="submit" class="btn btn-primary me-2">Cari</button>
+                <a href="klasifikasi_surat.php" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="fas fa-list"></i> Daftar Klasifikasi</span>
@@ -45,7 +80,7 @@ if (isset($_SESSION['error_message'])) {
                 </thead>
                 <tbody>
                     <?php if (mysqli_num_rows($result) > 0) : ?>
-                        <?php $no = 1; ?>
+                        <?php $no = $offset + 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
                                 <td><?php echo $no++; ?></td>
@@ -69,6 +104,17 @@ if (isset($_SESSION['error_message'])) {
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                        <a class="page-link" href="klasifikasi_surat.php?page=<?php echo $i; ?>&keyword=<?php echo urlencode($keyword); ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
     </div>
 </div>
 

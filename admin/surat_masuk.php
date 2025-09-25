@@ -22,8 +22,24 @@ if (count($where_clauses) > 0) {
     $query .= " WHERE " . implode(' AND ', $where_clauses);
 }
 
-$query .= " ORDER BY tanggal_diterima DESC";
+$limit = 20;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
+// Query untuk menghitung total data
+$count_query = "SELECT COUNT(*) as total FROM surat_masuk";
+if (count($where_clauses) > 0) {
+    $count_query .= " WHERE " . implode(' AND ', $where_clauses);
+}
+$count_result = mysqli_query($koneksi, $count_query);
+$total_data = mysqli_fetch_assoc($count_result)['total'];
+$total_pages = ceil($total_data / $limit);
+
+// Query untuk mengambil data dengan limit dan offset
+if (count($where_clauses) > 0) {
+    $query .= " WHERE " . implode(' AND ', $where_clauses);
+}
+$query .= " ORDER BY tanggal_diterima DESC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($koneksi, $query);
 
 if (!$result) {
@@ -136,6 +152,20 @@ if (!$result) {
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <?php
+                $query_params = http_build_query(array_filter(['dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
+                for ($i = 1; $i <= $total_pages; $i++) :
+                ?>
+                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                        <a class="page-link" href="surat_masuk.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
     </div>
 </div>
 
