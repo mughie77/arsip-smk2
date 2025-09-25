@@ -3,8 +3,8 @@
 
 // --- Konfigurasi Database ---
 $db_host = 'localhost';     // Host database, biasanya 'localhost'
-$db_user = 'root';          // Username database
-$db_pass = '';              // Password database
+$db_user = 'arsip_user';    // Username database
+$db_pass = 'password123';   // Password database
 $db_name = 'db_arsip_digital'; // Nama database
 
 // --- Membuat Koneksi ke Database ---
