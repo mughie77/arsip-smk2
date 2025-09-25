@@ -1,33 +1,8 @@
 <?php
-// Aktifkan pelaporan error untuk debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-session_start();
 require_once '../config/koneksi.php';
-
-// --- DEBUGGING ---
-if (!isset($_SESSION['username'])) {
-    die("DEBUG: Sesi admin tidak ditemukan. Silakan login kembali.");
-} else {
-    echo "DEBUG: Sesi admin ditemukan: " . htmlspecialchars($_SESSION['username']) . "<br>";
-}
+require_once '../admin/cek_sesi.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
-if (empty($action)) {
-    die("DEBUG: Tidak ada 'action' yang diterima. Pastikan form mengirimkan 'action'.");
-} else {
-    echo "DEBUG: Aksi yang diterima adalah: " . htmlspecialchars($action) . "<br>";
-}
-// --- END DEBUGGING ---
-
-
-// Cek apakah admin sudah login
-if (!isset($_SESSION['username'])) {
-    header("Location: ../login.php");
-    exit;
-}
 
 // Tambah Klasifikasi
 if ($action == 'add') {
@@ -75,8 +50,6 @@ elseif ($action == 'delete') {
     if (empty($id)) {
         $_SESSION['error_message'] = "ID tidak valid.";
     } else {
-        // Sebaiknya tambahkan pengecekan apakah klasifikasi ini sedang digunakan
-        // oleh surat keluar sebelum menghapus. Untuk saat ini, kita langsung hapus.
         $query = "DELETE FROM klasifikasi_surat WHERE id=$id";
         if (mysqli_query($koneksi, $query)) {
             $_SESSION['success_message'] = "Klasifikasi berhasil dihapus.";

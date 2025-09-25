@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
 
@@ -153,7 +152,7 @@ elseif ($action == 'delete') {
 
 else {
     $_SESSION['error_message'] = "Aksi tidak valid.";
-    header("Location: ../admin/surat_keluar.php");
+    header("Location: ../admin/index.php");
     exit;
 }
 

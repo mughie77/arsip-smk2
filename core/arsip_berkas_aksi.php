@@ -1,12 +1,6 @@
 <?php
-session_start();
 require_once '../config/koneksi.php';
-
-// Cek apakah admin sudah login
-if (!isset($_SESSION['username'])) {
-    header("Location: ../login.php");
-    exit;
-}
+require_once '../admin/cek_sesi.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
@@ -75,7 +69,7 @@ if ($action == 'add') {
 }
 
 // Aksi Edit Data
-if ($action == 'edit') {
+elseif ($action == 'edit') {
     $id = mysqli_real_escape_string($koneksi, $_POST['id']);
     $no_berkas = mysqli_real_escape_string($koneksi, $_POST['no_berkas']);
     $nama_berkas = mysqli_real_escape_string($koneksi, $_POST['nama_berkas']);
@@ -124,7 +118,7 @@ if ($action == 'edit') {
 }
 
 // Aksi Hapus Data
-if ($action == 'delete') {
+elseif ($action == 'delete') {
     $id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
     // Ambil nama file untuk dihapus dari folder uploads
@@ -146,6 +140,11 @@ if ($action == 'delete') {
     } else {
         $_SESSION['error_message'] = "Gagal menghapus data: " . mysqli_error($koneksi);
     }
+    header("Location: ../admin/arsip_berkas.php");
+    exit;
+}
+else {
+    $_SESSION['error_message'] = "Aksi tidak valid.";
     header("Location: ../admin/arsip_berkas.php");
     exit;
 }

@@ -1,12 +1,6 @@
 <?php
-session_start();
 require_once '../config/koneksi.php';
-
-// Cek apakah admin sudah login
-if (!isset($_SESSION['username'])) {
-    header("Location: ../login.php");
-    exit;
-}
+require_once '../admin/cek_sesi.php';
 
 $action = $_POST['action'] ?? '';
 
