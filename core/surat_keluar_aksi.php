@@ -84,12 +84,6 @@ if ($action == 'add' || $action == 'edit') {
     }
 
     if ($action == 'add') {
-        if (empty($nama_file_pdf_final)) {
-            $_SESSION['error_message'] = "File PDF wajib diunggah.";
-            header("Location: ../admin/surat_keluar.php");
-            exit;
-        }
-
         $query = "INSERT INTO surat_keluar (kode_arsip, nomor_surat, perihal, tujuan_surat, tanggal_kirim, klasifikasi_id, nama_file_pdf)
                   VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($koneksi, $query);

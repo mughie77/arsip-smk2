@@ -101,9 +101,9 @@ if (isset($_SESSION['error_message'])) {
                     <tr>
                         <th>No</th>
                         <th>Kode Arsip</th>
-                        <th>Perihal</th>
-                        <th>Tujuan</th>
                         <th>Nomor Surat</th>
+                        <th>Tujuan</th>
+                        <th>Perihal</th>
                         <th>Tgl. Kirim</th>
                         <th>Berkas</th>
                         <th>Aksi</th>
