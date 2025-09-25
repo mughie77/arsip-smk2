@@ -126,14 +126,18 @@ if (isset($_SESSION['error_message'])) {
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td>
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
-                                        <a href="../uploads/surat_keluar/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm" title="Lihat Berkas">
-                                            <i class="fas fa-eye"></i>
+                                        <a href="../uploads/surat_keluar/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                            <i class="fas fa-eye"></i> Lihat
                                         </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">No File</span>
                                     <?php endif; ?>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>" title="Edit">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <a href="../core/surat_keluar_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');" title="Hapus">
+                                    <a href="../core/surat_keluar_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
