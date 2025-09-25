@@ -104,3 +104,17 @@ INSERT INTO `pengaturan` (`id`, `nama_sekolah`, `kode_sekolah`) VALUES
 --
 ALTER TABLE `surat_keluar`
   ADD CONSTRAINT `surat_keluar_ibfk_1` FOREIGN KEY (`klasifikasi_id`) REFERENCES `klasifikasi_surat` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `arsip_berkas`
+--
+CREATE TABLE `arsip_berkas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_berkas` varchar(100) NOT NULL,
+  `nama_berkas` varchar(255) NOT NULL,
+  `tanggal_berkas` date NOT NULL,
+  `nama_file_pdf` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -55,6 +55,11 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <i class="fas fa-file-alt"></i> Daftar Notulen
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'arsip_berkas.php') ? 'active' : ''; ?>" href="arsip_berkas.php">
+                    <i class="fas fa-archive"></i> Arsip Berkas
+                </a>
+            </li>
                     <li class="nav-item">
                         <a class="nav-link" href="klasifikasi_surat.php">
                             <i class="fas fa-tags"></i> Klasifikasi Surat
