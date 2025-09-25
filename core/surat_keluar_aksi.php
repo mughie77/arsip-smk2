@@ -49,7 +49,7 @@ if ($action == 'add' || $action == 'edit') {
     }
 
     $tahun = date('Y', strtotime($tanggal_kirim));
-    $kode_arsip = "$kode_klasifikasi-$nomor_surat-$kode_sekolah-$tahun";
+    $kode_arsip = "$kode_klasifikasi/$nomor_surat/$kode_sekolah/$tahun";
     // --- END GENERATE KODE ARSIP ---
 
     // --- LOGIKA UPLOAD FILE ---
