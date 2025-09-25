@@ -67,23 +67,26 @@
 
                                 $sql = "
                                     (SELECT
-                                        id, nomor_arsip, nomor_surat, perihal, asal_surat AS pihak_terkait, tanggal_diterima AS tanggal, nama_file_pdf, 'Surat Masuk' as jenis
-                                    FROM surat_masuk WHERE nomor_arsip = ?)
+                                        id, nomor_arsip as no_identitas, nomor_surat, perihal, asal_surat AS pihak_terkait, tanggal_diterima AS tanggal, nama_file_pdf, 'Surat Masuk' as jenis, 'surat_masuk' as tipe_folder
+                                    FROM surat_masuk WHERE nomor_arsip = ? OR nomor_surat = ?)
                                     UNION
                                     (SELECT
-                                        id, nomor_arsip, nomor_surat, perihal, tujuan_surat AS pihak_terkait, tanggal_kirim AS tanggal, nama_file_pdf, 'Surat Keluar' as jenis
-                                    FROM surat_keluar WHERE nomor_arsip = ?)
+                                        id, kode_arsip as no_identitas, nomor_surat, perihal, tujuan_surat AS pihak_terkait, tanggal_kirim AS tanggal, nama_file_pdf, 'Surat Keluar' as jenis, 'surat_keluar' as tipe_folder
+                                    FROM surat_keluar WHERE kode_arsip = ? OR nomor_surat = ?)
+                                    UNION
+                                    (SELECT
+                                        id, no_berkas as no_identitas, nama_berkas as nomor_surat, '-' as perihal, '-' as pihak_terkait, tanggal_berkas as tanggal, nama_file_pdf, 'Arsip Berkas' as jenis, 'arsip_berkas' as tipe_folder
+                                    FROM arsip_berkas WHERE no_berkas = ?)
                                 ";
 
                                 if ($stmt = mysqli_prepare($koneksi, $sql)) {
-                                    mysqli_stmt_bind_param($stmt, "ss", $nomor_arsip, $nomor_arsip);
+                                    mysqli_stmt_bind_param($stmt, "sssss", $nomor_arsip, $nomor_arsip, $nomor_arsip, $nomor_arsip, $nomor_arsip);
                                     mysqli_stmt_execute($stmt);
                                     $result = mysqli_stmt_get_result($stmt);
 
                                     if (mysqli_num_rows($result) > 0) {
                                         $data = mysqli_fetch_assoc($result);
-                                        $file_path = ($data['jenis'] == 'Surat Masuk') ? 'uploads/surat_masuk/' : 'uploads/surat_keluar/';
-                                        $file_url = $file_path . htmlspecialchars($data['nama_file_pdf']);
+                                        $file_url = 'uploads/' . $data['tipe_folder'] . '/' . htmlspecialchars($data['nama_file_pdf']);
                                         $pihak_terkait_label = ($data['jenis'] == 'Surat Masuk') ? 'Asal Surat' : 'Tujuan Surat';
                             ?>
                                         <div class="card">
@@ -96,8 +99,8 @@
                                                 <table class="table table-borderless table-sm">
                                                     <tbody>
                                                         <tr>
-                                                            <th style="width: 150px;">Nomor Arsip</th>
-                                                            <td>: <?php echo htmlspecialchars($data['nomor_arsip']); ?></td>
+                                                            <th style="width: 150px;">Nomor Identitas</th>
+                                                            <td>: <?php echo htmlspecialchars($data['no_identitas']); ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Jenis Arsip</th>
