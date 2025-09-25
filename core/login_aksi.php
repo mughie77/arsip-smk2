@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Verifikasi password menggunakan password_verify()
         if (password_verify($password, $admin['password'])) {
             // Jika password cocok, buat session
-            $_SESSION['username'] = $admin['username'];
+            $_SESSION['admin_loggedin'] = true;
+            $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['login_time'] = time();
 
