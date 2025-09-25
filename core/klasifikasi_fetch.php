@@ -1,14 +1,8 @@
 <?php
-session_start();
 require_once '../config/koneksi.php';
+require_once '../admin/cek_sesi.php';
 
 header('Content-Type: application/json');
-
-// Cek apakah admin sudah login
-if (!isset($_SESSION['username'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Akses ditolak. Silakan login terlebih dahulu.']);
-    exit;
-}
 
 // Inisialisasi respons default
 $response = ['status' => 'error', 'message' => 'Permintaan tidak valid.'];

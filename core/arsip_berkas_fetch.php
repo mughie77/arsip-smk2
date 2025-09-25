@@ -1,5 +1,8 @@
 <?php
 require_once '../config/koneksi.php';
+require_once '../admin/cek_sesi.php';
+
+header('Content-Type: application/json');
 
 // Pastikan hanya request POST yang diterima
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
