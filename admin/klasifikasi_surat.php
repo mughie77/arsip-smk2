@@ -14,6 +14,17 @@ if (!$result) {
     <h1 class="h2">Manajemen Klasifikasi Surat</h1>
 </div>
 
+<?php
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="alert alert-success">' . $_SESSION['success_message'] . '</div>';
+    unset($_SESSION['success_message']);
+}
+if (isset($_SESSION['error_message'])) {
+    echo '<div class="alert alert-danger">' . $_SESSION['error_message'] . '</div>';
+    unset($_SESSION['error_message']);
+}
+?>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="fas fa-list"></i> Daftar Klasifikasi</span>

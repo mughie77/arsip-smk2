@@ -8,13 +8,7 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-$action = $_REQUEST['action'] ?? '';
-
-// Fungsi untuk redirect dengan pesan
-function redirect_with_message($message, $status) {
-    header("Location: ../admin/klasifikasi_surat.php?message=" . urlencode($message) . "&status=" . $status);
-    exit;
-}
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // Tambah Klasifikasi
 if ($action == 'add') {
@@ -22,15 +16,17 @@ if ($action == 'add') {
     $jenis_surat = mysqli_real_escape_string($koneksi, $_POST['jenis_surat']);
 
     if (empty($kode) || empty($jenis_surat)) {
-        redirect_with_message("Kode dan Jenis Surat tidak boleh kosong.", "error");
-    }
-
-    $query = "INSERT INTO klasifikasi_surat (kode, jenis_surat) VALUES ('$kode', '$jenis_surat')";
-    if (mysqli_query($koneksi, $query)) {
-        redirect_with_message("Klasifikasi berhasil ditambahkan.", "success");
+        $_SESSION['error_message'] = "Kode dan Jenis Surat tidak boleh kosong.";
     } else {
-        redirect_with_message("Error: " . mysqli_error($koneksi), "error");
+        $query = "INSERT INTO klasifikasi_surat (kode, jenis_surat) VALUES ('$kode', '$jenis_surat')";
+        if (mysqli_query($koneksi, $query)) {
+            $_SESSION['success_message'] = "Klasifikasi berhasil ditambahkan.";
+        } else {
+            $_SESSION['error_message'] = "Error: " . mysqli_error($koneksi);
+        }
     }
+    header("Location: ../admin/klasifikasi_surat.php");
+    exit;
 }
 
 // Edit Klasifikasi
@@ -40,15 +36,17 @@ elseif ($action == 'edit') {
     $jenis_surat = mysqli_real_escape_string($koneksi, $_POST['jenis_surat']);
 
     if (empty($id) || empty($kode) || empty($jenis_surat)) {
-        redirect_with_message("Data tidak lengkap.", "error");
-    }
-
-    $query = "UPDATE klasifikasi_surat SET kode='$kode', jenis_surat='$jenis_surat' WHERE id=$id";
-    if (mysqli_query($koneksi, $query)) {
-        redirect_with_message("Klasifikasi berhasil diperbarui.", "success");
+        $_SESSION['error_message'] = "Data tidak lengkap.";
     } else {
-        redirect_with_message("Error: " . mysqli_error($koneksi), "error");
+        $query = "UPDATE klasifikasi_surat SET kode='$kode', jenis_surat='$jenis_surat' WHERE id=$id";
+        if (mysqli_query($koneksi, $query)) {
+            $_SESSION['success_message'] = "Klasifikasi berhasil diperbarui.";
+        } else {
+            $_SESSION['error_message'] = "Error: " . mysqli_error($koneksi);
+        }
     }
+    header("Location: ../admin/klasifikasi_surat.php");
+    exit;
 }
 
 // Hapus Klasifikasi
@@ -56,22 +54,26 @@ elseif ($action == 'delete') {
     $id = (int)$_GET['id'];
 
     if (empty($id)) {
-        redirect_with_message("ID tidak valid.", "error");
-    }
-
-    // Sebaiknya tambahkan pengecekan apakah klasifikasi ini sedang digunakan
-    // oleh surat keluar sebelum menghapus. Untuk saat ini, kita langsung hapus.
-
-    $query = "DELETE FROM klasifikasi_surat WHERE id=$id";
-    if (mysqli_query($koneksi, $query)) {
-        redirect_with_message("Klasifikasi berhasil dihapus.", "success");
+        $_SESSION['error_message'] = "ID tidak valid.";
     } else {
-        redirect_with_message("Error: " . mysqli_error($koneksi), "error");
+        // Sebaiknya tambahkan pengecekan apakah klasifikasi ini sedang digunakan
+        // oleh surat keluar sebelum menghapus. Untuk saat ini, kita langsung hapus.
+        $query = "DELETE FROM klasifikasi_surat WHERE id=$id";
+        if (mysqli_query($koneksi, $query)) {
+            $_SESSION['success_message'] = "Klasifikasi berhasil dihapus.";
+        } else {
+            $_SESSION['error_message'] = "Error: " . mysqli_error($koneksi);
+        }
     }
+    header("Location: ../admin/klasifikasi_surat.php");
+    exit;
 }
 
+// Jika tidak ada aksi yang valid
 else {
-    redirect_with_message("Aksi tidak valid.", "error");
+    $_SESSION['error_message'] = "Aksi tidak valid.";
+    header("Location: ../admin/klasifikasi_surat.php");
+    exit;
 }
 
 mysqli_close($koneksi);
