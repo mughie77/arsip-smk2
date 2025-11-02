@@ -39,10 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (mysqli_stmt_fetch($stmt)) {
                     // Verifikasi password
-                    // Catatan: Di aplikasi production, gunakan password_verify($password, $db_password)
-                    // dan simpan password di DB menggunakan password_hash().
-                    // Untuk tujuan proyek ini, kita gunakan perbandingan teks biasa sesuai permintaan.
-                    if ($password === $db_password) {
+                    // Verifikasi password menggunakan password_verify
+                    if (password_verify($password, $db_password)) {
                         // Password benar, mulai session baru
 
                         // Hapus session lama dan regenerasi ID

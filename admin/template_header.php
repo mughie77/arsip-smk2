@@ -9,6 +9,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://code.jquery.com; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; object-src 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Arsip Digital</title>
 
