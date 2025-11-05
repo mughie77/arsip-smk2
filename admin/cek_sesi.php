@@ -15,12 +15,16 @@ if (!isset($_SESSION['admin_loggedin']) || $_SESSION['admin_loggedin'] !== true)
 }
 
 // 2. Cek User Agent untuk mencegah session hijacking
+// Fitur ini dinonaktifkan sementara karena dapat menyebabkan masalah bagi pengguna
+// dengan User Agent yang dinamis atau browser yang sering update di latar belakang.
+/*
 if (!isset($_SESSION['user_agent']) || $_SESSION['user_agent'] !== $_SERVER['HTTP_USER_AGENT']) {
     session_unset();
     session_destroy();
     header("Location: ../login.php?error=Sesi tidak valid. Silakan login kembali.");
     exit;
 }
+*/
 
 // 3. Cek IP Address (opsional, bisa menyebabkan masalah jika IP pengguna dinamis)
 // Untuk keamanan tambahan, baris ini bisa diaktifkan
