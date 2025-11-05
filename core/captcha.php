@@ -2,7 +2,9 @@
 session_start();
 
 // Buat string acak untuk CAPTCHA
-$captcha_text = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+// Karakter yang ambigu (misal: O, 0, I, l, 1) dihilangkan untuk meningkatkan keterbacaan.
+$character_set = "23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+$captcha_text = substr(str_shuffle($character_set), 0, 6);
 
 // Simpan teks CAPTCHA di session
 $_SESSION['captcha'] = $captcha_text;
