@@ -55,6 +55,16 @@ if (isset($_SESSION['admin_id'])) {
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 <label for="password">Password</label>
             </div>
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="core/captcha.php" alt="CAPTCHA" class="img-fluid" id="captcha-image">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="captcha" name="captcha" placeholder="Masukkan Captcha" required>
+                    </div>
+                </div>
+            </div>
             <div class="d-grid">
                 <button type="submit" class="btn btn-login">Login</button>
             </div>
