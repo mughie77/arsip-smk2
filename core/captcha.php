@@ -8,8 +8,8 @@ $captcha_text = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGH
 $_SESSION['captcha'] = $captcha_text;
 
 // Buat gambar CAPTCHA
-$width = 150;
-$height = 40;
+$width = 300;
+$height = 80;
 $image = imagecreatetruecolor($width, $height);
 
 // Definisikan warna
@@ -31,13 +31,19 @@ for ($i = 0; $i < 1000; $i++) {
 }
 
 // Tulis teks CAPTCHA ke gambar
-// Anda mungkin perlu menyesuaikan path font ke file .ttf yang valid di server Anda
-// Misalnya, jika Anda punya font 'Arial.ttf' di folder yang sama: $font = './Arial.ttf';
-// Jika tidak ada font, gunakan font bawaan GD (nilai 1-5)
-$font_size = 5;
-$x = (imagesx($image) - (strlen($captcha_text) * imagefontwidth($font_size))) / 2;
-$y = (imagesy($image) - imagefontheight($font_size)) / 2;
-imagestring($image, $font_size, $x, $y, $captcha_text, $text_color);
+$font_file = '../assets/fonts/OpenSans-Regular.ttf';
+$font_size = 30;
+
+// Dapatkan ukuran kotak teks
+$textbox = imagettfbbox($font_size, 0, $font_file, $captcha_text);
+$text_width = $textbox[2] - $textbox[0];
+$text_height = $textbox[7] - $textbox[1];
+
+// Hitung posisi x dan y agar teks berada di tengah
+$x = ($width - $text_width) / 2;
+$y = ($height - $text_height) / 2;
+
+imagettftext($image, $font_size, 0, $x, $y, $text_color, $font_file, $captcha_text);
 
 // Atur header dan output gambar
 header('Content-Type: image/png');
