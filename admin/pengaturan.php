@@ -44,6 +44,7 @@ if (isset($_GET['message'])) {
     </div>
     <div class="card-body">
         <form action="../core/pengaturan_aksi.php" method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             <input type="hidden" name="action" value="update">
 
             <div class="mb-3">

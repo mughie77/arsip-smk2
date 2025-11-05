@@ -1,6 +1,7 @@
 <?php
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
+require_once 'csrf_validator.php';
 
 $action = $_POST['action'] ?? '';
 

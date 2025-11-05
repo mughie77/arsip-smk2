@@ -9,6 +9,11 @@
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php'; // Memastikan hanya admin yang bisa mengakses skrip ini
 
+// Jika aksi adalah POST (tambah/edit), validasi CSRF
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once 'csrf_validator.php';
+}
+
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
 /**
@@ -142,9 +147,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt);
             break;
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'delete') {
-    // --- AKSI HAPUS DATA (melalui metode GET dari link) ---
-    $id = intval($_GET['id']);
+} elseif ($action === 'delete') {
+    // --- AKSI HAPUS DATA (melalui metode POST) ---
+    $id = intval($_POST['id']);
 
     // Langkah 1: Ambil nama file dari DB agar bisa dihapus dari server
     $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";

@@ -1,6 +1,7 @@
 <?php
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
+require_once 'csrf_validator.php';
 
 $action = $_REQUEST['action'] ?? '';
 
@@ -109,7 +110,7 @@ if ($action == 'add' || $action == 'edit') {
 
 // Hapus Surat Keluar
 elseif ($action == 'delete') {
-    $id = (int)($_GET['id'] ?? 0);
+    $id = (int)($_POST['id'] ?? 0);
     if ($id === 0) {
         $_SESSION['error_message'] = "ID tidak valid.";
         header("Location: ../admin/surat_keluar.php");

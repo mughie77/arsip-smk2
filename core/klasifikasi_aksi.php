@@ -1,6 +1,7 @@
 <?php
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
+require_once 'csrf_validator.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
@@ -45,7 +46,7 @@ elseif ($action == 'edit') {
 
 // Hapus Klasifikasi
 elseif ($action == 'delete') {
-    $id = (int)$_GET['id'];
+    $id = (int)$_POST['id'];
 
     if (empty($id)) {
         $_SESSION['error_message'] = "ID tidak valid.";

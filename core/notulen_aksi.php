@@ -3,6 +3,7 @@
 
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
+require_once 'csrf_validator.php';
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
@@ -107,8 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt);
             break;
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'delete') {
-    $id = intval($_GET['id']);
+} elseif ($action === 'delete') {
+    $id = intval($_POST['id']);
 
     $sql_get_file = "SELECT nama_file FROM notulen WHERE id=?";
     $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
