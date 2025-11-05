@@ -76,8 +76,8 @@ if (!$result) {
         <hr>
         <div class="mt-3">
             <p class="fw-bold">Ekspor Data</p>
-            <a href="../core/export_csv.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
-                <i class="fas fa-file-csv"></i> Download Daftar (CSV)
+            <a href="../core/export_xlsx.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
             </a>
             <a href="../core/export_zip.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-info text-white">
                 <i class="fas fa-file-archive"></i> Download Arsip (ZIP)

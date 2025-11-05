@@ -1,9 +1,4 @@
 <?php
-// Pengaturan keamanan session
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1); // Hanya aktifkan jika menggunakan HTTPS
-ini_set('session.use_only_cookies', 1);
-
 session_start();
 require_once '../config/koneksi.php';
 
@@ -41,16 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Verifikasi password menggunakan password_verify()
         if (password_verify($password, $admin['password'])) {
-            // Regenerasi session ID untuk mencegah session fixation
-            session_regenerate_id(true);
-
             // Jika password cocok, buat session
             $_SESSION['admin_loggedin'] = true;
             $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['login_time'] = time();
-            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-            $_SESSION['user_ip'] = $_SERVER['REMOTE_ADDR'];
 
             // Redirect ke dashboard admin
             header("Location: ../admin/index.php");
