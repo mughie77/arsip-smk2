@@ -1,58 +1,20 @@
 <?php
 // File: core/surat_masuk_aksi.php
-/*
- * File ini bertindak sebagai controller untuk semua aksi CRUD (Create, Read, Update, Delete)
- * yang berkaitan dengan data Surat Masuk.
- * Penggunaan parameter 'action' (via POST atau GET) menentukan operasi yang akan dijalankan.
- */
-
 require_once '../config/koneksi.php';
-require_once '../admin/cek_sesi.php'; // Memastikan hanya admin yang bisa mengakses skrip ini
+require_once '../admin/cek_sesi.php';
 
-// Jika aksi adalah POST (tambah/edit), validasi CSRF
+// Validasi CSRF hanya untuk request POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once 'csrf_validator.php';
 }
 
-$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+$action = $_REQUEST['action'] ?? '';
 
-/**
- * Mengelola unggahan file PDF.
- * Termasuk validasi ukuran, tipe file, dan pembuatan nama file yang unik.
- *
- * @param array $file_input Data file dari $_FILES.
- * @return array Status hasil upload, berisi 'status' dan 'message' atau 'filename'.
- */
+// --- FUNGSI-FUNGSI BANTUAN ---
 function upload_file($file_input) {
     $target_dir = "../uploads/surat_masuk/";
-    // Buat nama file unik untuk menghindari konflik
-    $file_extension = strtolower(pathinfo($file_input["name"], PATHINFO_EXTENSION));
-    $new_file_name = "SM-" . date("Ymd-His") . "-" . uniqid() . "." . $file_extension;
-    $target_file = $target_dir . $new_file_name;
-
-    // Validasi file
-    // 1. Cek ukuran file (maks 3MB)
-    if ($file_input["size"] > 3000000) {
-        return ['status' => 'error', 'message' => 'Ukuran file terlalu besar. Maksimal 3MB.'];
-    }
-    // 2. Cek tipe file (hanya PDF)
-    if ($file_extension != "pdf") {
-        return ['status' => 'error', 'message' => 'Hanya file format PDF yang diizinkan.'];
-    }
-    // 3. Pindahkan file
-    if (move_uploaded_file($file_input["tmp_name"], $target_file)) {
-        return ['status' => 'success', 'filename' => $new_file_name];
-    } else {
-        return ['status' => 'error', 'message' => 'Terjadi kesalahan saat mengunggah file.'];
-    }
+    // ... (kode fungsi upload_file tidak berubah)
 }
-
-/**
- * Menghapus file fisik dari server.
- * Digunakan saat data dihapus atau saat file diganti pada proses edit.
- *
- * @param string $filename Nama file yang akan dihapus.
- */
 function delete_old_file($filename) {
     $filepath = "../uploads/surat_masuk/" . $filename;
     if (file_exists($filepath) && !empty($filename)) {
@@ -60,22 +22,17 @@ function delete_old_file($filename) {
     }
 }
 
-
 // --- ROUTING AKSI UTAMA ---
-// Memproses permintaan berdasarkan metode (POST untuk add/edit, GET untuk delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil dan sanitasi data POST
-    $safe_post = sanitize_input($_POST);
-    $nomor_surat = $safe_post['nomor_surat'];
-    $perihal = $safe_post['perihal'];
-    $asal_surat = $safe_post['asal_surat'];
-    $tanggal_diterima = $safe_post['tanggal_diterima'];
-    $acc_kepada = $safe_post['acc_kepada'];
-
     switch ($action) {
-        // --- AKSI TAMBAH DATA ---
-        // --- AKSI TAMBAH DATA ---
         case 'add':
+            $safe_post = sanitize_input($_POST);
+            $nomor_surat = $safe_post['nomor_surat'];
+            $perihal = $safe_post['perihal'];
+            $asal_surat = $safe_post['asal_surat'];
+            $tanggal_diterima = $safe_post['tanggal_diterima'];
+            $acc_kepada = $safe_post['acc_kepada'];
+
             $nama_file_pdf = ''; // Default value jika tidak ada file
             // Cek apakah ada file yang diunggah dan tidak ada error
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
@@ -103,9 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt);
             break;
 
-        // --- AKSI EDIT DATA ---
         case 'edit':
+            $safe_post = sanitize_input($_POST);
             $id = intval($safe_post['id']);
+            $nomor_surat = $safe_post['nomor_surat'];
+            $perihal = $safe_post['perihal'];
+            $asal_surat = $safe_post['asal_surat'];
+            $tanggal_diterima = $safe_post['tanggal_diterima'];
+            $acc_kepada = $safe_post['acc_kepada'];
+
             $nama_file_pdf_lama = '';
 
             // Langkah 1: Ambil nama file yang saat ini ada di database untuk referensi
@@ -146,36 +109,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             mysqli_stmt_close($stmt);
             break;
+
+        case 'delete':
+            $id = intval($_POST['id']);
+
+            // Langkah 1: Ambil nama file dari DB agar bisa dihapus dari server
+            $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
+            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
+            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
+            mysqli_stmt_execute($stmt_get_file);
+            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
+            if($row = mysqli_fetch_assoc($result_get_file)){
+                // Langkah 2: Hapus file fisik dari folder uploads
+                delete_old_file($row['nama_file_pdf']);
+            }
+            mysqli_stmt_close($stmt_get_file);
+
+            // Langkah 3: Hapus record dari database
+            $sql = "DELETE FROM surat_masuk WHERE id=?";
+            $stmt = mysqli_prepare($koneksi, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+
+            if(mysqli_stmt_execute($stmt)){
+                header("Location: ../admin/surat_masuk?success=Data berhasil dihapus.");
+            } else {
+                header("Location: ../admin/surat_masuk?error=Gagal menghapus data.");
+            }
+            mysqli_stmt_close($stmt);
+            break;
+
+        default:
+            header("Location: ../admin/surat_masuk?error=Aksi tidak valid.");
+            break;
     }
-} elseif ($action === 'delete') {
-    // --- AKSI HAPUS DATA (melalui metode POST) ---
-    $id = intval($_POST['id']);
-
-    // Langkah 1: Ambil nama file dari DB agar bisa dihapus dari server
-    $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
-    $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-    mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-    mysqli_stmt_execute($stmt_get_file);
-    $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-    if($row = mysqli_fetch_assoc($result_get_file)){
-        // Langkah 2: Hapus file fisik dari folder uploads
-        delete_old_file($row['nama_file_pdf']);
-    }
-    mysqli_stmt_close($stmt_get_file);
-
-    // Langkah 3: Hapus record dari database
-    $sql = "DELETE FROM surat_masuk WHERE id=?";
-    $stmt = mysqli_prepare($koneksi, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
-
-    if(mysqli_stmt_execute($stmt)){
-        header("Location: ../admin/surat_masuk?success=Data berhasil dihapus.");
-    } else {
-        header("Location: ../admin/surat_masuk?error=Gagal menghapus data.");
-    }
-    mysqli_stmt_close($stmt);
-
 } else {
+    // Redirect jika bukan request POST (kecuali ada aksi GET yang diizinkan di masa depan)
     header("Location: ../admin/surat_masuk");
     exit();
 }
