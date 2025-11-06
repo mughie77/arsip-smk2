@@ -175,6 +175,7 @@ if (!$result) {
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="nama_file_existing" id="nama_file_existing">
 
                     <div class="mb-3">
                         <label for="kegiatan" class="form-label">Nama Kegiatan</label>
@@ -206,6 +207,7 @@ $(document).ready(function() {
         $('#notulenForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#nama_file_existing').val('');
     });
 
     $('.btn-edit').on('click', function() {
@@ -224,6 +226,7 @@ $(document).ready(function() {
                 if(data.status === 'success') {
                     $('#kegiatan').val(data.data.kegiatan);
                     $('#tanggal').val(data.data.tanggal);
+                    $('#nama_file_existing').val(data.data.nama_file);
                     $('#notulenModal').modal('show');
                 } else {
                     alert('Gagal mengambil data: ' + data.message);

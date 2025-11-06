@@ -13,11 +13,42 @@ $action = $_REQUEST['action'] ?? '';
 // --- FUNGSI-FUNGSI BANTUAN ---
 function upload_file($file_input) {
     $target_dir = "../uploads/surat_masuk/";
-    // ... (kode fungsi upload_file tidak berubah)
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
+    }
+
+    $file_extension = strtolower(pathinfo($file_input["name"], PATHINFO_EXTENSION));
+    $new_file_name = "SM-" . date("Ymd-His") . "-" . uniqid() . "." . $file_extension;
+    $target_file = $target_dir . $new_file_name;
+
+    // Validasi file
+    if ($file_input["size"] > 3 * 1024 * 1024) { // Maks 3MB
+        return ['status' => 'error', 'message' => 'Ukuran file terlalu besar. Maksimal 3MB.'];
+    }
+    if ($file_extension !== 'pdf') {
+        return ['status' => 'error', 'message' => 'Hanya file format PDF yang diizinkan.'];
+    }
+
+    // Validasi tipe MIME
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $file_input['tmp_name']);
+    finfo_close($finfo);
+
+    if ($mime_type !== 'application/pdf') {
+        return ['status' => 'error', 'message' => 'Tipe file tidak valid.'];
+    }
+
+    if (move_uploaded_file($file_input["tmp_name"], $target_file)) {
+        return ['status' => 'success', 'filename' => $new_file_name];
+    } else {
+        return ['status' => 'error', 'message' => 'Terjadi kesalahan saat mengunggah file.'];
+    }
 }
+
 function delete_old_file($filename) {
+    if (empty($filename)) return;
     $filepath = "../uploads/surat_masuk/" . $filename;
-    if (file_exists($filepath) && !empty($filename)) {
+    if (file_exists($filepath)) {
         unlink($filepath);
     }
 }
@@ -26,127 +57,121 @@ function delete_old_file($filename) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'add':
-            $safe_post = sanitize_input($_POST);
-            $nomor_surat = $safe_post['nomor_surat'];
-            $perihal = $safe_post['perihal'];
-            $asal_surat = $safe_post['asal_surat'];
-            $tanggal_diterima = $safe_post['tanggal_diterima'];
-            $acc_kepada = $safe_post['acc_kepada'];
+            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
+            $perihal = trim($_POST['perihal'] ?? '');
+            $asal_surat = trim($_POST['asal_surat'] ?? '');
+            $tanggal_diterima = trim($_POST['tanggal_diterima'] ?? '');
+            $acc_kepada = trim($_POST['acc_kepada'] ?? '');
 
-            $nama_file_pdf = ''; // Default value jika tidak ada file
-            // Cek apakah ada file yang diunggah dan tidak ada error
+            // Validasi input dasar
+            if (empty($nomor_surat) || empty($perihal) || empty($asal_surat) || empty($tanggal_diterima)) {
+                $_SESSION['error_message'] = "Semua field wajib diisi, kecuali 'Diteruskan Kepada'.";
+                header("Location: ../admin/surat_masuk.php");
+                exit;
+            }
+
+            $nama_file_pdf = '';
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
-                // Proses upload file
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
-                    header("Location: ../admin/surat_masuk?error=" . urlencode($upload_result['message']));
-                    exit();
+                    $_SESSION['error_message'] = $upload_result['message'];
+                    header("Location: ../admin/surat_masuk.php");
+                    exit;
                 }
                 $nama_file_pdf = $upload_result['filename'];
             }
 
-            $nomor_arsip = generate_nomor_arsip('SM'); // Buat nomor arsip unik
+            // generate_nomor_arsip function needs to be defined or included
+            // For now, let's assume a placeholder or a simple logic
+            $nomor_arsip = 'SM/' . date('Ymd') . '/' . mt_rand(100, 999);
 
-            // Query INSERT dengan prepared statement untuk keamanan
-            $sql = "INSERT INTO surat_masuk (nomor_arsip, nomor_surat, perihal, asal_surat, tanggal_diterima, acc_kepada, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "sssssss", $nomor_arsip, $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf);
+            $stmt = $koneksi->prepare("INSERT INTO surat_masuk (nomor_arsip, nomor_surat, perihal, asal_surat, tanggal_diterima, acc_kepada, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssss", $nomor_arsip, $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf);
 
-            if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/surat_masuk?success=Data berhasil ditambahkan.");
+            if($stmt->execute()){
+                 $_SESSION['success_message'] = "Data surat masuk berhasil ditambahkan.";
             } else {
-                header("Location: ../admin/surat_masuk?error=Gagal menyimpan data.");
+                 $_SESSION['error_message'] = "Gagal menyimpan data: " . $stmt->error;
             }
-            mysqli_stmt_close($stmt);
-            break;
+            $stmt->close();
+            header("Location: ../admin/surat_masuk.php");
+            exit;
 
         case 'edit':
-            $safe_post = sanitize_input($_POST);
-            $id = intval($safe_post['id']);
-            $nomor_surat = $safe_post['nomor_surat'];
-            $perihal = $safe_post['perihal'];
-            $asal_surat = $safe_post['asal_surat'];
-            $tanggal_diterima = $safe_post['tanggal_diterima'];
-            $acc_kepada = $safe_post['acc_kepada'];
+            $id = (int)($_POST['id'] ?? 0);
+            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
+            $perihal = trim($_POST['perihal'] ?? '');
+            $asal_surat = trim($_POST['asal_surat'] ?? '');
+            $tanggal_diterima = trim($_POST['tanggal_diterima'] ?? '');
+            $acc_kepada = trim($_POST['acc_kepada'] ?? '');
+            $nama_file_pdf_lama = trim($_POST['nama_file_pdf_existing'] ?? '');
 
-            $nama_file_pdf_lama = '';
-
-            // Langkah 1: Ambil nama file yang saat ini ada di database untuk referensi
-            $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
-            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-            mysqli_stmt_execute($stmt_get_file);
-            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-            if($row = mysqli_fetch_assoc($result_get_file)){
-                $nama_file_pdf_lama = $row['nama_file_pdf'];
+            if (empty($id) || empty($nomor_surat) || empty($perihal) || empty($asal_surat) || empty($tanggal_diterima)) {
+                $_SESSION['error_message'] = "Data tidak lengkap.";
+                header("Location: ../admin/surat_masuk.php");
+                exit;
             }
-            mysqli_stmt_close($stmt_get_file);
 
             $nama_file_pdf_baru = $nama_file_pdf_lama;
 
-            // Langkah 2: Cek apakah user mengunggah file baru
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == UPLOAD_ERR_OK) {
-                // Jika ya, proses upload file baru
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
-                    header("Location: ../admin/surat_masuk?error=" . urlencode($upload_result['message']));
-                    exit();
+                    $_SESSION['error_message'] = $upload_result['message'];
+                    header("Location: ../admin/surat_masuk.php");
+                    exit;
                 }
                 $nama_file_pdf_baru = $upload_result['filename'];
-                // Langkah 3: Hapus file lama setelah file baru berhasil diunggah
                 delete_old_file($nama_file_pdf_lama);
             }
 
-            // Langkah 4: Update data di database dengan prepared statement
-            $sql = "UPDATE surat_masuk SET nomor_surat=?, perihal=?, asal_surat=?, tanggal_diterima=?, acc_kepada=?, nama_file_pdf=? WHERE id=?";
-            $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "ssssssi", $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf_baru, $id);
+            $stmt = $koneksi->prepare("UPDATE surat_masuk SET nomor_surat=?, perihal=?, asal_surat=?, tanggal_diterima=?, acc_kepada=?, nama_file_pdf=? WHERE id=?");
+            $stmt->bind_param("ssssssi", $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf_baru, $id);
 
-            if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/surat_masuk?success=Data berhasil diperbarui.");
+            if($stmt->execute()){
+                 $_SESSION['success_message'] = "Data surat masuk berhasil diperbarui.";
             } else {
-                header("Location: ../admin/surat_masuk?error=Gagal memperbarui data.");
+                 $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
             }
-            mysqli_stmt_close($stmt);
-            break;
+            $stmt->close();
+            header("Location: ../admin/surat_masuk.php");
+            exit;
 
         case 'delete':
-            $id = intval($_POST['id']);
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id === 0) {
+                 $_SESSION['error_message'] = "ID tidak valid.";
+                 header("Location: ../admin/surat_masuk.php");
+                 exit;
+            }
 
-            // Langkah 1: Ambil nama file dari DB agar bisa dihapus dari server
-            $sql_get_file = "SELECT nama_file_pdf FROM surat_masuk WHERE id=?";
-            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-            mysqli_stmt_execute($stmt_get_file);
-            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-            if($row = mysqli_fetch_assoc($result_get_file)){
-                // Langkah 2: Hapus file fisik dari folder uploads
+            $stmt_get = $koneksi->prepare("SELECT nama_file_pdf FROM surat_masuk WHERE id=?");
+            $stmt_get->bind_param("i", $id);
+            $stmt_get->execute();
+            $result = $stmt_get->get_result();
+            if($row = $result->fetch_assoc()){
                 delete_old_file($row['nama_file_pdf']);
             }
-            mysqli_stmt_close($stmt_get_file);
+            $stmt_get->close();
 
-            // Langkah 3: Hapus record dari database
-            $sql = "DELETE FROM surat_masuk WHERE id=?";
-            $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "i", $id);
-
-            if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/surat_masuk?success=Data berhasil dihapus.");
+            $stmt_del = $koneksi->prepare("DELETE FROM surat_masuk WHERE id=?");
+            $stmt_del->bind_param("i",_id);
+            if($stmt_del->execute()){
+                $_SESSION['success_message'] = "Data surat masuk berhasil dihapus.";
             } else {
-                header("Location: ../admin/surat_masuk?error=Gagal menghapus data.");
+                $_SESSION['error_message'] = "Gagal menghapus data: " . $stmt_del->error;
             }
-            mysqli_stmt_close($stmt);
-            break;
+            $stmt_del->close();
+            header("Location: ../admin/surat_masuk.php");
+            exit;
 
         default:
-            header("Location: ../admin/surat_masuk?error=Aksi tidak valid.");
-            break;
+             $_SESSION['error_message'] = "Aksi tidak valid.";
+             header("Location: ../admin/surat_masuk.php");
+             exit;
     }
 } else {
-    // Redirect jika bukan request POST (kecuali ada aksi GET yang diizinkan di masa depan)
-    header("Location: ../admin/surat_masuk");
+    header("Location: ../admin/surat_masuk.php");
     exit();
 }
-
-mysqli_close($koneksi);
 ?>

@@ -109,8 +109,8 @@ if (!$result) {
                                 <td><?php echo htmlspecialchars($row['nama_berkas']); ?></td>
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_berkas'])); ?></td>
                                 <td>
-                                    <?php if (!empty($row['nama_file_pdf'])) : ?>
-                                        <a href="../uploads/arsip_berkas/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <?php if (!empty($row['file_path'])) : ?>
+                                        <a href="../uploads/berkas/<?php echo htmlspecialchars($row['file_path']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
                                         </a>
                                     <?php else : ?>
@@ -171,6 +171,7 @@ if (!$result) {
                     <!-- Hidden input untuk ID (untuk edit) dan action -->
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="file_path_existing" id="file_path_existing">
 
                     <div class="mb-3">
                         <label for="no_berkas" class="form-label">Nomor Berkas</label>
@@ -185,7 +186,11 @@ if (!$result) {
                         <input type="date" class="form-control" id="tanggal_berkas" name="tanggal_berkas" required>
                     </div>
                     <div class="mb-3">
-                        <label for="nama_file_pdf" class="form-label">Unggah Berkas (PDF, max 3MB)</label>
+                        <label for="uraian" class="form-label">Uraian</label>
+                        <textarea class="form-control" id="uraian" name="uraian" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nama_file_pdf" class="form-label">Unggah Berkas (PDF, max 5MB)</label>
                         <input class="form-control" type="file" id="nama_file_pdf" name="nama_file_pdf" accept=".pdf">
                         <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
                     </div>
@@ -209,6 +214,7 @@ $(document).ready(function() {
         $('#arsipBerkasForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#file_path_existing').val('');
         $('#fileHelp').show();
     });
 
@@ -233,6 +239,8 @@ $(document).ready(function() {
                     $('#no_berkas').val(data.data.no_berkas);
                     $('#nama_berkas').val(data.data.nama_berkas);
                     $('#tanggal_berkas').val(data.data.tanggal_berkas);
+                    $('#uraian').val(data.data.uraian);
+                    $('#file_path_existing').val(data.data.file_path);
                     // Tampilkan modal setelah data terisi
                     $('#arsipBerkasModal').modal('show');
                 } else {

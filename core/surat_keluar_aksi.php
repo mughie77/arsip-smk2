@@ -69,8 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../admin/surat_keluar.php");
                     exit;
                 }
-                if (strtolower(pathinfo($_FILES['nama_file_pdf']['name'], PATHINFO_EXTENSION)) != 'pdf') {
+
+                $file_extension = strtolower(pathinfo($_FILES['nama_file_pdf']['name'], PATHINFO_EXTENSION));
+                if ($file_extension != 'pdf') {
                     $_SESSION['error_message'] = "Hanya file PDF yang diizinkan.";
+                    header("Location: ../admin/surat_keluar.php");
+                    exit;
+                }
+
+                // Validasi tipe MIME
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime_type = finfo_file($finfo, $_FILES['nama_file_pdf']['tmp_name']);
+                finfo_close($finfo);
+
+                if ($mime_type !== 'application/pdf') {
+                    $_SESSION['error_message'] = "Tipe file tidak valid.";
                     header("Location: ../admin/surat_keluar.php");
                     exit;
                 }
@@ -78,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $new_file_name = uniqid() . '_' . time() . '.pdf';
                 if (move_uploaded_file($_FILES['nama_file_pdf']['tmp_name'], $upload_dir . $new_file_name)) {
                     // Hapus file lama jika ada dan jika upload baru berhasil
-                    if (!empty($nama_file_pdf_existing)) {
+                    if (!empty($nama_file_pdf_existing) && file_exists($upload_dir . $nama_file_pdf_existing)) {
                         unlink($upload_dir . $nama_file_pdf_existing);
                     }
                     $nama_file_pdf_final = $new_file_name;

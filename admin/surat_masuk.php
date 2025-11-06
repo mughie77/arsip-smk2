@@ -188,6 +188,7 @@ if (!$result) {
                     <!-- Hidden input untuk ID (untuk edit) dan action -->
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="nama_file_pdf_existing" id="nama_file_pdf_existing">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -238,6 +239,7 @@ $(document).ready(function() {
         $('#suratMasukForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#nama_file_pdf_existing').val('');
         $('#fileHelp').show();
     });
 
@@ -264,6 +266,7 @@ $(document).ready(function() {
                     $('#perihal').val(data.data.perihal);
                     $('#tanggal_diterima').val(data.data.tanggal_diterima);
                     $('#acc_kepada').val(data.data.acc_kepada);
+                    $('#nama_file_pdf_existing').val(data.data.nama_file_pdf);
                     // Tampilkan modal setelah data terisi
                     $('#suratMasukModal').modal('show');
                 } else {
