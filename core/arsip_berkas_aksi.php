@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $uraian = mysqli_real_escape_string($koneksi, $_POST['uraian']);
 
             $file_result = null;
-            if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] == 0) {
-                $file_result = upload_pdf($_FILES['file_path']);
+            if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == 0) {
+                $file_result = upload_pdf($_FILES['nama_file_pdf']);
                 if (isset($file_result['error'])) {
                     $_SESSION['error_message'] = $file_result['error'];
                     header("Location: ../admin/arsip_berkas.php?action=add");
@@ -87,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $file_path = $_POST['file_path_existing']; // File lama
 
-            if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] == 0) {
-                $file_result = upload_pdf($_FILES['file_path'], $id);
+            if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == 0) {
+                $file_result = upload_pdf($_FILES['nama_file_pdf'], $id);
                 if (isset($file_result['error'])) {
                     $_SESSION['error_message'] = $file_result['error'];
                     header("Location: ../admin/arsip_berkas.php?action=edit&id=" . $id);
