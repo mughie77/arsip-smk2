@@ -10,21 +10,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
-// ... (definisi fungsi upload_file dan delete_old_file)
+// --- FUNGSI UNTUK MENGHANDLE UPLOAD FILE ---
+function upload_file($file_input) {
+    // ... (kode fungsi upload_file tidak berubah)
+}
 
+// --- FUNGSI UNTUK MENGHAPUS FILE LAMA ---
+function delete_old_file($filename) {
+    // ... (kode fungsi delete_old_file tidak berubah)
+}
+
+// --- ROUTING BERDASARKAN AKSI ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'add':
-        case 'edit':
             $safe_post = sanitize_input($_POST);
             $kegiatan = $safe_post['kegiatan'];
             $tanggal = $safe_post['tanggal'];
+            // ... (logika tambah data)
+            break;
 
-            if ($action == 'add') {
-                // ... (logika tambah data)
-            } else { // edit
-                // ... (logika edit data)
-            }
+        case 'edit':
+            $safe_post = sanitize_input($_POST);
+            $id = intval($safe_post['id']);
+            $kegiatan = $safe_post['kegiatan'];
+            $tanggal = $safe_post['tanggal'];
+            // ... (logika edit data)
             break;
 
         case 'delete':
