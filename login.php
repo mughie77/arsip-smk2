@@ -29,10 +29,6 @@ if (isset($_SESSION['admin_id'])) {
             background: linear-gradient(rgba(10, 38, 71, 0.8), rgba(10, 38, 71, 0.8)), url('https://placehold.co/1920x1080/0A2647/FFFFFF?text=Background+Login') no-repeat center center;
             background-size: cover;
         }
-        #captcha-image {
-            border-radius: .25rem;
-            max-height: 38px; /* Menyamakan tinggi dengan input field */
-        }
     </style>
 </head>
 <body class="login-page">
@@ -59,21 +55,6 @@ if (isset($_SESSION['admin_id'])) {
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 <label for="password">Password</label>
             </div>
-            <div class="mb-3">
-                 <div class="row g-2 align-items-center">
-                    <div class="col-7">
-                        <img src="core/captcha.php" alt="CAPTCHA" class="img-fluid" id="captcha-image">
-                    </div>
-                    <div class="col-5">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="captcha" name="captcha" placeholder="Captcha" required>
-                            <button type="button" class="btn btn-outline-secondary" id="refresh-captcha" title="Refresh Captcha">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="d-grid">
                 <button type="submit" class="btn btn-login">Login</button>
@@ -86,16 +67,5 @@ if (isset($_SESSION['admin_id'])) {
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const refreshButton = document.getElementById('refresh-captcha');
-            const captchaImage = document.getElementById('captcha-image');
-
-            refreshButton.addEventListener('click', function () {
-                // Tambahkan timestamp acak untuk mencegah caching
-                captchaImage.src = 'core/captcha.php?' + new Date().getTime();
-            });
-        });
-    </script>
 </body>
 </html>

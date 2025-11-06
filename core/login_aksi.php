@@ -4,16 +4,6 @@ require_once '../config/koneksi.php';
 
 // Cek jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 1. Verifikasi CAPTCHA
-    if (!isset($_POST['captcha']) || strtolower($_POST['captcha']) != strtolower($_SESSION['captcha'])) {
-        // Jika CAPTCHA salah, kirim pesan error
-        header("Location: ../login.php?error=CAPTCHA yang Anda masukkan salah.");
-        exit;
-    }
-
-    // Hapus session captcha setelah diverifikasi
-    unset($_SESSION['captcha']);
-
     $username = mysqli_real_escape_string($koneksi, $_POST['username']);
     $password = mysqli_real_escape_string($koneksi, $_POST['password']);
 
@@ -37,10 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Verifikasi password menggunakan password_verify()
         if (password_verify($password, $admin['password'])) {
             // Jika password cocok, buat session
+            session_regenerate_id(true); // Mencegah session fixation
             $_SESSION['admin_loggedin'] = true;
             $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['login_time'] = time();
+            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $_SESSION['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+
 
             // Redirect ke dashboard admin
             header("Location: ../admin/index.php");
