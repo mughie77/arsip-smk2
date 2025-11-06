@@ -1,6 +1,29 @@
 <?php
+// --- Pengaturan Security Headers ---
+// Mencegah clickjacking
+header("X-Frame-Options: DENY");
+// Mencegah browser dari menebak tipe MIME
+header("X-Content-Type-Options: nosniff");
+// Mendorong penggunaan HTTPS
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+// Kebijakan Keamanan Konten (CSP) yang lebih ketat
+$csp = "default-src 'self'; " .
+       "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "font-src 'self' https://cdnjs.cloudflare.com; " .
+       "img-src 'self' data:;";
+header("Content-Security-Policy: " . $csp);
+
+
 // Memulai session dan memeriksa status login
 require_once 'cek_sesi.php';
+
+// --- Perlindungan CSRF ---
+// Buat token CSRF jika belum ada
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
 
 // Mendapatkan path skrip saat ini untuk menandai menu aktif
 $current_page = basename($_SERVER['SCRIPT_NAME']);
@@ -11,9 +34,6 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Arsip Digital</title>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

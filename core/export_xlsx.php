@@ -1,15 +1,10 @@
 <?php
-// File: core/export_csv.php
-// Skrip ini bertanggung jawab untuk mengekspor data ke format CSV.
+// File: core/export_xlsx.php
+// Skrip ini bertanggung jawab untuk mengekspor data ke format XLSX (Excel).
 
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
-
-// --- FUNGSI UNTUK MENGIRIM HEADER CSV ---
-function send_csv_headers($filename) {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-}
+require_once 'lib/xlsxwriter.class.php';
 
 // --- FUNGSI UTAMA ---
 $jenis = isset($_GET['jenis']) ? $_GET['jenis'] : '';
@@ -26,7 +21,7 @@ if (!in_array($jenis, $allowed_types)) {
 // Tentukan query dan header berdasarkan jenis
 $table = '';
 $headers = [];
-$filename = "export_" . $jenis . "_" . date('Y-m-d') . ".csv";
+$filename = "export_" . $jenis . "_" . date('Y-m-d') . ".xlsx";
 
 $base_query = "";
 $where_clauses = [];
@@ -36,21 +31,21 @@ $date_column = '';
 switch ($jenis) {
     case 'surat_masuk':
         $table = "surat_masuk";
-        $headers = ['Nomor Arsip', 'Nomor Surat', 'Perihal', 'Asal Surat', 'Tanggal Diterima', 'Diteruskan Kepada'];
+        $headers = ['Nomor Arsip'=>'string', 'Nomor Surat'=>'string', 'Perihal'=>'string', 'Asal Surat'=>'string', 'Tanggal Diterima'=>'date', 'Diteruskan Kepada'=>'string'];
         $base_query = "SELECT nomor_arsip, nomor_surat, perihal, asal_surat, tanggal_diterima, acc_kepada FROM surat_masuk";
         $search_columns = ['nomor_arsip', 'nomor_surat', 'perihal', 'asal_surat'];
         $date_column = 'tanggal_diterima';
         break;
     case 'surat_keluar':
         $table = "surat_keluar";
-        $headers = ['Nomor Surat', 'Perihal', 'Tujuan Surat', 'Tanggal Kirim'];
+        $headers = ['Nomor Surat'=>'string', 'Perihal'=>'string', 'Tujuan Surat'=>'string', 'Tanggal Kirim'=>'date'];
         $base_query = "SELECT nomor_surat, perihal, tujuan_surat, tanggal_kirim FROM surat_keluar";
         $search_columns = ['nomor_surat', 'perihal', 'tujuan_surat'];
         $date_column = 'tanggal_kirim';
         break;
     case 'notulen':
         $table = "notulen";
-        $headers = ['Tanggal', 'Kegiatan'];
+        $headers = ['Tanggal'=>'date', 'Kegiatan'=>'string'];
         $base_query = "SELECT tanggal, kegiatan FROM notulen";
         $search_columns = ['kegiatan'];
         $date_column = 'tanggal';
@@ -80,19 +75,19 @@ if (!$result) {
     die("Query Error: " . mysqli_error($koneksi));
 }
 
-// Kirim header dan buat file CSV
-send_csv_headers($filename);
-$output = fopen('php://output', 'w');
-
-// Tulis header
-fputcsv($output, $headers);
-
-// Tulis data
+// Buat file XLSX
+$writer = new XLSXWriter();
+$writer->writeSheetHeader('Sheet1', $headers);
 while ($row = mysqli_fetch_assoc($result)) {
-    fputcsv($output, $row);
+    $writer->writeSheetRow('Sheet1', $row);
 }
 
-fclose($output);
+// Atur header untuk download
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+
+$writer->writeToStdOut();
 mysqli_close($koneksi);
 exit();
 ?>

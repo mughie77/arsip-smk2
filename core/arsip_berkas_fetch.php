@@ -7,8 +7,8 @@ header('Content-Type: application/json');
 // Pastikan hanya request POST yang diterima
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Pastikan ID ada dan merupakan integer
-    if (isset($_POST['id']) && filter_var($_POST['id'], FILTER_VALIDATE_INT)) {
-        $id = $_POST['id'];
+    if (isset($_POST['id'])) {
+        $id = (int)$_POST['id'];
 
         // Ambil data dari database
         $query = "SELECT * FROM arsip_berkas WHERE id = ?";

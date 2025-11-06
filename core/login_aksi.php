@@ -27,10 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Verifikasi password menggunakan password_verify()
         if (password_verify($password, $admin['password'])) {
             // Jika password cocok, buat session
+            session_regenerate_id(true); // Mencegah session fixation
             $_SESSION['admin_loggedin'] = true;
             $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['login_time'] = time();
+            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $_SESSION['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+
 
             // Redirect ke dashboard admin
             header("Location: ../admin/index.php");

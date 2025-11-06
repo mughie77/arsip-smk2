@@ -76,8 +76,8 @@ if (!$result) {
         <hr>
         <div class="mt-3">
             <p class="fw-bold">Ekspor Data</p>
-            <a href="../core/export_csv.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
-                <i class="fas fa-file-csv"></i> Download Daftar (CSV)
+            <a href="../core/export_xlsx.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
             </a>
             <a href="../core/export_zip.php?jenis=notulen&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-info text-white">
                 <i class="fas fa-file-archive"></i> Download Arsip (ZIP)
@@ -126,9 +126,14 @@ if (!$result) {
                                     <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <a href="../core/notulen_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <form action="../core/notulen_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -167,8 +172,10 @@ if (!$result) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="nama_file_existing" id="nama_file_existing">
 
                     <div class="mb-3">
                         <label for="kegiatan" class="form-label">Nama Kegiatan</label>
@@ -200,6 +207,7 @@ $(document).ready(function() {
         $('#notulenForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#nama_file_existing').val('');
     });
 
     $('.btn-edit').on('click', function() {
@@ -218,6 +226,7 @@ $(document).ready(function() {
                 if(data.status === 'success') {
                     $('#kegiatan').val(data.data.kegiatan);
                     $('#tanggal').val(data.data.tanggal);
+                    $('#nama_file_existing').val(data.data.nama_file);
                     $('#notulenModal').modal('show');
                 } else {
                     alert('Gagal mengambil data: ' + data.message);

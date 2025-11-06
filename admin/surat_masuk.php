@@ -79,8 +79,8 @@ if (!$result) {
         <div class="mt-3">
             <p class="fw-bold">Ekspor Data</p>
             <!-- Tombol ekspor akan memicu skrip ekspor dengan parameter filter dan pencarian yang sama -->
-            <a href="../core/export_csv.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
-                <i class="fas fa-file-csv"></i> Download Daftar (CSV)
+            <a href="../core/export_xlsx.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
             </a>
             <a href="../core/export_zip.php?jenis=surat_masuk&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-info text-white">
                 <i class="fas fa-file-archive"></i> Download Arsip (ZIP)
@@ -138,9 +138,14 @@ if (!$result) {
                                     <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <a href="../core/surat_masuk_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <form action="../core/surat_masuk_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -179,9 +184,11 @@ if (!$result) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <!-- Hidden input untuk ID (untuk edit) dan action -->
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="nama_file_pdf_existing" id="nama_file_pdf_existing">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -232,6 +239,7 @@ $(document).ready(function() {
         $('#suratMasukForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#nama_file_pdf_existing').val('');
         $('#fileHelp').show();
     });
 
@@ -258,6 +266,7 @@ $(document).ready(function() {
                     $('#perihal').val(data.data.perihal);
                     $('#tanggal_diterima').val(data.data.tanggal_diterima);
                     $('#acc_kepada').val(data.data.acc_kepada);
+                    $('#nama_file_pdf_existing').val(data.data.nama_file_pdf);
                     // Tampilkan modal setelah data terisi
                     $('#suratMasukModal').modal('show');
                 } else {
