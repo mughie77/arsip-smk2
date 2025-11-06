@@ -8,7 +8,7 @@ header("X-Content-Type-Options: nosniff");
 header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 // Kebijakan Keamanan Konten (CSP) yang lebih ketat
 $csp = "default-src 'self'; " .
-       "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; " .
+       "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
        "style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
        "font-src 'self' https://cdnjs.cloudflare.com; " .
        "img-src 'self' data:;";
@@ -34,9 +34,6 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Arsip Digital</title>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
