@@ -25,7 +25,11 @@ if (count($where_clauses) > 0) {
     $query .= " WHERE " . implode(' AND ', $where_clauses);
 }
 
-$limit = 20;
+// Logika Pagination
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+if (!in_array($limit, [10, 20, 100])) {
+    $limit = 10; // Nilai default jika input tidak valid
+}
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -106,13 +110,25 @@ if (isset($_SESSION['error_message'])) {
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="fas fa-table"></i> Daftar Surat Keluar</span>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
-            <i class="fas fa-plus"></i> Tambah Data
-        </button>
+        <div>
+            <form method="GET" action="surat_keluar.php" class="d-inline-block">
+                <input type="hidden" name="dari" value="<?php echo $dari_tanggal; ?>">
+                <input type="hidden" name="sampai" value="<?php echo $sampai_tanggal; ?>">
+                <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
+                <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
+                    <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
+                    <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
+                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                </select>
+            </form>
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
+                <i class="fas fa-plus"></i> Tambah Data
+            </button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover table-sm">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
@@ -133,12 +149,12 @@ if (isset($_SESSION['error_message'])) {
                                 <td><?php echo $no++; ?></td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
                                 <td>
-                                    <?php echo htmlspecialchars($row['nomor_surat']); ?>
+                                    <?php echo htmlspecialchars($row['perihal']); ?>
                                     <br>
                                     <small class="text-muted"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></small>
                                 </td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
-                                <td><?php echo htmlspecialchars($row['perihal']); ?></td>
+                                <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td>
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
@@ -177,7 +193,7 @@ if (isset($_SESSION['error_message'])) {
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 <?php
-                $query_params = http_build_query(array_filter(['dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
+                $query_params = http_build_query(array_filter(['limit' => $limit, 'dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
                 for ($i = 1; $i <= $total_pages; $i++) :
                 ?>
                     <li class="page-item <?php if ($i == $page) echo 'active'; ?>">

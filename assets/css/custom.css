@@ -1,0 +1,10 @@
+/* assets/css/custom.css */
+
+.table-sm {
+    font-size: 0.875rem; /* Ukuran font lebih kecil */
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 0.4rem; /* Padding lebih kecil untuk sel */
+}

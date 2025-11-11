@@ -3,7 +3,11 @@ require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
 // Pagination and Search Logic
-$limit = 20; // Data per halaman
+// Logika Pagination
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+if (!in_array($limit, [10, 20, 100])) {
+    $limit = 10; // Nilai default jika input tidak valid
+}
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 $keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
@@ -78,10 +82,20 @@ if (isset($_SESSION['error_message'])) {
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="fas fa-list"></i> Daftar Klasifikasi (Total: <?php echo $total_data; ?>)</span>
+        <div>
+            <form method="GET" action="klasifikasi_surat.php" class="d-inline-block">
+                <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
+                <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
+                    <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
+                    <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
+                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                </select>
+            </form>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover table-sm">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
@@ -125,9 +139,12 @@ if (isset($_SESSION['error_message'])) {
         <!-- Pagination -->
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                <?php
+                $query_params = http_build_query(array_filter(['limit' => $limit, 'keyword' => $keyword]));
+                for ($i = 1; $i <= $total_pages; $i++) :
+                ?>
                     <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                        <a class="page-link" href="klasifikasi_surat.php?page=<?php echo $i; ?>&keyword=<?php echo urlencode($keyword); ?>"><?php echo $i; ?></a>
+                        <a class="page-link" href="klasifikasi_surat.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php endfor; ?>
             </ul>
