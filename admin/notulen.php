@@ -123,9 +123,9 @@ if (!$result) {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                    <a href="notulen_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <form action="../core/notulen_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                         <input type="hidden" name="action" value="delete">
@@ -162,7 +162,7 @@ if (!$result) {
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Notulen -->
+<!-- Modal Tambah Notulen -->
 <div class="modal fade" id="notulenModal" tabindex="-1" aria-labelledby="notulenModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -173,9 +173,7 @@ if (!$result) {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" id="action" value="add">
-                    <input type="hidden" name="nama_file_existing" id="nama_file_existing">
+                    <input type="hidden" name="action" value="add">
 
                     <div class="mb-3">
                         <label for="kegiatan" class="form-label">Nama Kegiatan</label>
@@ -188,12 +186,11 @@ if (!$result) {
                     <div class="mb-3">
                         <label for="nama_file" class="form-label">Unggah Berkas (PDF, DOC, DOCX)</label>
                         <input class="form-control" type="file" id="nama_file" name="nama_file" accept=".pdf,.doc,.docx">
-                        <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
@@ -201,43 +198,12 @@ if (!$result) {
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#btnTambah').on('click', function() {
-        $('#notulenModalLabel').text('Tambah Notulen');
-        $('#notulenForm')[0].reset();
-        $('#action').val('add');
-        $('#id').val('');
-        $('#nama_file_existing').val('');
-    });
-
-    $('.btn-edit').on('click', function() {
-        var id = $(this).data('id');
-
-        $('#notulenModalLabel').text('Edit Notulen');
-        $('#action').val('edit');
-        $('#id').val(id);
-
-        $.ajax({
-            url: '../core/notulen_fetch.php',
-            type: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function(data) {
-                if(data.status === 'success') {
-                    $('#kegiatan').val(data.data.kegiatan);
-                    $('#tanggal').val(data.data.tanggal);
-                    $('#nama_file_existing').val(data.data.nama_file);
-                    $('#notulenModal').modal('show');
-                } else {
-                    alert('Gagal mengambil data: ' + data.message);
-                }
-            },
-            error: function() {
-                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
-            }
+    $(document).ready(function() {
+        // Reset form saat modal tambah dibuka
+        $('#notulenModal').on('shown.bs.modal', function() {
+            $('#notulenForm')[0].reset();
         });
     });
-});
 </script>
 
 <?php

@@ -150,9 +150,9 @@ if (isset($_SESSION['error_message'])) {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                    <a href="surat_keluar_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <form action="../core/surat_keluar_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                         <input type="hidden" name="action" value="delete">
@@ -189,7 +189,7 @@ if (isset($_SESSION['error_message'])) {
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Surat Keluar -->
+<!-- Modal Tambah Surat Keluar -->
 <div class="modal fade" id="suratKeluarModal" tabindex="-1" aria-labelledby="suratKeluarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -200,13 +200,12 @@ if (isset($_SESSION['error_message'])) {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="action" value="add">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="klasifikasi_id" class="form-label">Klasifikasi Surat</label>
-                            <select class="form-select" id="klasifikasi_id" name="klasifikasi_id" required>
+                            <label for="klasifikasi_id_add" class="form-label">Klasifikasi Surat</label>
+                            <select class="form-select" id="klasifikasi_id_add" name="klasifikasi_id" required>
                                 <option value="">-- Pilih Klasifikasi --</option>
                                 <?php
                                 $q_klasifikasi = mysqli_query($koneksi, "SELECT * FROM klasifikasi_surat ORDER BY jenis_surat ASC");
@@ -241,67 +240,32 @@ if (isset($_SESSION['error_message'])) {
                     <div class="mb-3">
                         <label for="nama_file_pdf" class="form-label">Unggah Berkas (PDF, max 3MB)</label>
                         <input class="form-control" type="file" id="nama_file_pdf" name="nama_file_pdf" accept=".pdf">
-                        <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
-                        <input type="hidden" name="nama_file_pdf_existing" id="nama_file_pdf_existing">
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
 <script>
-$(document).ready(function() {
-    // Inisialisasi Select2 pada dropdown di dalam modal
-    $('#klasifikasi_id').select2({
-        theme: 'bootstrap-5',
-        dropdownParent: $('#suratKeluarModal')
-    });
+    $(document).ready(function() {
+        // Inisialisasi Select2 pada dropdown di dalam modal
+        $('#klasifikasi_id_add').select2({
+            theme: 'bootstrap-5',
+            dropdownParent: $('#suratKeluarModal')
+        });
 
-    $('#btnTambah').on('click', function() {
-        $('#suratKeluarModalLabel').text('Tambah Surat Keluar');
-        $('#suratKeluarForm')[0].reset();
-        $('#action').val('add');
-        $('#id').val('');
-    });
-
-    $('.btn-edit').on('click', function() {
-        var id = $(this).data('id');
-
-        $('#suratKeluarModalLabel').text('Edit Surat Keluar');
-        $('#action').val('edit');
-        $('#id').val(id);
-
-        $.ajax({
-            url: '../core/surat_keluar_fetch.php',
-            type: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function(data) {
-                if(data.status === 'success') {
-                    $('#nomor_surat').val(data.data.nomor_surat);
-                    $('#tujuan_surat').val(data.data.tujuan_surat);
-                    $('#perihal').val(data.data.perihal);
-                    $('#tanggal_kirim').val(data.data.tanggal_kirim);
-                    $('#klasifikasi_id').val(data.data.klasifikasi_id);
-                    $('#nama_file_pdf_existing').val(data.data.nama_file_pdf); // Simpan nama file lama
-                    $('#suratKeluarModal').modal('show');
-                } else {
-                    alert('Gagal mengambil data: ' + data.message);
-                }
-            },
-            error: function() {
-                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
-            }
+        // Reset form saat modal ditampilkan
+        $('#suratKeluarModal').on('shown.bs.modal', function(e) {
+            $('#suratKeluarForm')[0].reset();
+            $('#klasifikasi_id_add').val(null).trigger('change');
         });
     });
-});
 </script>
 
 <?php

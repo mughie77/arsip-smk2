@@ -118,9 +118,9 @@ if (!$result) {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                    <a href="arsip_berkas_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <form action="../core/arsip_berkas_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                         <input type="hidden" name="action" value="delete">
@@ -157,7 +157,7 @@ if (!$result) {
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Arsip Berkas -->
+<!-- Modal Tambah Arsip Berkas -->
 <div class="modal fade" id="arsipBerkasModal" tabindex="-1" aria-labelledby="arsipBerkasModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -168,10 +168,7 @@ if (!$result) {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                    <!-- Hidden input untuk ID (untuk edit) dan action -->
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" id="action" value="add">
-                    <input type="hidden" name="file_path_existing" id="file_path_existing">
+                    <input type="hidden" name="action" value="add">
 
                     <div class="mb-3">
                         <label for="no_berkas" class="form-label">Nomor Berkas</label>
@@ -192,67 +189,25 @@ if (!$result) {
                     <div class="mb-3">
                         <label for="nama_file_pdf" class="form-label">Unggah Berkas (PDF, max 5MB)</label>
                         <input class="form-control" type="file" id="nama_file_pdf" name="nama_file_pdf" accept=".pdf">
-                        <small id="fileHelp" class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas saat mengedit.</small>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
 <script>
-$(document).ready(function() {
-    // Reset modal saat tombol 'Tambah Data' diklik
-    $('#btnTambah').on('click', function() {
-        $('#arsipBerkasModalLabel').text('Tambah Arsip Berkas');
-        $('#arsipBerkasForm')[0].reset();
-        $('#action').val('add');
-        $('#id').val('');
-        $('#file_path_existing').val('');
-        $('#fileHelp').show();
-    });
-
-    // Handle klik tombol 'Edit'
-    $('.btn-edit').on('click', function() {
-        var id = $(this).data('id');
-
-        // Ubah tampilan modal untuk mode edit
-        $('#arsipBerkasModalLabel').text('Edit Arsip Berkas');
-        $('#action').val('edit');
-        $('#id').val(id);
-        $('#fileHelp').show();
-
-        // Ambil data via AJAX untuk mengisi form
-        $.ajax({
-            url: '../core/arsip_berkas_fetch.php',
-            type: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function(data) {
-                if(data.status === 'success') {
-                    $('#no_berkas').val(data.data.no_berkas);
-                    $('#nama_berkas').val(data.data.nama_berkas);
-                    $('#tanggal_berkas').val(data.data.tanggal_berkas);
-                    $('#uraian').val(data.data.uraian);
-                    $('#file_path_existing').val(data.data.file_path);
-                    // Tampilkan modal setelah data terisi
-                    $('#arsipBerkasModal').modal('show');
-                } else {
-                    alert('Gagal mengambil data: ' + data.message);
-                }
-            },
-            error: function() {
-                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
-            }
+    $(document).ready(function() {
+        // Reset modal saat tombol 'Tambah Data' diklik
+        $('#arsipBerkasModal').on('shown.bs.modal', function() {
+            $('#arsipBerkasForm')[0].reset();
         });
     });
-});
 </script>
 
 <?php

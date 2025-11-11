@@ -87,9 +87,9 @@ if (isset($_SESSION['error_message'])) {
                                 <td><?php echo htmlspecialchars($row['kode']); ?></td>
                                 <td><?php echo htmlspecialchars($row['jenis_surat']); ?></td>
                                 <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                    <a href="klasifikasi_surat_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <form action="../core/klasifikasi_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                         <input type="hidden" name="action" value="delete">
@@ -123,7 +123,7 @@ if (isset($_SESSION['error_message'])) {
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Klasifikasi -->
+<!-- Modal Tambah Klasifikasi -->
 <div class="modal fade" id="klasifikasiModal" tabindex="-1" aria-labelledby="klasifikasiModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,8 +134,7 @@ if (isset($_SESSION['error_message'])) {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="action" value="add">
 
                     <div class="mb-3">
                         <label for="kode" class="form-label">Kode Klasifikasi</label>
@@ -148,7 +147,7 @@ if (isset($_SESSION['error_message'])) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
@@ -156,44 +155,12 @@ if (isset($_SESSION['error_message'])) {
 </div>
 
 <script>
-$(document).ready(function() {
-    // Reset form saat modal tambah dibuka
-    $('#btnTambah').on('click', function() {
-        $('#klasifikasiModalLabel').text('Tambah Klasifikasi');
-        $('#klasifikasiForm')[0].reset();
-        $('#action').val('add');
-        $('#id').val('');
-    });
-
-    // Isi form saat tombol edit diklik
-    $('.btn-edit').on('click', function() {
-        var id = $(this).data('id');
-
-        $('#klasifikasiModalLabel').text('Edit Klasifikasi');
-        $('#action').val('edit');
-        $('#id').val(id);
-
-        // AJAX request untuk mengambil data
-        $.ajax({
-            url: '../core/klasifikasi_fetch.php',
-            type: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function(data) {
-                if(data.status === 'success') {
-                    $('#kode').val(data.data.kode);
-                    $('#jenis_surat').val(data.data.jenis_surat);
-                    $('#klasifikasiModal').modal('show');
-                } else {
-                    alert('Gagal mengambil data: ' + data.message);
-                }
-            },
-            error: function() {
-                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
-            }
+    $(document).ready(function() {
+        // Reset form saat modal tambah dibuka
+        $('#klasifikasiModal').on('shown.bs.modal', function() {
+            $('#klasifikasiForm')[0].reset();
         });
     });
-});
 </script>
 
 <?php
