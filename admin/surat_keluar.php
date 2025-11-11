@@ -186,6 +186,10 @@ if (isset($_SESSION['error_message'])) {
                 <?php endfor; ?>
             </ul>
         </nav>
+
+        <div class="text-muted mt-3">
+            Total data: <?php echo $total_data; ?>
+        </div>
     </div>
 </div>
 

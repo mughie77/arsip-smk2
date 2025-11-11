@@ -45,27 +45,39 @@ if (isset($_SESSION['error_message'])) {
 }
 ?>
 
-<div class="card mb-4">
-    <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
-    <div class="card-body">
-        <form method="GET" action="klasifikasi_surat.php" class="row g-3 align-items-center">
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari berdasarkan Kode atau Jenis Surat..." value="<?php echo htmlspecialchars($keyword); ?>">
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
+            <div class="card-body">
+                <form method="GET" action="klasifikasi_surat.php">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari berdasarkan Kode atau Jenis Surat..." value="<?php echo htmlspecialchars($keyword); ?>">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        <a href="klasifikasi_surat.php" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-2 d-flex">
-                <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="klasifikasi_surat.php" class="btn btn-secondary">Reset</a>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><i class="fas fa-plus-circle"></i> Aksi</div>
+            <div class="card-body">
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#klasifikasiModal" id="btnTambah">
+                        <i class="fas fa-plus"></i> Tambah Data Klasifikasi
+                    </button>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="fas fa-list"></i> Daftar Klasifikasi</span>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#klasifikasiModal" id="btnTambah">
-            <i class="fas fa-plus"></i> Tambah Data
-        </button>
+        <span><i class="fas fa-list"></i> Daftar Klasifikasi (Total: <?php echo $total_data; ?>)</span>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -120,6 +132,10 @@ if (isset($_SESSION['error_message'])) {
                 <?php endfor; ?>
             </ul>
         </nav>
+
+        <div class="text-muted mt-3">
+            Total data: <?php echo $total_data; ?>
+        </div>
     </div>
 </div>
 
