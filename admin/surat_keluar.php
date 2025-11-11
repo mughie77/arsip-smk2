@@ -133,12 +133,12 @@ if (isset($_SESSION['error_message'])) {
                                 <td><?php echo $no++; ?></td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
                                 <td>
-                                    <?php echo htmlspecialchars($row['perihal']); ?>
+                                    <?php echo htmlspecialchars($row['nomor_surat']); ?>
                                     <br>
                                     <small class="text-muted"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></small>
                                 </td>
                                 <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
-                                <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
+                                <td><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td>
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
