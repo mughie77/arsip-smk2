@@ -111,7 +111,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <div class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
-                <button class="btn btn-outline-secondary d-lg-none" type="button" id="sidebarToggle">
+                <button class="btn btn-outline-secondary" type="button" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="ms-auto">

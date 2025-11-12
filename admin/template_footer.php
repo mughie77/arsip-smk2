@@ -24,8 +24,7 @@
 $(document).ready(function() {
     // Logika untuk toggle sidebar
     $('#sidebarToggle').on('click', function() {
-        $('.sidebar').toggleClass('toggled');
-        $('.main-content').toggleClass('toggled');
+        $('body').toggleClass('sidebar-toggled');
     });
 });
 </script>
