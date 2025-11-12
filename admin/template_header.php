@@ -51,9 +51,9 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 </head>
 <body>
 
-<div class="d-flex">
+<div class="wrapper d-flex align-items-stretch">
     <!-- Sidebar -->
-    <nav class="sidebar d-flex flex-column p-0">
+    <nav id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <a href="./">
                 <i class="fas fa-archive"></i> Arsip<strong>Digital</strong>

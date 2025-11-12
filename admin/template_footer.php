@@ -22,33 +22,9 @@
 <!-- Custom Admin JS -->
 <script>
 $(document).ready(function() {
-    // Fungsi untuk menampilkan atau menyembunyikan sidebar
-    function toggleSidebar() {
-        $('body').toggleClass('sidebar-toggled');
-    }
-
-    // Event listener untuk tombol toggle
-    $('#sidebarToggle').on('click', function(e) {
-        e.stopPropagation(); // Mencegah event bubbling
-        toggleSidebar();
+    $('#sidebarToggle').on('click', function() {
+        $('#sidebar').toggleClass('active');
     });
-
-    // Event listener untuk overlay (hanya aktif di mode mobile)
-    $('.sidebar-overlay').on('click', function() {
-        if ($(window).width() < 992) {
-            toggleSidebar();
-        }
-    });
-
-    // Cek lebar layar saat halaman dimuat
-    // Jika layar desktop, sidebar tidak tertoggle secara default
-    if ($(window).width() >= 992) {
-        // Hapus class jika ada untuk memastikan state awal benar di desktop
-        if ($('body').hasClass('sidebar-toggled')) {
-            // Uncomment baris berikut jika ingin sidebar selalu terbuka di desktop saat reload
-            // $('body').removeClass('sidebar-toggled');
-        }
-    }
 });
 </script>
 
