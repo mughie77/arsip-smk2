@@ -2,7 +2,7 @@
         </div>
     </div>
     <!-- End Main Content -->
-
+</div>
 <!-- Footer Universal -->
 <footer class="footer mt-auto py-3 bg-light border-top">
     <div class="container-fluid text-center">
