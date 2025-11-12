@@ -25,6 +25,14 @@ $(document).ready(function() {
     $('#sidebarToggle').on('click', function() {
         $('#sidebar').toggleClass('active');
     });
+
+    $('#content').on('click', function() {
+        if ($(window).width() < 992) {
+            if ($('#sidebar').hasClass('active')) {
+                $('#sidebar').removeClass('active');
+            }
+        }
+    });
 });
 </script>
 
