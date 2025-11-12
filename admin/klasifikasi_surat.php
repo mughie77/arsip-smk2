@@ -50,7 +50,7 @@ if (isset($_SESSION['error_message'])) {
 ?>
 
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-8 col-12 mb-3">
         <div class="card mb-4">
             <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
             <div class="card-body">
@@ -64,7 +64,7 @@ if (isset($_SESSION['error_message'])) {
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-4 col-12 mb-3">
         <div class="card mb-4">
             <div class="card-header"><i class="fas fa-plus-circle"></i> Aksi</div>
             <div class="card-body">
@@ -109,10 +109,10 @@ if (isset($_SESSION['error_message'])) {
                         <?php $no = $offset + 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
-                                <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['kode']); ?></td>
-                                <td><?php echo htmlspecialchars($row['jenis_surat']); ?></td>
-                                <td>
+                                <td data-label="No"><?php echo $no++; ?></td>
+                                <td data-label="Kode Klasifikasi"><?php echo htmlspecialchars($row['kode']); ?></td>
+                                <td data-label="Jenis Surat"><?php echo htmlspecialchars($row['jenis_surat']); ?></td>
+                                <td data-label="Aksi">
                                     <a href="klasifikasi_surat_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>

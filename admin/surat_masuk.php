@@ -55,7 +55,7 @@ if (!$result) {
 <!-- Area Aksi dan Filter -->
 <div class="row mb-4">
     <!-- Tombol Aksi -->
-    <div class="col-md-6 mb-3">
+    <div class="col-lg-6 col-12 mb-3">
         <div class="d-flex flex-wrap gap-2">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#suratMasukModal" id="btnTambah">
                 <i class="fas fa-plus"></i> Tambah Data
@@ -69,7 +69,7 @@ if (!$result) {
         </div>
     </div>
     <!-- Form Pencarian dan Filter -->
-    <div class="col-md-6 mb-3">
+    <div class="col-lg-6 col-12 mb-3">
         <form method="GET" action="surat_masuk.php">
             <div class="input-group">
                 <input type="date" class="form-control" name="dari" value="<?php echo $dari_tanggal; ?>" title="Dari Tanggal">
@@ -123,14 +123,14 @@ if (!$result) {
                         <?php $no = 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
-                                <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
-                                <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
-                                <td><?php echo htmlspecialchars($row['perihal']); ?></td>
-                                <td><?php echo htmlspecialchars($row['asal_surat']); ?></td>
-                                <td><?php echo date('d-m-Y', strtotime($row['tanggal_diterima'])); ?></td>
-                                <td><?php echo htmlspecialchars($row['acc_kepada']); ?></td>
-                                <td>
+                                <td data-label="No"><?php echo $no++; ?></td>
+                                <td data-label="Nomor Arsip"><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
+                                <td data-label="Nomor Surat"><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
+                                <td data-label="Perihal"><?php echo htmlspecialchars($row['perihal']); ?></td>
+                                <td data-label="Asal Surat"><?php echo htmlspecialchars($row['asal_surat']); ?></td>
+                                <td data-label="Tanggal Diterima"><?php echo date('d-m-Y', strtotime($row['tanggal_diterima'])); ?></td>
+                                <td data-label="Acc Kepada"><?php echo htmlspecialchars($row['acc_kepada']); ?></td>
+                                <td data-label="Berkas">
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
                                         <a href="../uploads/surat_masuk/<?php echo htmlspecialchars($row['nama_file_pdf']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
@@ -139,7 +139,7 @@ if (!$result) {
                                         <span class="text-muted">No File</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <td data-label="Aksi">
                                     <a href="surat_masuk_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>

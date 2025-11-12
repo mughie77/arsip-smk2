@@ -55,13 +55,13 @@ if (!$result) {
 <!-- Area Aksi dan Filter -->
 <div class="row mb-4">
     <!-- Tombol Aksi -->
-    <div class="col-md-6 mb-3">
+    <div class="col-lg-6 col-12 mb-3">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
             <i class="fas fa-plus"></i> Tambah Data
         </button>
     </div>
     <!-- Form Pencarian -->
-    <div class="col-md-6 mb-3">
+    <div class="col-lg-6 col-12 mb-3">
         <form method="GET" action="arsip_berkas.php" class="input-group">
             <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no berkas, nama berkas..." value="<?php echo htmlspecialchars($keyword); ?>">
             <button type="submit" class="btn btn-primary">
@@ -112,11 +112,11 @@ if (!$result) {
                         <?php $no = 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
-                                <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['no_berkas']); ?></td>
-                                <td><?php echo htmlspecialchars($row['nama_berkas']); ?></td>
-                                <td><?php echo date('d-m-Y', strtotime($row['tanggal_berkas'])); ?></td>
-                                <td>
+                                <td data-label="No"><?php echo $no++; ?></td>
+                                <td data-label="Nomor Berkas"><?php echo htmlspecialchars($row['no_berkas']); ?></td>
+                                <td data-label="Nama Berkas"><?php echo htmlspecialchars($row['nama_berkas']); ?></td>
+                                <td data-label="Tanggal Berkas"><?php echo date('d-m-Y', strtotime($row['tanggal_berkas'])); ?></td>
+                                <td data-label="Berkas">
                                     <?php if (!empty($row['file_path'])) : ?>
                                         <a href="../uploads/berkas/<?php echo htmlspecialchars($row['file_path']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
@@ -125,7 +125,7 @@ if (!$result) {
                                         <span class="text-muted">No File</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <td data-label="Aksi">
                                     <a href="arsip_berkas_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>

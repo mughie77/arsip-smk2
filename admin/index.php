@@ -108,6 +108,21 @@ $total_arsip_berkas = $data_ab['total_arsip_berkas'];
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm card-statistic">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-archive fa-3x text-purple"></i>
+                    </div>
+                    <div class="col">
+                        <h5 class="card-title text-muted mb-1">Arsip Berkas</h5>
+                        <h3 class="fw-bold"><?php echo $total_arsip_berkas; ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Grafik Perbandingan -->
