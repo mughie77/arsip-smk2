@@ -240,10 +240,11 @@ body {
     position: fixed;
     height: 100%;
     z-index: 1030;
+    margin-left: -250px;
 }
 
 #sidebar.active {
-    margin-left: -250px;
+    margin-left: 0;
 }
 
 #content {
@@ -256,10 +257,11 @@ body {
 @media (min-width: 992px) {
     #sidebar {
         position: relative;
+        margin-left: 0;
     }
 
     #sidebar.active {
-        margin-left: 0;
+        margin-left: -250px;
     }
 
     #content {
