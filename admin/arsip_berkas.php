@@ -40,9 +40,6 @@ $total_data = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total_data / $limit);
 
 // Query untuk mengambil data dengan limit dan offset
-if (count($where_clauses) > 0) {
-    $query .= " WHERE " . implode(' AND ', $where_clauses);
-}
 $query .= " ORDER BY tanggal_berkas DESC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($koneksi, $query);
 
