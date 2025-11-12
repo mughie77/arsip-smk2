@@ -233,18 +233,19 @@ body {
 /* === Reponsive Sidebar === */
 :root {
     --sidebar-width: 250px;
+    --transition-speed: 0.3s;
 }
 
 .sidebar {
     width: var(--sidebar-width);
-    flex-shrink: 0;
-    transition: margin-left 0.3s ease;
+    flex-shrink: 0; /* Mencegah sidebar dari menyusut */
+    transition: margin-left var(--transition-speed) ease-in-out;
 }
 
 .main-content {
-    flex-grow: 1;
-    transition: margin-left 0.3s ease;
-    width: calc(100% - var(--sidebar-width));
+    flex-grow: 1; /* Memungkinkan konten utama mengambil sisa ruang */
+    transition: all var(--transition-speed) ease-in-out;
+    width: calc(100% - var(--sidebar-width)); /* Menjaga lebar awal */
 }
 
 /* Tampilan Desktop (Sidebar bisa ditoggle) */
@@ -254,7 +255,6 @@ body {
     }
 
     body.sidebar-toggled .main-content {
-        margin-left: calc(-1 * var(--sidebar-width));
         width: 100%;
     }
 }
@@ -267,7 +267,7 @@ body {
         left: 0;
         height: 100%;
         z-index: 1030; /* Di atas konten utama */
-        margin-left: calc(-1 * var(--sidebar-width)); /* Sembunyi di luar layar */
+        margin-left: calc(-1 * var(--sidebar-width)); /* Sembunyi di luar layar secara default */
     }
 
     body.sidebar-toggled .sidebar {
@@ -276,18 +276,21 @@ body {
 
     .main-content {
         width: 100%;
-        margin-left: 0;
+        margin-left: 0; /* Selalu lebar penuh */
     }
 
-    /* Overlay gelap saat sidebar aktif di mobile */
-    body.sidebar-toggled::before {
-        content: '';
+    .sidebar-overlay {
+        display: none; /* Sembunyi secara default */
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1029;
+        z-index: 1029; /* Di bawah sidebar */
+    }
+
+    body.sidebar-toggled .sidebar-overlay {
+        display: block; /* Tampilkan overlay saat sidebar aktif */
     }
 }

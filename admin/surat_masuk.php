@@ -73,16 +73,14 @@ if (!$result) {
     </div>
     <!-- Form Pencarian dan Filter -->
     <div class="col-md-6 mb-3">
-        <form method="GET" action="surat_masuk.php" class="d-flex gap-2">
-            <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>" title="Dari Tanggal">
-            <input type="date" class="form-control" id="sampai" name="sampai" value="<?php echo $sampai_tanggal; ?>" title="Sampai Tanggal">
-            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari..." value="<?php echo htmlspecialchars($keyword); ?>">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-search"></i>
-            </button>
-            <a href="surat_masuk.php" class="btn btn-secondary">
-                <i class="fas fa-sync-alt"></i>
-            </a>
+        <form method="GET" action="surat_masuk.php">
+            <div class="input-group">
+                <input type="date" class="form-control" name="dari" value="<?php echo $dari_tanggal; ?>" title="Dari Tanggal">
+                <input type="date" class="form-control" name="sampai" value="<?php echo $sampai_tanggal; ?>" title="Sampai Tanggal">
+                <input type="text" class="form-control" name="keyword" placeholder="Cari..." value="<?php echo htmlspecialchars($keyword); ?>">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                <a href="surat_masuk.php" class="btn btn-secondary"><i class="fas fa-sync-alt"></i></a>
+            </div>
         </form>
     </div>
 </div>

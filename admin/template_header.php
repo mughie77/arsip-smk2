@@ -109,6 +109,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <!-- End Sidebar -->
 
     <!-- Main Content -->
+    <div class="sidebar-overlay"></div>
     <div class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
