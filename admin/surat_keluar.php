@@ -69,40 +69,33 @@ if (isset($_SESSION['error_message'])) {
 }
 ?>
 
-<!-- Area Filter dan Ekspor -->
-<div class="card mb-4">
-    <div class="card-header">
-        <i class="fas fa-filter"></i> Filter & Ekspor
-    </div>
-    <div class="card-body">
-        <form method="GET" action="surat_keluar" class="row g-3 align-items-center">
-            <div class="col-md-3">
-                <label for="dari" class="form-label">Dari Tanggal</label>
-                <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
-            </div>
-            <div class="col-md-3">
-                <label for="sampai" class="form-label">Sampai Tanggal</label>
-                <input type="date" class="form-control" id="sampai" name="sampai" value="<?php echo $sampai_tanggal; ?>">
-            </div>
-            <div class="col-md-4">
-                <label for="keyword" class="form-label">Kata Kunci</label>
-                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no arsip, no surat, perihal..." value="<?php echo htmlspecialchars($keyword); ?>">
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="surat_keluar" class="btn btn-secondary">Reset</a>
-            </div>
-        </form>
-        <hr>
-        <div class="mt-3">
-            <p class="fw-bold">Ekspor Data</p>
+<!-- Area Aksi dan Filter -->
+<div class="row mb-4">
+    <!-- Tombol Aksi -->
+    <div class="col-md-6 mb-3">
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
+                <i class="fas fa-plus"></i> Tambah Data
+            </button>
             <a href="../core/export_xlsx.php?jenis=surat_keluar&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Download Daftar (XLSX)
+                <i class="fas fa-file-excel"></i> Ekspor XLSX
             </a>
             <a href="../core/export_zip.php?jenis=surat_keluar&dari=<?php echo $dari_tanggal; ?>&sampai=<?php echo $sampai_tanggal; ?>&keyword=<?php echo urlencode($keyword); ?>" class="btn btn-info text-white">
-                <i class="fas fa-file-archive"></i> Download Arsip (ZIP)
+                <i class="fas fa-file-archive"></i> Unduh ZIP
             </a>
         </div>
+    </div>
+    <!-- Form Pencarian -->
+    <div class="col-md-6 mb-3">
+        <form method="GET" action="surat_keluar.php" class="input-group">
+            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no arsip, no surat, perihal..." value="<?php echo htmlspecialchars($keyword); ?>">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="surat_keluar.php" class="btn btn-secondary">
+                <i class="fas fa-sync-alt"></i>
+            </a>
+        </form>
     </div>
 </div>
 

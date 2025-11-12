@@ -55,29 +55,24 @@ if (!$result) {
     <h1 class="h2">Arsip Berkas</h1>
 </div>
 
-<!-- Area Filter -->
-<div class="card mb-4">
-    <div class="card-header">
-        <i class="fas fa-filter"></i> Filter
+<!-- Area Aksi dan Filter -->
+<div class="row mb-4">
+    <!-- Tombol Aksi -->
+    <div class="col-md-6 mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
+            <i class="fas fa-plus"></i> Tambah Data
+        </button>
     </div>
-    <div class="card-body">
-        <form method="GET" action="arsip_berkas.php" class="row g-3 align-items-center">
-            <div class="col-md-3">
-                <label for="dari" class="form-label">Dari Tanggal</label>
-                <input type="date" class="form-control" id="dari" name="dari" value="<?php echo $dari_tanggal; ?>">
-            </div>
-            <div class="col-md-3">
-                <label for="sampai" class="form-label">Sampai Tanggal</label>
-                <input type="date" class="form-control" id="sampai" name="sampai" value="<?php echo $sampai_tanggal; ?>">
-            </div>
-            <div class="col-md-4">
-                <label for="keyword" class="form-label">Kata Kunci</label>
-                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no berkas, nama berkas..." value="<?php echo htmlspecialchars($keyword); ?>">
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="arsip_berkas.php" class="btn btn-secondary">Reset</a>
-            </div>
+    <!-- Form Pencarian -->
+    <div class="col-md-6 mb-3">
+        <form method="GET" action="arsip_berkas.php" class="input-group">
+            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari no berkas, nama berkas..." value="<?php echo htmlspecialchars($keyword); ?>">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="arsip_berkas.php" class="btn btn-secondary">
+                <i class="fas fa-sync-alt"></i>
+            </a>
         </form>
     </div>
 </div>

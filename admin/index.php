@@ -24,6 +24,18 @@ $result_n = mysqli_query($koneksi, $query_n);
 $data_n = mysqli_fetch_assoc($result_n);
 $total_notulen = $data_n['total_notulen'];
 
+// 4. Jumlah Klasifikasi
+$query_k = "SELECT COUNT(id) as total_klasifikasi FROM klasifikasi_surat";
+$result_k = mysqli_query($koneksi, $query_k);
+$data_k = mysqli_fetch_assoc($result_k);
+$total_klasifikasi = $data_k['total_klasifikasi'];
+
+// 5. Jumlah Arsip Berkas
+$query_ab = "SELECT COUNT(id) as total_arsip_berkas FROM arsip_berkas";
+$result_ab = mysqli_query($koneksi, $query_ab);
+$data_ab = mysqli_fetch_assoc($result_ab);
+$total_arsip_berkas = $data_ab['total_arsip_berkas'];
+
 ?>
 
 <!-- Judul Halaman -->
@@ -36,7 +48,7 @@ $total_notulen = $data_n['total_notulen'];
 
 <!-- Kartu Statistik -->
 <div class="row">
-    <div class="col-md-4 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card h-100 shadow-sm card-statistic">
             <div class="card-body">
                 <div class="row align-items-center">
@@ -51,7 +63,7 @@ $total_notulen = $data_n['total_notulen'];
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card h-100 shadow-sm card-statistic">
             <div class="card-body">
                 <div class="row align-items-center">
@@ -66,7 +78,7 @@ $total_notulen = $data_n['total_notulen'];
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card h-100 shadow-sm card-statistic">
             <div class="card-body">
                 <div class="row align-items-center">
@@ -81,6 +93,21 @@ $total_notulen = $data_n['total_notulen'];
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm card-statistic">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-tags fa-3x text-info"></i>
+                    </div>
+                    <div class="col">
+                        <h5 class="card-title text-muted mb-1">Klasifikasi</h5>
+                        <h3 class="fw-bold"><?php echo $total_klasifikasi; ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Grafik Perbandingan -->
@@ -88,10 +115,10 @@ $total_notulen = $data_n['total_notulen'];
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="card-title mb-0">Grafik Perbandingan Surat</h5>
+                <h5 class="card-title mb-0">Grafik Perbandingan Arsip</h5>
             </div>
             <div class="card-body">
-                <canvas id="suratChart"></canvas>
+                <canvas id="arsipChart"></canvas>
             </div>
         </div>
     </div>
@@ -101,24 +128,33 @@ $total_notulen = $data_n['total_notulen'];
 <script>
 // Menunggu dokumen siap sebelum menjalankan skrip Chart.js
 document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('suratChart').getContext('2d');
-    const suratChart = new Chart(ctx, {
+    const ctx = document.getElementById('arsipChart').getContext('2d');
+    const arsipChart = new Chart(ctx, {
         type: 'bar', // Tipe grafik adalah bar chart
         data: {
-            labels: ['Surat Masuk', 'Surat Keluar'],
+            labels: ['Surat Masuk', 'Surat Keluar', 'Notulen', 'Klasifikasi', 'Arsip Berkas'],
             datasets: [{
                 label: 'Jumlah Arsip',
                 data: [
                     <?php echo $total_surat_masuk; ?>,
-                    <?php echo $total_surat_keluar; ?>
+                    <?php echo $total_surat_keluar; ?>,
+                    <?php echo $total_notulen; ?>,
+                    <?php echo $total_klasifikasi; ?>,
+                    <?php echo $total_arsip_berkas; ?>
                 ],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.5)', // Biru untuk Surat Masuk
-                    'rgba(75, 192, 192, 0.5)'  // Hijau untuk Surat Keluar
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(23, 162, 184, 0.5)',
+                    'rgba(153, 102, 255, 0.5)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)'
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(153, 102, 255, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -142,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 title: {
                     display: true,
-                    text: 'Total Jumlah Surat Masuk dan Surat Keluar'
+                    text: 'Total Jumlah Arsip Berdasarkan Kategori'
                 }
             }
         }
