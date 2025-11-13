@@ -52,6 +52,29 @@
     }
 }
 
+@media (max-width: 576px) {
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group .form-control,
+    .input-group .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    .card-header .btn-primary.btn-sm {
+        display: none;
+    }
+    .h2 {
+        font-size: 1.5rem;
+    }
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
+
 /* Custom Off-Canvas Menu Styles */
 #mobileMenu {
     background-color: var(--primary-color);

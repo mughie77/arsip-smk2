@@ -111,7 +111,7 @@ if (isset($_SESSION['error_message'])) {
                     <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
                 </select>
             </form>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
+            <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
                 <i class="fas fa-plus"></i> Tambah Data
             </button>
         </div>
