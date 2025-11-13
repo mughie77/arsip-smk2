@@ -50,6 +50,19 @@
         font-weight: bold;
         text-align: left;
     }
+
+    body {
+        font-size: 1rem;
+    }
+
+    .table-sm {
+        font-size: 1rem;
+    }
+
+    .table-sm th,
+    .table-sm td {
+        padding: 0.75rem;
+    }
 }
 
 @media (max-width: 576px) {
