@@ -22,16 +22,7 @@
 <!-- Custom Admin JS -->
 <script>
 $(document).ready(function() {
-    $('#sidebarToggle').on('click', function(e) {
-        e.stopPropagation();
-        $('#sidebar').toggleClass('active');
-    });
-
-    $('#content').on('click', function() {
-        if ($('#sidebar').hasClass('active')) {
-            $('#sidebar').removeClass('active');
-        }
-    });
+    // Custom JS can be added here in the future
 });
 </script>
 
