@@ -127,7 +127,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
             <!-- Konten halaman akan dimulai di sini -->
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-    <div class="offcanvas-header">
+    <div class="offcanvas-header sidebar-header">
         <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>

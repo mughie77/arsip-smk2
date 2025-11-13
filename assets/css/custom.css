@@ -51,3 +51,34 @@
         text-align: left;
     }
 }
+
+/* Custom Off-Canvas Menu Styles */
+#mobileMenu {
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
+}
+
+#mobileMenu .offcanvas-header {
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+#mobileMenu .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+#mobileMenu .nav-link {
+    color: #adb5bd;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+#mobileMenu .nav-link:hover,
+#mobileMenu .nav-link.active {
+    color: var(--light-color);
+    background-color: var(--secondary-color);
+}
+
+#mobileMenu .nav-link i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
