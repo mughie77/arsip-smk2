@@ -3,7 +3,11 @@ require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
 // Pagination and Search Logic
-$limit = 20; // Data per halaman
+// Logika Pagination
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+if (!in_array($limit, [10, 20, 100])) {
+    $limit = 10; // Nilai default jika input tidak valid
+}
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 $keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
@@ -45,31 +49,53 @@ if (isset($_SESSION['error_message'])) {
 }
 ?>
 
-<div class="card mb-4">
-    <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
-    <div class="card-body">
-        <form method="GET" action="klasifikasi_surat.php" class="row g-3 align-items-center">
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari berdasarkan Kode atau Jenis Surat..." value="<?php echo htmlspecialchars($keyword); ?>">
+<div class="row">
+    <div class="col-lg-8 col-12 mb-3">
+        <div class="card mb-4">
+            <div class="card-header"><i class="fas fa-search"></i> Pencarian</div>
+            <div class="card-body">
+                <form method="GET" action="klasifikasi_surat.php">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Cari berdasarkan Kode atau Jenis Surat..." value="<?php echo htmlspecialchars($keyword); ?>">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        <a href="klasifikasi_surat.php" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-2 d-flex">
-                <button type="submit" class="btn btn-primary me-2">Cari</button>
-                <a href="klasifikasi_surat.php" class="btn btn-secondary">Reset</a>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12 mb-3">
+        <div class="card mb-4">
+            <div class="card-header"><i class="fas fa-plus-circle"></i> Aksi</div>
+            <div class="card-body">
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#klasifikasiModal" id="btnTambah">
+                        <i class="fas fa-plus"></i> Tambah Data Klasifikasi
+                    </button>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="fas fa-list"></i> Daftar Klasifikasi</span>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#klasifikasiModal" id="btnTambah">
-            <i class="fas fa-plus"></i> Tambah Data
-        </button>
+        <span><i class="fas fa-list"></i> Daftar Klasifikasi (Total: <?php echo $total_data; ?>)</span>
+        <div>
+            <form method="GET" action="klasifikasi_surat.php" class="d-inline-block">
+                <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
+                <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
+                    <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
+                    <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
+                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                </select>
+            </form>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover table-sm">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
@@ -83,13 +109,13 @@ if (isset($_SESSION['error_message'])) {
                         <?php $no = $offset + 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
-                                <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['kode']); ?></td>
-                                <td><?php echo htmlspecialchars($row['jenis_surat']); ?></td>
-                                <td>
-                                    <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
+                                <td data-label="No"><?php echo $no++; ?></td>
+                                <td data-label="Kode Klasifikasi"><?php echo htmlspecialchars($row['kode']); ?></td>
+                                <td data-label="Jenis Surat"><?php echo htmlspecialchars($row['jenis_surat']); ?></td>
+                                <td data-label="Aksi">
+                                    <a href="klasifikasi_surat_edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     <form action="../core/klasifikasi_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                         <input type="hidden" name="action" value="delete">
@@ -113,17 +139,24 @@ if (isset($_SESSION['error_message'])) {
         <!-- Pagination -->
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                <?php
+                $query_params = http_build_query(array_filter(['limit' => $limit, 'keyword' => $keyword]));
+                for ($i = 1; $i <= $total_pages; $i++) :
+                ?>
                     <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                        <a class="page-link" href="klasifikasi_surat.php?page=<?php echo $i; ?>&keyword=<?php echo urlencode($keyword); ?>"><?php echo $i; ?></a>
+                        <a class="page-link" href="klasifikasi_surat.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
                     </li>
                 <?php endfor; ?>
             </ul>
         </nav>
+
+        <div class="text-muted mt-3">
+            Total data: <?php echo $total_data; ?>
+        </div>
     </div>
 </div>
 
-<!-- Modal Tambah/Edit Klasifikasi -->
+<!-- Modal Tambah Klasifikasi -->
 <div class="modal fade" id="klasifikasiModal" tabindex="-1" aria-labelledby="klasifikasiModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,8 +167,7 @@ if (isset($_SESSION['error_message'])) {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="action" value="add">
 
                     <div class="mb-3">
                         <label for="kode" class="form-label">Kode Klasifikasi</label>
@@ -148,7 +180,7 @@ if (isset($_SESSION['error_message'])) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
@@ -156,44 +188,12 @@ if (isset($_SESSION['error_message'])) {
 </div>
 
 <script>
-$(document).ready(function() {
-    // Reset form saat modal tambah dibuka
-    $('#btnTambah').on('click', function() {
-        $('#klasifikasiModalLabel').text('Tambah Klasifikasi');
-        $('#klasifikasiForm')[0].reset();
-        $('#action').val('add');
-        $('#id').val('');
-    });
-
-    // Isi form saat tombol edit diklik
-    $('.btn-edit').on('click', function() {
-        var id = $(this).data('id');
-
-        $('#klasifikasiModalLabel').text('Edit Klasifikasi');
-        $('#action').val('edit');
-        $('#id').val(id);
-
-        // AJAX request untuk mengambil data
-        $.ajax({
-            url: '../core/klasifikasi_fetch.php',
-            type: 'POST',
-            data: { id: id },
-            dataType: 'json',
-            success: function(data) {
-                if(data.status === 'success') {
-                    $('#kode').val(data.data.kode);
-                    $('#jenis_surat').val(data.data.jenis_surat);
-                    $('#klasifikasiModal').modal('show');
-                } else {
-                    alert('Gagal mengambil data: ' + data.message);
-                }
-            },
-            error: function() {
-                alert('Terjadi kesalahan. Tidak dapat mengambil data.');
-            }
+    $(document).ready(function() {
+        // Reset form saat modal tambah dibuka
+        $('#klasifikasiModal').on('shown.bs.modal', function() {
+            $('#klasifikasiForm')[0].reset();
         });
     });
-});
 </script>
 
 <?php

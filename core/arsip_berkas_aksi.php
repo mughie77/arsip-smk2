@@ -79,11 +79,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
 
         case 'edit':
-            $id = (int)$_POST['id'];
-            $no_berkas = mysqli_real_escape_string($koneksi, $_POST['no_berkas']);
-            $nama_berkas = mysqli_real_escape_string($koneksi, $_POST['nama_berkas']);
-            $tanggal_berkas = mysqli_real_escape_string($koneksi, $_POST['tanggal_berkas']);
-            $uraian = mysqli_real_escape_string($koneksi, $_POST['uraian']);
+            $id = (int)($_POST['id'] ?? 0);
+            $no_berkas = trim($_POST['no_berkas'] ?? '');
+            $nama_berkas = trim($_POST['nama_berkas'] ?? '');
+            $tanggal_berkas = trim($_POST['tanggal_berkas'] ?? '');
+            $uraian = trim($_POST['uraian'] ?? '');
+
+            if (empty($id) || empty($no_berkas) || empty($nama_berkas) || empty($tanggal_berkas)) {
+                $_SESSION['error_message'] = "Semua field wajib diisi.";
+                header("Location: ../admin/arsip_berkas_edit.php?id=" . $id);
+                exit;
+            }
 
             $file_path = $_POST['file_path_existing']; // File lama
 
@@ -91,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $file_result = upload_pdf($_FILES['nama_file_pdf'], $id);
                 if (isset($file_result['error'])) {
                     $_SESSION['error_message'] = $file_result['error'];
-                    header("Location: ../admin/arsip_berkas.php?action=edit&id=" . $id);
+                    header("Location: ../admin/arsip_berkas_edit.php?id=" . $id);
                     exit;
                 }
                 if (!empty($file_path) && file_exists("../uploads/berkas/" . $file_path)) {

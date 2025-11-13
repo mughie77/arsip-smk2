@@ -31,23 +31,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
 
         case 'edit':
-            $id = (int)$_POST['id'];
-            $kode = mysqli_real_escape_string($koneksi, $_POST['kode']);
-            $jenis_surat = mysqli_real_escape_string($koneksi, $_POST['jenis_surat']);
+            $id = (int)($_POST['id'] ?? 0);
+            $kode = trim($_POST['kode'] ?? '');
+            $jenis_surat = trim($_POST['jenis_surat'] ?? '');
 
             if (empty($id) || empty($kode) || empty($jenis_surat)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";
-            } else {
-                $query = "UPDATE klasifikasi_surat SET kode=?, jenis_surat=? WHERE id=?";
-                $stmt = mysqli_prepare($koneksi, $query);
-                mysqli_stmt_bind_param($stmt, "ssi", $kode, $jenis_surat, $id);
-                if (mysqli_stmt_execute($stmt)) {
-                    $_SESSION['success_message'] = "Klasifikasi berhasil diperbarui.";
-                } else {
-                    $_SESSION['error_message'] = "Error: " . mysqli_error($koneksi);
-                }
-                mysqli_stmt_close($stmt);
+                header("Location: ../admin/klasifikasi_surat_edit.php?id=" . $id);
+                exit;
             }
+
+            $stmt = $koneksi->prepare("UPDATE klasifikasi_surat SET kode = ?, jenis_surat = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $kode, $jenis_surat, $id);
+
+            if ($stmt->execute()) {
+                $_SESSION['success_message'] = "Klasifikasi berhasil diperbarui.";
+            } else {
+                $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
+            }
+            $stmt->close();
             header("Location: ../admin/klasifikasi_surat.php");
             exit;
 

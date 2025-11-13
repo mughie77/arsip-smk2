@@ -2,9 +2,7 @@
         </div>
     </div>
     <!-- End Main Content -->
-
 </div>
-
 <!-- Footer Universal -->
 <footer class="footer mt-auto py-3 bg-light border-top">
     <div class="container-fluid text-center">
@@ -24,11 +22,7 @@
 <!-- Custom Admin JS -->
 <script>
 $(document).ready(function() {
-    // Logika untuk toggle sidebar
-    $('#sidebarToggle').on('click', function() {
-        $('.sidebar').toggleClass('toggled');
-        $('.main-content').toggleClass('toggled');
-    });
+    // Custom JS can be added here in the future
 });
 </script>
 

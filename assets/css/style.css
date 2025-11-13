@@ -230,36 +230,15 @@ body {
 }
 
 
-/* === Reponsive Sidebar === */
-.sidebar {
-    width: 250px; /* Lebar sidebar */
+/* === Responsive Sidebar === */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+}
+
+#content {
+    width: calc(100% - 250px);
+    padding: 20px;
+    min-height: 100vh;
     transition: all 0.3s;
-}
-
-.main-content {
-    transition: margin-left 0.3s;
-}
-
-/* Tampilan Desktop */
-@media (min-width: 992px) {
-    .sidebar.toggled {
-        margin-left: -250px;
-    }
-    .main-content.toggled {
-        margin-left: -250px;
-    }
-}
-
-/* Tampilan Mobile */
-@media (max-width: 991.98px) {
-    .sidebar {
-        margin-left: -250px; /* Sembunyikan by default */
-    }
-    .sidebar.toggled {
-        margin-left: 0; /* Tampilkan saat ditoggle */
-    }
-    .main-content {
-        width: 100%;
-        margin-left: 0;
-    }
 }

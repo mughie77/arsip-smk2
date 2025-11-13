@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $action = $_REQUEST['action'] ?? '';
 
 // --- FUNGSI-FUNGSI BANTUAN ---
-function upload_file($file_input) {
+function upload_file($file_input)
+{
     $target_dir = "../uploads/surat_masuk/";
     if (!is_dir($target_dir)) {
         mkdir($target_dir, 0755, true);
@@ -45,7 +46,8 @@ function upload_file($file_input) {
     }
 }
 
-function delete_old_file($filename) {
+function delete_old_file($filename)
+{
     if (empty($filename)) return;
     $filepath = "../uploads/surat_masuk/" . $filename;
     if (file_exists($filepath)) {
@@ -88,10 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $koneksi->prepare("INSERT INTO surat_masuk (nomor_arsip, nomor_surat, perihal, asal_surat, tanggal_diterima, acc_kepada, nama_file_pdf) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("sssssss", $nomor_arsip, $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf);
 
-            if($stmt->execute()){
-                 $_SESSION['success_message'] = "Data surat masuk berhasil ditambahkan.";
+            if ($stmt->execute()) {
+                $_SESSION['success_message'] = "Data surat masuk berhasil ditambahkan.";
             } else {
-                 $_SESSION['error_message'] = "Gagal menyimpan data: " . $stmt->error;
+                $_SESSION['error_message'] = "Gagal menyimpan data: " . $stmt->error;
             }
             $stmt->close();
             header("Location: ../admin/surat_masuk.php");
@@ -108,8 +110,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (empty($id) || empty($nomor_surat) || empty($perihal) || empty($asal_surat) || empty($tanggal_diterima)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";
-                header("Location: ../admin/surat_masuk.php");
+                header("Location: ../admin/surat_masuk_edit.php?id=" . $id);
                 exit;
+            }
+
+            // Cek apakah tanggal diubah untuk regenerasi nomor arsip
+            $stmt_cek = $koneksi->prepare("SELECT tanggal_diterima, nomor_arsip FROM surat_masuk WHERE id=?");
+            $stmt_cek->bind_param("i", $id);
+            $stmt_cek->execute();
+            $result_cek = $stmt_cek->get_result();
+            $data_lama = $result_cek->fetch_assoc();
+            $stmt_cek->close();
+
+            $nomor_arsip = $data_lama['nomor_arsip'];
+            if ($tanggal_diterima !== $data_lama['tanggal_diterima']) {
+                $nomor_arsip = 'SM/' . date('Ymd', strtotime($tanggal_diterima)) . '/' . mt_rand(100, 999);
             }
 
             $nama_file_pdf_baru = $nama_file_pdf_lama;
@@ -118,20 +133,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $upload_result = upload_file($_FILES['nama_file_pdf']);
                 if ($upload_result['status'] == 'error') {
                     $_SESSION['error_message'] = $upload_result['message'];
-                    header("Location: ../admin/surat_masuk.php");
+                    header("Location: ../admin/surat_masuk_edit.php?id=" . $id);
                     exit;
                 }
                 $nama_file_pdf_baru = $upload_result['filename'];
                 delete_old_file($nama_file_pdf_lama);
             }
 
-            $stmt = $koneksi->prepare("UPDATE surat_masuk SET nomor_surat=?, perihal=?, asal_surat=?, tanggal_diterima=?, acc_kepada=?, nama_file_pdf=? WHERE id=?");
-            $stmt->bind_param("ssssssi", $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf_baru, $id);
+            $stmt = $koneksi->prepare("UPDATE surat_masuk SET nomor_arsip=?, nomor_surat=?, perihal=?, asal_surat=?, tanggal_diterima=?, acc_kepada=?, nama_file_pdf=? WHERE id=?");
+            $stmt->bind_param("sssssssi", $nomor_arsip, $nomor_surat, $perihal, $asal_surat, $tanggal_diterima, $acc_kepada, $nama_file_pdf_baru, $id);
 
-            if($stmt->execute()){
-                 $_SESSION['success_message'] = "Data surat masuk berhasil diperbarui.";
+            if ($stmt->execute()) {
+                $_SESSION['success_message'] = "Data surat masuk berhasil diperbarui.";
             } else {
-                 $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
+                $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
             }
             $stmt->close();
             header("Location: ../admin/surat_masuk.php");
@@ -140,23 +155,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'delete':
             $id = (int)($_POST['id'] ?? 0);
             if ($id === 0) {
-                 $_SESSION['error_message'] = "ID tidak valid.";
-                 header("Location: ../admin/surat_masuk.php");
-                 exit;
+                $_SESSION['error_message'] = "ID tidak valid.";
+                header("Location: ../admin/surat_masuk.php");
+                exit;
             }
 
             $stmt_get = $koneksi->prepare("SELECT nama_file_pdf FROM surat_masuk WHERE id=?");
             $stmt_get->bind_param("i", $id);
             $stmt_get->execute();
             $result = $stmt_get->get_result();
-            if($row = $result->fetch_assoc()){
+            if ($row = $result->fetch_assoc()) {
                 delete_old_file($row['nama_file_pdf']);
             }
             $stmt_get->close();
 
             $stmt_del = $koneksi->prepare("DELETE FROM surat_masuk WHERE id=?");
-            $stmt_del->bind_param("i",_id);
-            if($stmt_del->execute()){
+            $stmt_del->bind_param("i", $id);
+            if ($stmt_del->execute()) {
                 $_SESSION['success_message'] = "Data surat masuk berhasil dihapus.";
             } else {
                 $_SESSION['error_message'] = "Gagal menghapus data: " . $stmt_del->error;
@@ -166,9 +181,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
 
         default:
-             $_SESSION['error_message'] = "Aksi tidak valid.";
-             header("Location: ../admin/surat_masuk.php");
-             exit;
+            $_SESSION['error_message'] = "Aksi tidak valid.";
+            header("Location: ../admin/surat_masuk.php");
+            exit;
     }
 } else {
     header("Location: ../admin/surat_masuk.php");

@@ -43,6 +43,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
 
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -50,9 +51,9 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 </head>
 <body>
 
-<div class="d-flex">
+<div class="wrapper d-flex align-items-stretch">
     <!-- Sidebar -->
-    <nav class="sidebar d-flex flex-column p-0">
+    <nav id="sidebar" class="sidebar d-none d-lg-block">
         <div class="sidebar-header">
             <a href="./">
                 <i class="fas fa-archive"></i> Arsip<strong>Digital</strong>
@@ -108,10 +109,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <!-- End Sidebar -->
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div id="content" class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
-                <button class="btn btn-outline-secondary d-lg-none" type="button" id="sidebarToggle">
+                <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="ms-auto">
@@ -124,3 +125,58 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 
         <div class="container-fluid">
             <!-- Konten halaman akan dimulai di sini -->
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header sidebar-header">
+        <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="./">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'surat_masuk.php') ? 'active' : ''; ?>" href="surat_masuk">
+                    <i class="fas fa-envelope-open-text"></i> Surat Masuk
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'surat_keluar.php') ? 'active' : ''; ?>" href="surat_keluar">
+                    <i class="fas fa-paper-plane"></i> Surat Keluar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'notulen.php') ? 'active' : ''; ?>" href="notulen">
+                    <i class="fas fa-file-alt"></i> Daftar Notulen
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'arsip_berkas.php') ? 'active' : ''; ?>" href="arsip_berkas.php">
+                    <i class="fas fa-archive"></i> Arsip Berkas
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="klasifikasi_surat.php">
+                    <i class="fas fa-tags"></i> Klasifikasi Surat
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto">
+             <ul class="nav flex-column">
+                 <li class="nav-item">
+                    <a class="nav-link" href="pengaturan.php">
+                        <i class="fas fa-cog"></i> Pengaturan
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </div>
+</div>

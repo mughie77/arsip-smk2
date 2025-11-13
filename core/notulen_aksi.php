@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (empty($id) || empty($kegiatan) || empty($tanggal)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";
-                header("Location: ../admin/notulen.php");
+                header("Location: ../admin/notulen_edit.php?id=" . $id);
                 exit;
             }
 
@@ -111,9 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
                 $upload_result = upload_file($_FILES['nama_file']);
                 if ($upload_result['status'] == 'error') {
-                     $_SESSION['error_message'] = $upload_result['message'];
-                     header("Location: ../admin/notulen.php");
-                     exit;
+                    $_SESSION['error_message'] = $upload_result['message'];
+                    header("Location: ../admin/notulen_edit.php?id=" . $id);
+                    exit;
                 }
                 $nama_file_baru = $upload_result['filename'];
                 delete_old_file($nama_file_lama);
@@ -122,10 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $koneksi->prepare("UPDATE notulen SET tanggal=?, kegiatan=?, nama_file=? WHERE id=?");
             $stmt->bind_param("sssi", $tanggal, $kegiatan, $nama_file_baru, $id);
 
-            if($stmt->execute()){
+            if ($stmt->execute()) {
                 $_SESSION['success_message'] = "Data notulen berhasil diperbarui.";
             } else {
-                 $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
+                $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
             }
             $stmt->close();
             header("Location: ../admin/notulen.php");
