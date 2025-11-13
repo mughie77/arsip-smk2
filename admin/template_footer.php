@@ -22,15 +22,14 @@
 <!-- Custom Admin JS -->
 <script>
 $(document).ready(function() {
-    $('#sidebarToggle').on('click', function() {
+    $('#sidebarToggle').on('click', function(e) {
+        e.stopPropagation();
         $('#sidebar').toggleClass('active');
     });
 
     $('#content').on('click', function() {
-        if ($(window).width() < 992) {
-            if ($('#sidebar').hasClass('active')) {
-                $('#sidebar').removeClass('active');
-            }
+        if ($('#sidebar').hasClass('active')) {
+            $('#sidebar').removeClass('active');
         }
     });
 });
