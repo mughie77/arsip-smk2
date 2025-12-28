@@ -29,7 +29,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#lacakArsipModal">Lacak Arsip</a>
+                        <a class="nav-link" href="lacak_arsip.php">Lacak Arsip</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-premium ms-lg-3" href="login">
@@ -139,70 +139,10 @@
         </div>
     </footer>
 
-    <!-- Modal Lacak Arsip -->
-    <div class="modal fade" id="lacakArsipModal" tabindex="-1" aria-labelledby="lacakArsipModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="lacakArsipModalLabel"><i class="fas fa-search"></i> Lacak Status Arsip</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formLacakArsip">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="nomor_arsip_lacak" name="nomor_arsip" placeholder="Masukkan Nomor Arsip Anda..." required>
-                            <button class="btn btn-primary" type="submit" id="btnLacak">
-                                <span id="lacak-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                Lacak
-                            </button>
-                        </div>
-                    </form>
-                    <div id="hasilLacak" class="mt-4">
-                        <!-- Hasil pencarian akan ditampilkan di sini oleh jQuery/AJAX -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
-
-    <script defer>
-    $(document).ready(function() {
-        $('#formLacakArsip').on('submit', function(e) {
-            e.preventDefault();
-
-            var nomorArsip = $('#nomor_arsip_lacak').val();
-            var btn = $('#btnLacak');
-            var spinner = $('#lacak-spinner');
-            var hasilContainer = $('#hasilLacak');
-
-            $.ajax({
-                url: 'core/lacak_arsip_aksi.php',
-                type: 'POST',
-                data: { nomor_arsip: nomorArsip },
-                beforeSend: function() {
-                    btn.prop('disabled', true);
-                    spinner.removeClass('d-none');
-                    hasilContainer.html('<p class="text-center">Mencari...</p>');
-                },
-                success: function(response) {
-                    hasilContainer.html(response);
-                },
-                error: function() {
-                    hasilContainer.html('<div class="alert alert-danger">Terjadi kesalahan. Silakan coba lagi.</div>');
-                },
-                complete: function() {
-                    btn.prop('disabled', false);
-                    spinner.addClass('d-none');
-                }
-            });
-        });
-    });
-    </script>
 
 </body>
 </html>
