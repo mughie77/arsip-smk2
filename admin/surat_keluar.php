@@ -297,14 +297,18 @@ if (isset($_SESSION['error_message'])) {
 
 <script>
     $(document).ready(function() {
-        // Inisialisasi Select2 pada dropdown di dalam modal
-        $('#klasifikasi_id_add').select2({
-            theme: 'bootstrap-5',
-            dropdownParent: $('#suratKeluarModal')
-        });
-
-        // Reset form saat modal ditampilkan
+        // Event listener untuk saat modal ditampilkan
         $('#suratKeluarModal').on('shown.bs.modal', function(e) {
+            // Inisialisasi Select2 pada dropdown di dalam modal
+            if ($('#klasifikasi_id_add').data('select2')) {
+                $('#klasifikasi_id_add').select2('destroy');
+            }
+            $('#klasifikasi_id_add').select2({
+                theme: 'bootstrap-5',
+                dropdownParent: $('#suratKeluarModal')
+            });
+
+            // Reset form
             $('#suratKeluarForm')[0].reset();
             $('#klasifikasi_id_add').val(null).trigger('change');
         });
