@@ -29,7 +29,8 @@ function upload_pdf($file, $id = null)
         return ['error' => "Ukuran file maksimal adalah 5 MB."];
     }
 
-    // Validasi tipe MIME
+    // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+    /*
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_type = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
@@ -37,6 +38,7 @@ function upload_pdf($file, $id = null)
     if ($mime_type !== 'application/pdf') {
         return ['error' => "Tipe file tidak valid. Hanya PDF yang diizinkan."];
     }
+    */
 
     if (move_uploaded_file($file["tmp_name"], $target_file)) {
         return ['success' => $file_name];

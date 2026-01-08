@@ -77,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // Validasi tipe MIME
+                // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+                /*
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $mime_type = finfo_file($finfo, $_FILES['nama_file_pdf']['tmp_name']);
                 finfo_close($finfo);
@@ -87,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../admin/surat_keluar.php");
                     exit;
                 }
+                */
 
                 $new_file_name = uniqid() . '_' . time() . '.pdf';
                 if (move_uploaded_file($_FILES['nama_file_pdf']['tmp_name'], $upload_dir . $new_file_name)) {
@@ -178,7 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // Validasi tipe MIME
+                // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+                /*
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $mime_type = finfo_file($finfo, $_FILES['nama_file_pdf']['tmp_name']);
                 finfo_close($finfo);
@@ -188,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../admin/surat_keluar_edit.php?id=" . $id);
                     exit;
                 }
+                */
 
                 $new_file_name = uniqid() . '_' . time() . '.pdf';
                 if (move_uploaded_file($_FILES['nama_file_pdf']['tmp_name'], $upload_dir . $new_file_name)) {
