@@ -9,10 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $action = $_REQUEST['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $kode = mysqli_real_escape_string($koneksi, $_POST['kode']);
-            $jenis_surat = mysqli_real_escape_string($koneksi, $_POST['jenis_surat']);
+            $kode = $_POST['kode'] ?? '';
+            $jenis_surat = $_POST['jenis_surat'] ?? '';
 
             if (empty($kode) || empty($jenis_surat)) {
                 $_SESSION['error_message'] = "Kode dan Jenis Surat tidak boleh kosong.";
@@ -32,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = (int)($_POST['id'] ?? 0);
-            $kode = trim($_POST['kode'] ?? '');
-            $jenis_surat = trim($_POST['jenis_surat'] ?? '');
+            $kode = $_POST['kode'] ?? '';
+            $jenis_surat = $_POST['jenis_surat'] ?? '';
 
             if (empty($id) || empty($kode) || empty($jenis_surat)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";

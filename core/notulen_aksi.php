@@ -61,10 +61,13 @@ function delete_old_file($filename) {
 
 // --- ROUTING BERDASARKAN AKSI ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $kegiatan = trim($_POST['kegiatan'] ?? '');
-            $tanggal = trim($_POST['tanggal'] ?? '');
+            $kegiatan = $_POST['kegiatan'] ?? '';
+            $tanggal = $_POST['tanggal'] ?? '';
 
             if (empty($kegiatan) || empty($tanggal)) {
                  $_SESSION['error_message'] = "Kegiatan dan Tanggal tidak boleh kosong.";
@@ -97,9 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = (int)($_POST['id'] ?? 0);
-            $kegiatan = trim($_POST['kegiatan'] ?? '');
-            $tanggal = trim($_POST['tanggal'] ?? '');
-            $nama_file_lama = trim($_POST['nama_file_existing'] ?? '');
+            $kegiatan = $_POST['kegiatan'] ?? '';
+            $tanggal = $_POST['tanggal'] ?? '';
+            $nama_file_lama = $_POST['nama_file_existing'] ?? '';
 
             if (empty($id) || empty($kegiatan) || empty($tanggal)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";

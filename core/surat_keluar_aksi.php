@@ -9,14 +9,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $action = $_REQUEST['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
             // Ambil data dari form
-            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
+            $nomor_surat = $_POST['nomor_surat'] ?? '';
             $klasifikasi_id = (int)($_POST['klasifikasi_id'] ?? 0);
-            $tujuan_surat = trim($_POST['tujuan_surat'] ?? '');
-            $perihal = trim($_POST['perihal'] ?? '');
-            $tanggal_kirim = trim($_POST['tanggal_kirim'] ?? '');
+            $tujuan_surat = $_POST['tujuan_surat'] ?? '';
+            $perihal = $_POST['perihal'] ?? '';
+            $tanggal_kirim = $_POST['tanggal_kirim'] ?? '';
 
             // Validasi dasar
             if (empty($nomor_surat) || empty($klasifikasi_id) || empty($tujuan_surat) || empty($perihal) || empty($tanggal_kirim)) {
@@ -112,12 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'edit':
             // Ambil data dari form
             $id = (int)($_POST['id'] ?? 0);
-            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
+            $nomor_surat = $_POST['nomor_surat'] ?? '';
             $klasifikasi_id = (int)($_POST['klasifikasi_id'] ?? 0);
-            $tujuan_surat = trim($_POST['tujuan_surat'] ?? '');
-            $perihal = trim($_POST['perihal'] ?? '');
-            $tanggal_kirim = trim($_POST['tanggal_kirim'] ?? '');
-            $nama_file_pdf_existing = trim($_POST['nama_file_pdf_existing'] ?? '');
+            $tujuan_surat = $_POST['tujuan_surat'] ?? '';
+            $perihal = $_POST['perihal'] ?? '';
+            $tanggal_kirim = $_POST['tanggal_kirim'] ?? '';
+            $nama_file_pdf_existing = $_POST['nama_file_pdf_existing'] ?? '';
 
             // Validasi dasar
             if (empty($id) || empty($nomor_surat) || empty($klasifikasi_id) || empty($tujuan_surat) || empty($perihal) || empty($tanggal_kirim)) {

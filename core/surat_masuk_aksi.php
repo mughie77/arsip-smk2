@@ -57,13 +57,16 @@ function delete_old_file($filename)
 
 // --- ROUTING AKSI UTAMA ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
-            $perihal = trim($_POST['perihal'] ?? '');
-            $asal_surat = trim($_POST['asal_surat'] ?? '');
-            $tanggal_diterima = trim($_POST['tanggal_diterima'] ?? '');
-            $acc_kepada = trim($_POST['acc_kepada'] ?? '');
+            $nomor_surat = $_POST['nomor_surat'] ?? '';
+            $perihal = $_POST['perihal'] ?? '';
+            $asal_surat = $_POST['asal_surat'] ?? '';
+            $tanggal_diterima = $_POST['tanggal_diterima'] ?? '';
+            $acc_kepada = $_POST['acc_kepada'] ?? '';
 
             // Validasi input dasar
             if (empty($nomor_surat) || empty($perihal) || empty($asal_surat) || empty($tanggal_diterima)) {
