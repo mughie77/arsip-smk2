@@ -172,12 +172,12 @@ if (isset($_SESSION['error_message'])) {
                                 <td data-label="No"><?php echo $no++; ?></td>
                                 <td data-label="Kode Arsip" class="fw-bold"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
                                 <td data-label="Nomor Surat">
-                                    <?php echo htmlspecialchars($row['perihal']); ?>
+                                    <?php echo htmlspecialchars($row['nomor_surat']); ?>
                                     <br>
                                     <small class="text-muted"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></small>
                                 </td>
                                 <td data-label="Tujuan"><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
-                                <td data-label="Perihal"><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
+                                <td data-label="Perihal"><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td data-label="Tgl. Kirim"><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td data-label="Berkas">
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
