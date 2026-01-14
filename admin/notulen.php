@@ -22,8 +22,24 @@ if (count($where_clauses) > 0) {
     $query .= " WHERE " . implode(' AND ', $where_clauses);
 }
 
-$query .= " ORDER BY tanggal DESC";
+$limit = 20;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
+// Query untuk menghitung total data
+$count_query = "SELECT COUNT(*) as total FROM notulen";
+if (count($where_clauses) > 0) {
+    $count_query .= " WHERE " . implode(' AND ', $where_clauses);
+}
+$count_result = mysqli_query($koneksi, $count_query);
+$total_data = mysqli_fetch_assoc($count_result)['total'];
+$total_pages = ceil($total_data / $limit);
+
+// Query untuk mengambil data dengan limit dan offset
+if (count($where_clauses) > 0) {
+    $query .= " WHERE " . implode(' AND ', $where_clauses);
+}
+$query .= " ORDER BY tanggal DESC LIMIT $limit OFFSET $offset";
 $result = mysqli_query($koneksi, $query);
 
 if (!$result) {
@@ -98,17 +114,26 @@ if (!$result) {
                                 <td><?php echo date('d-m-Y', strtotime($row['tanggal'])); ?></td>
                                 <td><?php echo htmlspecialchars($row['kegiatan']); ?></td>
                                 <td>
-                                    <a href="../uploads/notulen/<?php echo htmlspecialchars($row['nama_file']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
-                                        <i class="fas fa-eye"></i> Lihat
-                                    </a>
+                                    <?php if (!empty($row['nama_file'])) : ?>
+                                        <a href="../uploads/notulen/<?php echo htmlspecialchars($row['nama_file']); ?>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                            <i class="fas fa-eye"></i> Lihat
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="text-muted">No File</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm btn-edit" data-id="<?php echo $row['id']; ?>">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <a href="../core/notulen_aksi.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <form action="../core/notulen_aksi.php" method="POST" style="display:inline-block;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -120,6 +145,20 @@ if (!$result) {
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <?php
+                $query_params = http_build_query(array_filter(['dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
+                for ($i = 1; $i <= $total_pages; $i++) :
+                ?>
+                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                        <a class="page-link" href="notulen.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -133,8 +172,10 @@ if (!$result) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" name="action" id="action" value="add">
+                    <input type="hidden" name="nama_file_existing" id="nama_file_existing">
 
                     <div class="mb-3">
                         <label for="kegiatan" class="form-label">Nama Kegiatan</label>
@@ -166,6 +207,7 @@ $(document).ready(function() {
         $('#notulenForm')[0].reset();
         $('#action').val('add');
         $('#id').val('');
+        $('#nama_file_existing').val('');
     });
 
     $('.btn-edit').on('click', function() {
@@ -184,6 +226,7 @@ $(document).ready(function() {
                 if(data.status === 'success') {
                     $('#kegiatan').val(data.data.kegiatan);
                     $('#tanggal').val(data.data.tanggal);
+                    $('#nama_file_existing').val(data.data.nama_file);
                     $('#notulenModal').modal('show');
                 } else {
                     alert('Gagal mengambil data: ' + data.message);

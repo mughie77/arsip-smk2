@@ -55,6 +55,7 @@ if (isset($_SESSION['admin_id'])) {
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 <label for="password">Password</label>
             </div>
+
             <div class="d-grid">
                 <button type="submit" class="btn btn-login">Login</button>
             </div>

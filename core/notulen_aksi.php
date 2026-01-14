@@ -4,26 +4,45 @@
 require_once '../config/koneksi.php';
 require_once '../admin/cek_sesi.php';
 
-$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once 'csrf_validator.php';
+}
+
+$action = $_REQUEST['action'] ?? '';
 
 // --- FUNGSI UNTUK MENGHANDLE UPLOAD FILE ---
 function upload_file($file_input) {
     $target_dir = "../uploads/notulen/";
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
+    }
+
     $file_extension = strtolower(pathinfo($file_input["name"], PATHINFO_EXTENSION));
     $new_file_name = "NTL-" . date("Ymd-His") . "-" . uniqid() . "." . $file_extension;
     $target_file = $target_dir . $new_file_name;
 
     // Validasi file
-    // 1. Cek ukuran file (maks 3MB)
-    if ($file_input["size"] > 3000000) {
+    if ($file_input["size"] > 3 * 1024 * 1024) { // Maks 3MB
         return ['status' => 'error', 'message' => 'Ukuran file terlalu besar. Maksimal 3MB.'];
     }
-    // 2. Cek tipe file (PDF, DOC, DOCX)
     $allowed_types = ['pdf', 'doc', 'docx'];
     if (!in_array($file_extension, $allowed_types)) {
         return ['status' => 'error', 'message' => 'Hanya file format PDF, DOC, atau DOCX yang diizinkan.'];
     }
-    // 3. Pindahkan file
+
+    // Validasi tipe MIME
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $file_input['tmp_name']);
+    finfo_close($finfo);
+    $allowed_mime_types = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (!in_array($mime_type, $allowed_mime_types)) {
+        return ['status' => 'error', 'message' => 'Tipe file tidak valid.'];
+    }
+
     if (move_uploaded_file($file_input["tmp_name"], $target_file)) {
         return ['status' => 'success', 'filename' => $new_file_name];
     } else {
@@ -33,6 +52,7 @@ function upload_file($file_input) {
 
 // --- FUNGSI UNTUK MENGHAPUS FILE LAMA ---
 function delete_old_file($filename) {
+    if (empty($filename)) return;
     $filepath = "../uploads/notulen/" . $filename;
     if (file_exists($filepath)) {
         unlink($filepath);
@@ -41,102 +61,112 @@ function delete_old_file($filename) {
 
 // --- ROUTING BERDASARKAN AKSI ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $safe_post = sanitize_input($_POST);
-    $kegiatan = $safe_post['kegiatan'];
-    $tanggal = $safe_post['tanggal'];
-
     switch ($action) {
         case 'add':
-            if (!isset($_FILES['nama_file']) || $_FILES['nama_file']['error'] == UPLOAD_ERR_NO_FILE) {
-                header("Location: ../admin/notulen?error=File wajib diunggah.");
-                exit();
+            $kegiatan = trim($_POST['kegiatan'] ?? '');
+            $tanggal = trim($_POST['tanggal'] ?? '');
+
+            if (empty($kegiatan) || empty($tanggal)) {
+                 $_SESSION['error_message'] = "Kegiatan dan Tanggal tidak boleh kosong.";
+                 header("Location: ../admin/notulen.php");
+                 exit;
             }
 
-            $upload_result = upload_file($_FILES['nama_file']);
-            if ($upload_result['status'] == 'error') {
-                header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
-                exit();
-            }
-            $nama_file = $upload_result['filename'];
-
-            $sql = "INSERT INTO notulen (tanggal, kegiatan, nama_file) VALUES (?, ?, ?)";
-            $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "sss", $tanggal, $kegiatan, $nama_file);
-
-            if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/notulen?success=Data berhasil ditambahkan.");
-            } else {
-                header("Location: ../admin/notulen?error=Gagal menyimpan data.");
-            }
-            mysqli_stmt_close($stmt);
-            break;
-
-        case 'edit':
-            $id = intval($safe_post['id']);
-            $nama_file_lama = '';
-
-            $sql_get_file = "SELECT nama_file FROM notulen WHERE id=?";
-            $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-            mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-            mysqli_stmt_execute($stmt_get_file);
-            $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-            if($row = mysqli_fetch_assoc($result_get_file)){
-                $nama_file_lama = $row['nama_file'];
-            }
-            mysqli_stmt_close($stmt_get_file);
-
-            $nama_file_baru = $nama_file_lama;
-
+            $nama_file = '';
             if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
                 $upload_result = upload_file($_FILES['nama_file']);
                 if ($upload_result['status'] == 'error') {
-                    header("Location: ../admin/notulen?error=" . urlencode($upload_result['message']));
-                    exit();
+                    $_SESSION['error_message'] = $upload_result['message'];
+                    header("Location: ../admin/notulen.php");
+                    exit;
+                }
+                $nama_file = $upload_result['filename'];
+            }
+
+            $stmt = $koneksi->prepare("INSERT INTO notulen (tanggal, kegiatan, nama_file) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $tanggal, $kegiatan, $nama_file);
+
+            if($stmt->execute()){
+                $_SESSION['success_message'] = "Data notulen berhasil ditambahkan.";
+            } else {
+                $_SESSION['error_message'] = "Gagal menyimpan data: " . $stmt->error;
+            }
+            $stmt->close();
+            header("Location: ../admin/notulen.php");
+            exit;
+
+        case 'edit':
+            $id = (int)($_POST['id'] ?? 0);
+            $kegiatan = trim($_POST['kegiatan'] ?? '');
+            $tanggal = trim($_POST['tanggal'] ?? '');
+            $nama_file_lama = trim($_POST['nama_file_existing'] ?? '');
+
+            if (empty($id) || empty($kegiatan) || empty($tanggal)) {
+                $_SESSION['error_message'] = "Data tidak lengkap.";
+                header("Location: ../admin/notulen.php");
+                exit;
+            }
+
+            $nama_file_baru = $nama_file_lama;
+            if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] == UPLOAD_ERR_OK) {
+                $upload_result = upload_file($_FILES['nama_file']);
+                if ($upload_result['status'] == 'error') {
+                     $_SESSION['error_message'] = $upload_result['message'];
+                     header("Location: ../admin/notulen.php");
+                     exit;
                 }
                 $nama_file_baru = $upload_result['filename'];
                 delete_old_file($nama_file_lama);
             }
 
-            $sql = "UPDATE notulen SET tanggal=?, kegiatan=?, nama_file=? WHERE id=?";
-            $stmt = mysqli_prepare($koneksi, $sql);
-            mysqli_stmt_bind_param($stmt, "sssi", $tanggal, $kegiatan, $nama_file_baru, $id);
+            $stmt = $koneksi->prepare("UPDATE notulen SET tanggal=?, kegiatan=?, nama_file=? WHERE id=?");
+            $stmt->bind_param("sssi", $tanggal, $kegiatan, $nama_file_baru, $id);
 
-            if(mysqli_stmt_execute($stmt)){
-                header("Location: ../admin/notulen?success=Data berhasil diperbarui.");
+            if($stmt->execute()){
+                $_SESSION['success_message'] = "Data notulen berhasil diperbarui.";
             } else {
-                header("Location: ../admin/notulen?error=Gagal memperbarui data.");
+                 $_SESSION['error_message'] = "Gagal memperbarui data: " . $stmt->error;
             }
-            mysqli_stmt_close($stmt);
-            break;
+            $stmt->close();
+            header("Location: ../admin/notulen.php");
+            exit;
+
+        case 'delete':
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id === 0) {
+                $_SESSION['error_message'] = "ID tidak valid.";
+                header("Location: ../admin/notulen.php");
+                exit;
+            }
+
+            $stmt_get = $koneksi->prepare("SELECT nama_file FROM notulen WHERE id=?");
+            $stmt_get->bind_param("i", $id);
+            $stmt_get->execute();
+            $result = $stmt_get->get_result();
+            if($row = $result->fetch_assoc()){
+                delete_old_file($row['nama_file']);
+            }
+            $stmt_get->close();
+
+            $stmt_del = $koneksi->prepare("DELETE FROM notulen WHERE id=?");
+            $stmt_del->bind_param("i", $id);
+
+            if($stmt_del->execute()){
+                $_SESSION['success_message'] = "Data notulen berhasil dihapus.";
+            } else {
+                $_SESSION['error_message'] = "Gagal menghapus data: " . $stmt_del->error;
+            }
+            $stmt_del->close();
+            header("Location: ../admin/notulen.php");
+            exit;
+
+        default:
+            $_SESSION['error_message'] = "Aksi tidak valid.";
+            header("Location: ../admin/notulen.php");
+            exit;
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'delete') {
-    $id = intval($_GET['id']);
-
-    $sql_get_file = "SELECT nama_file FROM notulen WHERE id=?";
-    $stmt_get_file = mysqli_prepare($koneksi, $sql_get_file);
-    mysqli_stmt_bind_param($stmt_get_file, "i", $id);
-    mysqli_stmt_execute($stmt_get_file);
-    $result_get_file = mysqli_stmt_get_result($stmt_get_file);
-    if($row = mysqli_fetch_assoc($result_get_file)){
-        delete_old_file($row['nama_file']);
-    }
-    mysqli_stmt_close($stmt_get_file);
-
-    $sql = "DELETE FROM notulen WHERE id=?";
-    $stmt = mysqli_prepare($koneksi, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
-
-    if(mysqli_stmt_execute($stmt)){
-        header("Location: ../admin/notulen?success=Data berhasil dihapus.");
-    } else {
-        header("Location: ../admin/notulen?error=Gagal menghapus data.");
-    }
-    mysqli_stmt_close($stmt);
-
 } else {
-    header("Location: ../admin/notulen");
+    header("Location: ../admin/notulen.php");
     exit();
 }
-
-mysqli_close($koneksi);
 ?>

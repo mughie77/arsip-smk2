@@ -1,7 +1,20 @@
+# --- Konfigurasi Halaman Error Kustom ---
+ErrorDocument 403 /error.php?code=403
+ErrorDocument 404 /404.php
+ErrorDocument 500 /error.php?code=500
+
 # Aktifkan Modul Rewrite Apache
 RewriteEngine On
 
-# Aturan untuk menghapus ekstensi .php dari URL
+# Aturan untuk menangani file .php yang tidak ditemukan
+# 1. Cek apakah permintaan adalah untuk file .php
+RewriteCond %{REQUEST_URI} \.php$
+# 2. Cek apakah file tersebut tidak ada
+RewriteCond %{REQUEST_FILENAME} !-f
+# 3. Arahkan ke halaman 404 kustom
+RewriteRule .* /404.php [L]
+
+# Aturan untuk menghapus ekstensi .php dari URL (URL bersih)
 # 1. Jangan terapkan aturan pada file atau direktori yang sudah ada
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -1,6 +1,29 @@
 <?php
+// --- Pengaturan Security Headers ---
+// Mencegah clickjacking
+header("X-Frame-Options: DENY");
+// Mencegah browser dari menebak tipe MIME
+header("X-Content-Type-Options: nosniff");
+// Mendorong penggunaan HTTPS
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+// Kebijakan Keamanan Konten (CSP) yang lebih ketat
+$csp = "default-src 'self'; " .
+       "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "font-src 'self' https://cdnjs.cloudflare.com; " .
+       "img-src 'self' data:;";
+header("Content-Security-Policy: " . $csp);
+
+
 // Memulai session dan memeriksa status login
 require_once 'cek_sesi.php';
+
+// --- Perlindungan CSRF ---
+// Buat token CSRF jika belum ada
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
 
 // Mendapatkan path skrip saat ini untuk menandai menu aktif
 $current_page = basename($_SERVER['SCRIPT_NAME']);
@@ -20,6 +43,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 </head>
 <body>
 
@@ -52,9 +79,24 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <i class="fas fa-file-alt"></i> Daftar Notulen
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'arsip_berkas.php') ? 'active' : ''; ?>" href="arsip_berkas.php">
+                    <i class="fas fa-archive"></i> Arsip Berkas
+                </a>
+            </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="klasifikasi_surat.php">
+                            <i class="fas fa-tags"></i> Klasifikasi Surat
+                        </a>
+                    </li>
         </ul>
         <div class="mt-auto">
              <ul class="nav flex-column">
+                 <li class="nav-item">
+                    <a class="nav-link" href="pengaturan.php">
+                        <i class="fas fa-cog"></i> Pengaturan
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
