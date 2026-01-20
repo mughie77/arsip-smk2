@@ -7,6 +7,7 @@ require_once '../config/koneksi.php';
 $dari_tanggal = $_GET['dari'] ?? '';
 $sampai_tanggal = $_GET['sampai'] ?? '';
 $keyword = $_GET['keyword'] ?? '';
+$klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] : 0;
 
 // Array untuk menyimpan parameter dan tipe data untuk bind_param
 $params = [];
@@ -29,6 +30,12 @@ if (!empty($keyword)) {
     $types .= 'ssss';
     $keyword_param = "%" . $keyword . "%";
     array_push($params, $keyword_param, $keyword_param, $keyword_param, $keyword_param);
+}
+
+if (!empty($klasifikasi_id)) {
+    $where_clauses[] = "sk.klasifikasi_id = ?";
+    $types .= 'i';
+    array_push($params, $klasifikasi_id);
 }
 
 if (count($where_clauses) > 0) {
@@ -68,7 +75,7 @@ $total_pages = ceil($total_data / $limit);
 
 
 // --- Query untuk mengambil data dengan limit dan offset ---
-$query .= " ORDER BY sk.tanggal_kirim DESC LIMIT ? OFFSET ?";
+$query .= " ORDER BY sk.created_at DESC LIMIT ? OFFSET ?";
 $types .= 'ii';
 array_push($params, $limit, $offset);
 
@@ -121,6 +128,16 @@ if (isset($_SESSION['error_message'])) {
             <div class="input-group">
                 <input type="date" class="form-control" name="dari" value="<?php echo $dari_tanggal; ?>" title="Dari Tanggal">
                 <input type="date" class="form-control" name="sampai" value="<?php echo $sampai_tanggal; ?>" title="Sampai Tanggal">
+                <select name="klasifikasi_id" id="klasifikasi_filter" class="form-select">
+                    <option value="">Semua Klasifikasi</option>
+                    <?php
+                    $q_klasifikasi = mysqli_query($koneksi, "SELECT * FROM klasifikasi_surat ORDER BY jenis_surat ASC");
+                    while ($klas = mysqli_fetch_assoc($q_klasifikasi)) {
+                        $selected = ($klasifikasi_id == $klas['id']) ? 'selected' : '';
+                        echo "<option value='{$klas['id']}' {$selected}>{$klas['kode']} - {$klas['jenis_surat']}</option>";
+                    }
+                    ?>
+                </select>
                 <input type="text" class="form-control" name="keyword" placeholder="Cari..." value="<?php echo htmlspecialchars($keyword); ?>">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 <a href="surat_keluar.php" class="btn btn-secondary"><i class="fas fa-sync-alt"></i></a>
@@ -297,9 +314,15 @@ if (isset($_SESSION['error_message'])) {
 
 <script>
     $(document).ready(function() {
-        // Event listener untuk saat modal ditampilkan
+        // Initialize Select2 for the filter dropdown
+        $('#klasifikasi_filter').select2({
+            theme: 'bootstrap-5',
+            width: '100%' // Ensure it fits well in the input group
+        });
+
+        // Event listener for when the modal is shown
         $('#suratKeluarModal').on('shown.bs.modal', function(e) {
-            // Inisialisasi Select2 pada dropdown di dalam modal
+            // Initialize Select2 on the dropdown inside the modal
             if ($('#klasifikasi_id_add').data('select2')) {
                 $('#klasifikasi_id_add').select2('destroy');
             }
