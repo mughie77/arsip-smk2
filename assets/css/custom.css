@@ -34,12 +34,13 @@
     }
     .table-responsive td {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end; /* Align content to the right */
         align-items: center;
         border: none;
         border-bottom: 1px solid #eee;
-        padding-left: 50%;
+        padding-left: 45%; /* Adjust padding to leave space for the label */
         position: relative;
+        text-align: right; /* Ensure text inside aligns to the right */
     }
     .table-responsive td::before {
         content: attr(data-label);
