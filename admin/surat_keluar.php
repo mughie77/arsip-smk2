@@ -9,6 +9,29 @@ $sampai_tanggal = $_GET['sampai'] ?? '';
 $keyword = $_GET['keyword'] ?? '';
 $klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] : 0;
 
+// --- Logika Pengurutan ---
+$sort_columns = ['kode_arsip', 'nomor_surat', 'tujuan_surat', 'perihal', 'tanggal_kirim'];
+$sort_by = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns) ? $_GET['sort'] : 'created_at';
+$sort_dir = isset($_GET['dir']) && in_array(strtoupper($_GET['dir']), ['ASC', 'DESC']) ? strtoupper($_GET['dir']) : 'DESC';
+
+// Fungsi bantuan untuk membuat link header tabel
+function sortable_header($title, $column, $current_sort, $current_dir) {
+    $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
+    $icon = '';
+    if ($current_sort == $column) {
+        $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
+    }
+
+    // Pertahankan parameter query yang ada
+    $query_params = $_GET;
+    $query_params['sort'] = $column;
+    $query_params['dir'] = $dir;
+
+    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
+}
+// --- Akhir Logika Pengurutan ---
+
+
 // Array untuk menyimpan parameter dan tipe data untuk bind_param
 $params = [];
 $types = '';
@@ -75,7 +98,7 @@ $total_pages = ceil($total_data / $limit);
 
 
 // --- Query untuk mengambil data dengan limit dan offset ---
-$query .= " ORDER BY sk.created_at DESC LIMIT ? OFFSET ?";
+$query .= " ORDER BY " . ($sort_by === 'created_at' ? 'sk.' : '') . "$sort_by $sort_dir LIMIT ? OFFSET ?";
 $types .= 'ii';
 array_push($params, $limit, $offset);
 
@@ -172,11 +195,11 @@ if (isset($_SESSION['error_message'])) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kode Arsip</th>
-                        <th>Nomor Surat</th>
-                        <th>Tujuan</th>
-                        <th>Perihal</th>
-                        <th>Tgl. Kirim</th>
+                        <th><?php echo sortable_header('Kode Arsip', 'kode_arsip', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Nomor Surat', 'nomor_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tujuan', 'tujuan_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Perihal', 'perihal', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tgl. Kirim', 'tanggal_kirim', $sort_by, $sort_dir); ?></th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
