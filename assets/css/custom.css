@@ -126,3 +126,11 @@
     color: inherit; /* Keep color the same on hover */
     text-decoration: none;
 }
+
+/* Responsive fix for main content area */
+@media (max-width: 991.98px) {
+    #content {
+        width: 100%;
+        padding: 1rem;
+    }
+}
