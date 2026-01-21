@@ -66,9 +66,6 @@
 }
 
 @media (max-width: 576px) {
-    .d-flex.gap-2 {
-        flex-direction: column;
-    }
     .input-group {
         flex-direction: column;
     }

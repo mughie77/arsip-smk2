@@ -112,7 +112,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
     <div id="content" class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
-                <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                <button class="btn btn-outline-secondary d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="ms-auto">
