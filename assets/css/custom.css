@@ -118,3 +118,14 @@
     margin-right: 10px;
     color: var(--accent-color);
 }
+
+/* Sortable Table Header Link Styles */
+.table-light th a {
+    color: inherit; /* Inherit color from the header */
+    text-decoration: none; /* Remove underline */
+}
+
+.table-light th a:hover {
+    color: inherit; /* Keep color the same on hover */
+    text-decoration: none;
+}
