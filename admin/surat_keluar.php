@@ -11,8 +11,18 @@ $klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] 
 
 // --- Logika Pengurutan ---
 $sort_columns = ['kode_arsip', 'nomor_surat', 'tujuan_surat', 'perihal', 'tanggal_kirim'];
-$sort_by = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns) ? $_GET['sort'] : 'created_at';
-$sort_dir = isset($_GET['dir']) && in_array(strtoupper($_GET['dir']), ['ASC', 'DESC']) ? strtoupper($_GET['dir']) : 'DESC';
+$is_user_sort = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns);
+
+if ($is_user_sort) {
+    $sort_by = $_GET['sort'];
+    $sort_dir = isset($_GET['dir']) && in_array(strtoupper($_GET['dir']), ['ASC', 'DESC']) ? strtoupper($_GET['dir']) : 'DESC';
+    $order_by_clause = "ORDER BY $sort_by $sort_dir";
+} else {
+    // Urutan default
+    $sort_by = 'tanggal_kirim'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
+    $sort_dir = 'DESC';
+    $order_by_clause = "ORDER BY sk.tanggal_kirim DESC, sk.created_at DESC";
+}
 
 // Fungsi bantuan untuk membuat link header tabel
 function sortable_header($title, $column, $current_sort, $current_dir) {
@@ -98,7 +108,7 @@ $total_pages = ceil($total_data / $limit);
 
 
 // --- Query untuk mengambil data dengan limit dan offset ---
-$query .= " ORDER BY " . ($sort_by === 'created_at' ? 'sk.' : '') . "$sort_by $sort_dir LIMIT ? OFFSET ?";
+$query .= " $order_by_clause LIMIT ? OFFSET ?";
 $types .= 'ii';
 array_push($params, $limit, $offset);
 
