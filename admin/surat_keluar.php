@@ -19,9 +19,9 @@ if ($is_user_sort) {
     $order_by_clause = "ORDER BY $sort_by $sort_dir";
 } else {
     // Urutan default
-    $sort_by = 'tanggal_kirim'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
+    $sort_by = 'nomor_surat'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
     $sort_dir = 'DESC';
-    $order_by_clause = "ORDER BY sk.tanggal_kirim DESC, sk.created_at DESC";
+    $order_by_clause = "ORDER BY sk.nomor_surat DESC";
 }
 
 // Fungsi bantuan untuk membuat link header tabel
@@ -77,7 +77,7 @@ if (count($where_clauses) > 0) {
 
 // Logika Pagination
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-if (!in_array($limit, [10, 20, 100])) $limit = 10;
+if (!in_array($limit, [10, 20, 30, 40, 50])) $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -191,7 +191,9 @@ if (isset($_SESSION['error_message'])) {
                 <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
                     <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
                     <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
-                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                    <option value="30" <?php if ($limit == 30) echo 'selected'; ?>>30</option>
+                    <option value="40" <?php if ($limit == 40) echo 'selected'; ?>>40</option>
+                    <option value="50" <?php if ($limit == 50) echo 'selected'; ?>>50</option>
                 </select>
             </form>
             <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
