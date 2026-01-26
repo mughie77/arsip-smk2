@@ -35,36 +35,26 @@
     .table-responsive td {
         border: none;
         border-bottom: 1px solid #eee;
-        padding: .6rem;
-        padding-left: 45%; /* Reserve space for the label */
+        padding: 0.8rem 0.8rem 0.8rem 40%; /* Top, Right, Bottom, Left */
         position: relative;
-        text-align: right; /* Align content to the right */
-        display: block; /* Ensure it behaves as a block for wrapping */
-        min-height: 2.75rem; /* Provide enough height for the centered label */
+        text-align: left; /* Align wrapped content cleanly */
+        display: block;
+        font-size: 0.9rem; /* Smaller font for content */
     }
     .table-responsive td::before {
         content: attr(data-label);
         position: absolute;
-        top: 50%;
-        left: 1rem; /* Add padding from the edge */
-        transform: translateY(-50%);
-        width: calc(45% - 2rem); /* Adjust width to account for padding */
+        top: 0.8rem; /* Align label to the top */
+        left: 0.8rem;
+        width: calc(40% - 1.6rem); /* Adjust width for padding */
         font-weight: bold;
         text-align: left;
-        white-space: nowrap; /* Prevent the label from wrapping */
+        font-size: 0.8rem; /* Smaller, distinct font for label */
+        white-space: normal; /* Allow labels to wrap */
     }
 
     body {
         font-size: 1rem;
-    }
-
-    .table-sm {
-        font-size: 1rem;
-    }
-
-    .table-sm th,
-    .table-sm td {
-        padding: 0.75rem;
     }
 }
 
