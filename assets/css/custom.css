@@ -33,23 +33,25 @@
         border: 1px solid #ddd;
     }
     .table-responsive td {
-        display: flex;
-        justify-content: flex-end; /* Align content to the right */
-        align-items: center;
         border: none;
         border-bottom: 1px solid #eee;
-        padding-left: 45%; /* Adjust padding to leave space for the label */
+        padding: .6rem;
+        padding-left: 45%; /* Reserve space for the label */
         position: relative;
-        text-align: right; /* Ensure text inside aligns to the right */
+        text-align: right; /* Align content to the right */
+        display: block; /* Ensure it behaves as a block for wrapping */
+        min-height: 2.75rem; /* Provide enough height for the centered label */
     }
     .table-responsive td::before {
         content: attr(data-label);
         position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 1rem;
+        top: 50%;
+        left: 1rem; /* Add padding from the edge */
+        transform: translateY(-50%);
+        width: calc(45% - 2rem); /* Adjust width to account for padding */
         font-weight: bold;
         text-align: left;
+        white-space: nowrap; /* Prevent the label from wrapping */
     }
 
     body {
