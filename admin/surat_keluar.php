@@ -4,21 +4,71 @@ require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
 // Logika Filter dan Pencarian
-$dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
-$sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
-$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
+$dari_tanggal = $_GET['dari'] ?? '';
+$sampai_tanggal = $_GET['sampai'] ?? '';
+$keyword = $_GET['keyword'] ?? '';
+$klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] : 0;
 
+// --- Logika Pengurutan ---
+$sort_columns = ['kode_arsip', 'nomor_surat', 'tujuan_surat', 'perihal', 'tanggal_kirim'];
+$is_user_sort = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns);
+
+if ($is_user_sort) {
+    $sort_by = $_GET['sort'];
+    $sort_dir = isset($_GET['dir']) && in_array(strtoupper($_GET['dir']), ['ASC', 'DESC']) ? strtoupper($_GET['dir']) : 'DESC';
+    $order_by_clause = "ORDER BY $sort_by $sort_dir";
+} else {
+    // Urutan default
+    $sort_by = 'nomor_surat'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
+    $sort_dir = 'DESC';
+    $order_by_clause = "ORDER BY sk.nomor_surat DESC";
+}
+
+// Fungsi bantuan untuk membuat link header tabel
+function sortable_header($title, $column, $current_sort, $current_dir) {
+    $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
+    $icon = '';
+    if ($current_sort == $column) {
+        $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
+    }
+
+    // Pertahankan parameter query yang ada
+    $query_params = $_GET;
+    $query_params['sort'] = $column;
+    $query_params['dir'] = $dir;
+
+    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
+}
+// --- Akhir Logika Pengurutan ---
+
+
+// Array untuk menyimpan parameter dan tipe data untuk bind_param
+$params = [];
+$types = '';
+
+// Query dasar
 $query = "SELECT sk.*, ks.kode as kode_klasifikasi, ks.jenis_surat
           FROM surat_keluar sk
           LEFT JOIN klasifikasi_surat ks ON sk.klasifikasi_id = ks.id";
 $where_clauses = [];
 
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    $where_clauses[] = "sk.tanggal_kirim BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+    $where_clauses[] = "sk.tanggal_kirim BETWEEN ? AND ?";
+    $types .= 'ss';
+    array_push($params, $dari_tanggal, $sampai_tanggal);
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(sk.kode_arsip LIKE '%$keyword%' OR sk.nomor_surat LIKE '%$keyword%' OR sk.perihal LIKE '%$keyword%' OR sk.tujuan_surat LIKE '%$keyword%')";
+    $where_clauses[] = "(sk.kode_arsip LIKE ? OR sk.nomor_surat LIKE ? OR sk.perihal LIKE ? OR sk.tujuan_surat LIKE ?)";
+    $types .= 'ssss';
+    $keyword_param = "%" . $keyword . "%";
+    array_push($params, $keyword_param, $keyword_param, $keyword_param, $keyword_param);
+}
+
+if (!empty($klasifikasi_id)) {
+    $where_clauses[] = "sk.klasifikasi_id = ?";
+    $types .= 'i';
+    array_push($params, $klasifikasi_id);
 }
 
 if (count($where_clauses) > 0) {
@@ -27,27 +77,50 @@ if (count($where_clauses) > 0) {
 
 // Logika Pagination
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-if (!in_array($limit, [10, 20, 100])) {
-    $limit = 10; // Nilai default jika input tidak valid
-}
+if (!in_array($limit, [10, 20, 30, 40, 50])) $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Query untuk menghitung total data
-$count_query = "SELECT COUNT(*) as total FROM surat_keluar sk";
+// --- Query untuk menghitung total data ---
+$count_query = "SELECT COUNT(*) as total
+                FROM surat_keluar sk
+                LEFT JOIN klasifikasi_surat ks ON sk.klasifikasi_id = ks.id";
 if (count($where_clauses) > 0) {
     $count_query .= " WHERE " . implode(' AND ', $where_clauses);
 }
-$count_result = mysqli_query($koneksi, $count_query);
-$total_data = mysqli_fetch_assoc($count_result)['total'];
+
+$stmt_count = $koneksi->prepare($count_query);
+if ($stmt_count && !empty($types)) {
+    // Create a temporary array for count parameters, excluding limit and offset
+    $count_params = array_slice($params, 0, count($params));
+    $count_types = substr($types, 0, strlen($types));
+    $stmt_count->bind_param($count_types, ...$count_params);
+}
+
+if ($stmt_count) {
+    $stmt_count->execute();
+    $total_data = $stmt_count->get_result()->fetch_assoc()['total'];
+    $stmt_count->close();
+} else {
+    $total_data = 0;
+}
 $total_pages = ceil($total_data / $limit);
 
-// Query untuk mengambil data dengan limit dan offset
-$query .= " ORDER BY sk.tanggal_kirim DESC LIMIT $limit OFFSET $offset";
-$result = mysqli_query($koneksi, $query);
+
+// --- Query untuk mengambil data dengan limit dan offset ---
+$query .= " $order_by_clause LIMIT ? OFFSET ?";
+$types .= 'ii';
+array_push($params, $limit, $offset);
+
+$stmt = $koneksi->prepare($query);
+if ($stmt && count($params) > 0) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 
 if (!$result) {
-    die("Query Error: " . mysqli_error($koneksi));
+    die("Query Error: " . $stmt->error);
 }
 ?>
 
@@ -88,6 +161,16 @@ if (isset($_SESSION['error_message'])) {
             <div class="input-group">
                 <input type="date" class="form-control" name="dari" value="<?php echo $dari_tanggal; ?>" title="Dari Tanggal">
                 <input type="date" class="form-control" name="sampai" value="<?php echo $sampai_tanggal; ?>" title="Sampai Tanggal">
+                <select name="klasifikasi_id" id="klasifikasi_filter" class="form-select">
+                    <option value="">Semua Klasifikasi</option>
+                    <?php
+                    $q_klasifikasi = mysqli_query($koneksi, "SELECT * FROM klasifikasi_surat ORDER BY jenis_surat ASC");
+                    while ($klas = mysqli_fetch_assoc($q_klasifikasi)) {
+                        $selected = ($klasifikasi_id == $klas['id']) ? 'selected' : '';
+                        echo "<option value='{$klas['id']}' {$selected}>{$klas['kode']} - {$klas['jenis_surat']}</option>";
+                    }
+                    ?>
+                </select>
                 <input type="text" class="form-control" name="keyword" placeholder="Cari..." value="<?php echo htmlspecialchars($keyword); ?>">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 <a href="surat_keluar.php" class="btn btn-secondary"><i class="fas fa-sync-alt"></i></a>
@@ -108,7 +191,9 @@ if (isset($_SESSION['error_message'])) {
                 <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
                     <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
                     <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
-                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                    <option value="30" <?php if ($limit == 30) echo 'selected'; ?>>30</option>
+                    <option value="40" <?php if ($limit == 40) echo 'selected'; ?>>40</option>
+                    <option value="50" <?php if ($limit == 50) echo 'selected'; ?>>50</option>
                 </select>
             </form>
             <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#suratKeluarModal" id="btnTambah">
@@ -122,11 +207,11 @@ if (isset($_SESSION['error_message'])) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kode Arsip</th>
-                        <th>Nomor Surat</th>
-                        <th>Tujuan</th>
-                        <th>Perihal</th>
-                        <th>Tgl. Kirim</th>
+                        <th><?php echo sortable_header('Kode Arsip', 'kode_arsip', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Nomor Surat', 'nomor_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tujuan', 'tujuan_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Perihal', 'perihal', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tgl. Kirim', 'tanggal_kirim', $sort_by, $sort_dir); ?></th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
@@ -139,12 +224,12 @@ if (isset($_SESSION['error_message'])) {
                                 <td data-label="No"><?php echo $no++; ?></td>
                                 <td data-label="Kode Arsip" class="fw-bold"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
                                 <td data-label="Nomor Surat">
-                                    <?php echo htmlspecialchars($row['perihal']); ?>
+                                    <?php echo htmlspecialchars($row['nomor_surat']); ?>
                                     <br>
                                     <small class="text-muted"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></small>
                                 </td>
                                 <td data-label="Tujuan"><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
-                                <td data-label="Perihal"><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
+                                <td data-label="Perihal"><?php echo htmlspecialchars($row['perihal']); ?></td>
                                 <td data-label="Tgl. Kirim"><?php echo date('d-m-Y', strtotime($row['tanggal_kirim'])); ?></td>
                                 <td data-label="Berkas">
                                     <?php if (!empty($row['nama_file_pdf'])) : ?>
@@ -264,14 +349,24 @@ if (isset($_SESSION['error_message'])) {
 
 <script>
     $(document).ready(function() {
-        // Inisialisasi Select2 pada dropdown di dalam modal
-        $('#klasifikasi_id_add').select2({
+        // Initialize Select2 for the filter dropdown
+        $('#klasifikasi_filter').select2({
             theme: 'bootstrap-5',
-            dropdownParent: $('#suratKeluarModal')
+            width: '100%' // Ensure it fits well in the input group
         });
 
-        // Reset form saat modal ditampilkan
+        // Event listener for when the modal is shown
         $('#suratKeluarModal').on('shown.bs.modal', function(e) {
+            // Initialize Select2 on the dropdown inside the modal
+            if ($('#klasifikasi_id_add').data('select2')) {
+                $('#klasifikasi_id_add').select2('destroy');
+            }
+            $('#klasifikasi_id_add').select2({
+                theme: 'bootstrap-5',
+                dropdownParent: $('#suratKeluarModal')
+            });
+
+            // Reset form
             $('#suratKeluarForm')[0].reset();
             $('#klasifikasi_id_add').val(null).trigger('change');
         });

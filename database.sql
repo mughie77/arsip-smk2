@@ -48,6 +48,7 @@ CREATE TABLE `surat_keluar` (
   `tanggal_kirim` date NOT NULL,
   `klasifikasi_id` int(11) DEFAULT NULL,
   `nama_file_pdf` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `klasifikasi_id` (`klasifikasi_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

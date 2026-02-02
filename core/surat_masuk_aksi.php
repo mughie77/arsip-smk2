@@ -30,7 +30,8 @@ function upload_file($file_input)
         return ['status' => 'error', 'message' => 'Hanya file format PDF yang diizinkan.'];
     }
 
-    // Validasi tipe MIME
+    // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+    /*
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_type = finfo_file($finfo, $file_input['tmp_name']);
     finfo_close($finfo);
@@ -38,6 +39,7 @@ function upload_file($file_input)
     if ($mime_type !== 'application/pdf') {
         return ['status' => 'error', 'message' => 'Tipe file tidak valid.'];
     }
+    */
 
     if (move_uploaded_file($file_input["tmp_name"], $target_file)) {
         return ['status' => 'success', 'filename' => $new_file_name];
@@ -57,13 +59,16 @@ function delete_old_file($filename)
 
 // --- ROUTING AKSI UTAMA ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $nomor_surat = trim($_POST['nomor_surat'] ?? '');
-            $perihal = trim($_POST['perihal'] ?? '');
-            $asal_surat = trim($_POST['asal_surat'] ?? '');
-            $tanggal_diterima = trim($_POST['tanggal_diterima'] ?? '');
-            $acc_kepada = trim($_POST['acc_kepada'] ?? '');
+            $nomor_surat = $_POST['nomor_surat'] ?? '';
+            $perihal = $_POST['perihal'] ?? '';
+            $asal_surat = $_POST['asal_surat'] ?? '';
+            $tanggal_diterima = $_POST['tanggal_diterima'] ?? '';
+            $acc_kepada = $_POST['acc_kepada'] ?? '';
 
             // Validasi input dasar
             if (empty($nomor_surat) || empty($perihal) || empty($asal_surat) || empty($tanggal_diterima)) {

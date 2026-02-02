@@ -33,42 +33,32 @@
         border: 1px solid #ddd;
     }
     .table-responsive td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         border: none;
         border-bottom: 1px solid #eee;
-        padding-left: 50%;
+        padding: 0.8rem 0.8rem 0.8rem 40%; /* Top, Right, Bottom, Left */
         position: relative;
+        text-align: left; /* Align wrapped content cleanly */
+        display: block;
+        font-size: 0.9rem; /* Smaller font for content */
     }
     .table-responsive td::before {
         content: attr(data-label);
         position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 1rem;
+        top: 0.8rem; /* Align label to the top */
+        left: 0.8rem;
+        width: calc(40% - 1.6rem); /* Adjust width for padding */
         font-weight: bold;
         text-align: left;
+        font-size: 0.8rem; /* Smaller, distinct font for label */
+        white-space: normal; /* Allow labels to wrap */
     }
 
     body {
         font-size: 1rem;
     }
-
-    .table-sm {
-        font-size: 1rem;
-    }
-
-    .table-sm th,
-    .table-sm td {
-        padding: 0.75rem;
-    }
 }
 
 @media (max-width: 576px) {
-    .d-flex.gap-2 {
-        flex-direction: column;
-    }
     .input-group {
         flex-direction: column;
     }
@@ -117,4 +107,23 @@
 #mobileMenu .nav-link i {
     margin-right: 10px;
     color: var(--accent-color);
+}
+
+/* Sortable Table Header Link Styles */
+.table-light th a {
+    color: inherit; /* Inherit color from the header */
+    text-decoration: none; /* Remove underline */
+}
+
+.table-light th a:hover {
+    color: inherit; /* Keep color the same on hover */
+    text-decoration: none;
+}
+
+/* Responsive fix for main content area */
+@media (max-width: 991.98px) {
+    #content {
+        width: 100%;
+        padding: 1rem;
+    }
 }

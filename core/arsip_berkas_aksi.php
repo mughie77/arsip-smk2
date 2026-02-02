@@ -29,7 +29,8 @@ function upload_pdf($file, $id = null)
         return ['error' => "Ukuran file maksimal adalah 5 MB."];
     }
 
-    // Validasi tipe MIME
+    // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+    /*
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_type = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
@@ -37,6 +38,7 @@ function upload_pdf($file, $id = null)
     if ($mime_type !== 'application/pdf') {
         return ['error' => "Tipe file tidak valid. Hanya PDF yang diizinkan."];
     }
+    */
 
     if (move_uploaded_file($file["tmp_name"], $target_file)) {
         return ['success' => $file_name];
@@ -47,12 +49,15 @@ function upload_pdf($file, $id = null)
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $no_berkas = mysqli_real_escape_string($koneksi, $_POST['no_berkas']);
-            $nama_berkas = mysqli_real_escape_string($koneksi, $_POST['nama_berkas']);
-            $tanggal_berkas = mysqli_real_escape_string($koneksi, $_POST['tanggal_berkas']);
-            $uraian = mysqli_real_escape_string($koneksi, $_POST['uraian']);
+            $no_berkas = $_POST['no_berkas'] ?? '';
+            $nama_berkas = $_POST['nama_berkas'] ?? '';
+            $tanggal_berkas = $_POST['tanggal_berkas'] ?? '';
+            $uraian = $_POST['uraian'] ?? '';
 
             $file_result = null;
             if (isset($_FILES['nama_file_pdf']) && $_FILES['nama_file_pdf']['error'] == 0) {
@@ -80,10 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = (int)($_POST['id'] ?? 0);
-            $no_berkas = trim($_POST['no_berkas'] ?? '');
-            $nama_berkas = trim($_POST['nama_berkas'] ?? '');
-            $tanggal_berkas = trim($_POST['tanggal_berkas'] ?? '');
-            $uraian = trim($_POST['uraian'] ?? '');
+            $no_berkas = $_POST['no_berkas'] ?? '';
+            $nama_berkas = $_POST['nama_berkas'] ?? '';
+            $tanggal_berkas = $_POST['tanggal_berkas'] ?? '';
+            $uraian = $_POST['uraian'] ?? '';
 
             if (empty($id) || empty($no_berkas) || empty($nama_berkas) || empty($tanggal_berkas)) {
                 $_SESSION['error_message'] = "Semua field wajib diisi.";

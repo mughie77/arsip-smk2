@@ -10,27 +10,53 @@ if (!in_array($limit, [10, 20, 100])) {
 }
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
-$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
+$keyword = $_GET['keyword'] ?? '';
 
-// Query untuk menghitung total data
+// Array untuk menyimpan parameter dan tipe data untuk bind_param
+$params = [];
+$types = '';
+
+$where_clauses = [];
+if (!empty($keyword)) {
+    $where_clauses[] = "(kode LIKE ? OR jenis_surat LIKE ?)";
+    $types .= 'ss';
+    $keyword_param = "%" . $keyword . "%";
+    array_push($params, $keyword_param, $keyword_param);
+}
+
+// --- Query untuk menghitung total data ---
 $count_query = "SELECT COUNT(*) as total FROM klasifikasi_surat";
-if (!empty($keyword)) {
-    $count_query .= " WHERE kode LIKE '%$keyword%' OR jenis_surat LIKE '%$keyword%'";
+if (count($where_clauses) > 0) {
+    $count_query .= " WHERE " . implode(' AND ', $where_clauses);
 }
-$count_result = mysqli_query($koneksi, $count_query);
-$total_data = mysqli_fetch_assoc($count_result)['total'];
+$stmt_count = $koneksi->prepare($count_query);
+if ($stmt_count && count($params) > 0) {
+    $stmt_count->bind_param($types, ...$params);
+}
+$stmt_count->execute();
+$total_data = $stmt_count->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_data / $limit);
+$stmt_count->close();
 
-// Query untuk mengambil data dengan limit dan offset
+
+// --- Query untuk mengambil data dengan limit dan offset ---
 $query = "SELECT * FROM klasifikasi_surat";
-if (!empty($keyword)) {
-    $query .= " WHERE kode LIKE '%$keyword%' OR jenis_surat LIKE '%$keyword%'";
+if (count($where_clauses) > 0) {
+    $query .= " WHERE " . implode(' AND ', $where_clauses);
 }
-$query .= " ORDER BY kode ASC LIMIT $limit OFFSET $offset";
-$result = mysqli_query($koneksi, $query);
+$query .= " ORDER BY kode ASC LIMIT ? OFFSET ?";
+$types .= 'ii';
+array_push($params, $limit, $offset);
+
+$stmt = $koneksi->prepare($query);
+if ($stmt && count($params) > 0) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 
 if (!$result) {
-    die("Query Error: " . mysqli_error($koneksi));
+    die("Query Error: " . $stmt->error);
 }
 ?>
 

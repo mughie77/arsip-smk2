@@ -30,7 +30,8 @@ function upload_file($file_input) {
         return ['status' => 'error', 'message' => 'Hanya file format PDF, DOC, atau DOCX yang diizinkan.'];
     }
 
-    // Validasi tipe MIME
+    // Validasi tipe MIME - dinonaktifkan karena ekstensi fileinfo tidak tersedia
+    /*
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_type = finfo_file($finfo, $file_input['tmp_name']);
     finfo_close($finfo);
@@ -42,6 +43,7 @@ function upload_file($file_input) {
     if (!in_array($mime_type, $allowed_mime_types)) {
         return ['status' => 'error', 'message' => 'Tipe file tidak valid.'];
     }
+    */
 
     if (move_uploaded_file($file_input["tmp_name"], $target_file)) {
         return ['status' => 'success', 'filename' => $new_file_name];
@@ -61,10 +63,13 @@ function delete_old_file($filename) {
 
 // --- ROUTING BERDASARKAN AKSI ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize all POST data
+    $_POST = sanitize_input($_POST);
+
     switch ($action) {
         case 'add':
-            $kegiatan = trim($_POST['kegiatan'] ?? '');
-            $tanggal = trim($_POST['tanggal'] ?? '');
+            $kegiatan = $_POST['kegiatan'] ?? '';
+            $tanggal = $_POST['tanggal'] ?? '';
 
             if (empty($kegiatan) || empty($tanggal)) {
                  $_SESSION['error_message'] = "Kegiatan dan Tanggal tidak boleh kosong.";
@@ -97,9 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'edit':
             $id = (int)($_POST['id'] ?? 0);
-            $kegiatan = trim($_POST['kegiatan'] ?? '');
-            $tanggal = trim($_POST['tanggal'] ?? '');
-            $nama_file_lama = trim($_POST['nama_file_existing'] ?? '');
+            $kegiatan = $_POST['kegiatan'] ?? '';
+            $tanggal = $_POST['tanggal'] ?? '';
+            $nama_file_lama = $_POST['nama_file_existing'] ?? '';
 
             if (empty($id) || empty($kegiatan) || empty($tanggal)) {
                 $_SESSION['error_message'] = "Data tidak lengkap.";

@@ -3,19 +3,61 @@ require_once 'template_header.php';
 require_once '../config/koneksi.php';
 
 // Logika Filter dan Pencarian
-$dari_tanggal = isset($_GET['dari']) ? $_GET['dari'] : '';
-$sampai_tanggal = isset($_GET['sampai']) ? $_GET['sampai'] : '';
-$keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($koneksi, $_GET['keyword']) : '';
+$dari_tanggal = $_GET['dari'] ?? '';
+$sampai_tanggal = $_GET['sampai'] ?? '';
+$keyword = $_GET['keyword'] ?? '';
 
+// --- Logika Pengurutan ---
+$sort_columns = ['nomor_arsip', 'nomor_surat', 'perihal', 'asal_surat', 'tanggal_diterima', 'acc_kepada'];
+$is_user_sort = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns);
+
+if ($is_user_sort) {
+    $sort_by = $_GET['sort'];
+    $sort_dir = isset($_GET['dir']) && in_array(strtoupper($_GET['dir']), ['ASC', 'DESC']) ? strtoupper($_GET['dir']) : 'DESC';
+    $order_by_clause = "ORDER BY $sort_by $sort_dir";
+} else {
+    // Urutan default
+    $sort_by = 'tanggal_diterima'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
+    $sort_dir = 'DESC';
+    $order_by_clause = "ORDER BY tanggal_diterima DESC";
+}
+
+// Fungsi bantuan untuk membuat link header tabel
+function sortable_header($title, $column, $current_sort, $current_dir) {
+    $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
+    $icon = '';
+    if ($current_sort == $column) {
+        $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
+    }
+
+    // Pertahankan parameter query yang ada
+    $query_params = $_GET;
+    $query_params['sort'] = $column;
+    $query_params['dir'] = $dir;
+
+    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
+}
+// --- Akhir Logika Pengurutan ---
+
+// Array untuk menyimpan parameter dan tipe data untuk bind_param
+$params = [];
+$types = '';
+
+// Query dasar
 $query = "SELECT * FROM surat_masuk";
 $where_clauses = [];
 
 if (!empty($dari_tanggal) && !empty($sampai_tanggal)) {
-    $where_clauses[] = "tanggal_diterima BETWEEN '$dari_tanggal' AND '$sampai_tanggal'";
+    $where_clauses[] = "tanggal_diterima BETWEEN ? AND ?";
+    $types .= 'ss';
+    array_push($params, $dari_tanggal, $sampai_tanggal);
 }
 
 if (!empty($keyword)) {
-    $where_clauses[] = "(nomor_arsip LIKE '%$keyword%' OR nomor_surat LIKE '%$keyword%' OR perihal LIKE '%$keyword%' OR asal_surat LIKE '%$keyword%')";
+    $where_clauses[] = "(nomor_arsip LIKE ? OR nomor_surat LIKE ? OR perihal LIKE ? OR asal_surat LIKE ?)";
+    $types .= 'ssss';
+    $keyword_param = "%" . $keyword . "%";
+    array_push($params, $keyword_param, $keyword_param, $keyword_param, $keyword_param);
 }
 
 if (count($where_clauses) > 0) {
@@ -24,27 +66,39 @@ if (count($where_clauses) > 0) {
 
 // Logika Pagination
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-if (!in_array($limit, [10, 20, 100])) {
-    $limit = 10; // Nilai default jika input tidak valid
-}
+if (!in_array($limit, [10, 20, 30, 40, 50])) $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Query untuk menghitung total data
+// --- Query untuk menghitung total data ---
 $count_query = "SELECT COUNT(*) as total FROM surat_masuk";
 if (count($where_clauses) > 0) {
     $count_query .= " WHERE " . implode(' AND ', $where_clauses);
 }
-$count_result = mysqli_query($koneksi, $count_query);
-$total_data = mysqli_fetch_assoc($count_result)['total'];
+$stmt_count = $koneksi->prepare($count_query);
+if ($stmt_count && count($params) > 0) {
+    $stmt_count->bind_param($types, ...$params);
+}
+$stmt_count->execute();
+$total_data = $stmt_count->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_data / $limit);
+$stmt_count->close();
 
-// Query untuk mengambil data dengan limit dan offset
-$query .= " ORDER BY tanggal_diterima DESC LIMIT $limit OFFSET $offset";
-$result = mysqli_query($koneksi, $query);
+
+// --- Query untuk mengambil data dengan limit dan offset ---
+$query .= " $order_by_clause LIMIT ? OFFSET ?";
+$types .= 'ii';
+array_push($params, $limit, $offset);
+
+$stmt = $koneksi->prepare($query);
+if ($stmt && count($params) > 0) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 
 if (!$result) {
-    die("Query Error: " . mysqli_error($koneksi));
+    die("Query Error: " . $stmt->error);
 }
 ?>
 
@@ -94,7 +148,9 @@ if (!$result) {
                 <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
                     <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
                     <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
-                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
+                    <option value="30" <?php if ($limit == 30) echo 'selected'; ?>>30</option>
+                    <option value="40" <?php if ($limit == 40) echo 'selected'; ?>>40</option>
+                    <option value="50" <?php if ($limit == 50) echo 'selected'; ?>>50</option>
                 </select>
             </form>
             <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#suratMasukModal" id="btnTambah">
@@ -108,12 +164,12 @@ if (!$result) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Nomor Arsip</th>
-                        <th>Nomor Surat</th>
-                        <th>Perihal</th>
-                        <th>Asal Surat</th>
-                        <th>Tanggal Diterima</th>
-                        <th>Acc Kepada</th>
+                        <th><?php echo sortable_header('Nomor Arsip', 'nomor_arsip', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Nomor Surat', 'nomor_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Perihal', 'perihal', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Asal Surat', 'asal_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tanggal Diterima', 'tanggal_diterima', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Acc Kepada', 'acc_kepada', $sort_by, $sort_dir); ?></th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
