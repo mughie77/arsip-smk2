@@ -24,7 +24,7 @@ if (count($where_clauses) > 0) {
 
 // Logika Pagination
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-if (!in_array($limit, [10, 20, 100])) {
+if (!in_array($limit, [10, 20, 30, 40, 50])) {
     $limit = 10; // Nilai default jika input tidak valid
 }
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -78,21 +78,9 @@ if (!$result) {
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="fas fa-table"></i> Daftar Arsip Berkas</span>
-        <div>
-            <form method="GET" action="arsip_berkas.php" class="d-inline-block">
-                <input type="hidden" name="dari" value="<?php echo $dari_tanggal; ?>">
-                <input type="hidden" name="sampai" value="<?php echo $sampai_tanggal; ?>">
-                <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
-                <select name="limit" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
-                    <option value="10" <?php if ($limit == 10) echo 'selected'; ?>>10</option>
-                    <option value="20" <?php if ($limit == 20) echo 'selected'; ?>>20</option>
-                    <option value="100" <?php if ($limit == 100) echo 'selected'; ?>>100</option>
-                </select>
-            </form>
-            <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
-                <i class="fas fa-plus"></i> Tambah Data
-            </button>
-        </div>
+        <button type="button" class="btn btn-primary btn-sm d-sm-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
+            <i class="fas fa-plus"></i> Tambah Data
+        </button>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -154,17 +142,72 @@ if (!$result) {
             <ul class="pagination justify-content-center">
                 <?php
                 $query_params = http_build_query(array_filter(['limit' => $limit, 'dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
-                for ($i = 1; $i <= $total_pages; $i++) :
+
+                // Tombol Sebelumnya
+                $prev_disabled = ($page <= 1) ? 'disabled' : '';
+                echo "<li class='page-item $prev_disabled'><a class='page-link' href='arsip_berkas.php?page=" . ($page - 1) . "&$query_params'><i class='fas fa-chevron-left'></i></a></li>";
+
+                // Angka Halaman
+                $adjacents = 1;
+                if ($total_pages <= 7) {
+                    for ($i = 1; $i <= $total_pages; $i++) {
+                        $active = ($i == $page) ? 'active' : '';
+                        echo "<li class='page-item $active'><a class='page-link' href='arsip_berkas.php?page=$i&$query_params'>$i</a></li>";
+                    }
+                } else {
+                    if ($page <= 4) {
+                        for ($i = 1; $i <= 5; $i++) {
+                            $active = ($i == $page) ? 'active' : '';
+                            echo "<li class='page-item $active'><a class='page-link' href='arsip_berkas.php?page=$i&$query_params'>$i</a></li>";
+                        }
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                        echo "<li class='page-item'><a class='page-link' href='arsip_berkas.php?page=$total_pages&$query_params'>$total_pages</a></li>";
+                    } elseif ($page > 4 && $page < $total_pages - 3) {
+                        echo "<li class='page-item'><a class='page-link' href='arsip_berkas.php?page=1&$query_params'>1</a></li>";
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                        for ($i = $page - $adjacents; $i <= $page + $adjacents; $i++) {
+                            $active = ($i == $page) ? 'active' : '';
+                            echo "<li class='page-item $active'><a class='page-link' href='arsip_berkas.php?page=$i&$query_params'>$i</a></li>";
+                        }
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                        echo "<li class='page-item'><a class='page-link' href='arsip_berkas.php?page=$total_pages&$query_params'>$total_pages</a></li>";
+                    } else {
+                        echo "<li class='page-item'><a class='page-link' href='arsip_berkas.php?page=1&$query_params'>1</a></li>";
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                        for ($i = $total_pages - 4; $i <= $total_pages; $i++) {
+                            $active = ($i == $page) ? 'active' : '';
+                            echo "<li class='page-item $active'><a class='page-link' href='arsip_berkas.php?page=$i&$query_params'>$i</a></li>";
+                        }
+                    }
+                }
+
+                // Tombol Berikutnya
+                $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
+                echo "<li class='page-item $next_disabled'><a class='page-link' href='arsip_berkas.php?page=" . ($page + 1) . "&$query_params'><i class='fas fa-chevron-right'></i></a></li>";
                 ?>
-                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                        <a class="page-link" href="arsip_berkas.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
-                    </li>
-                <?php endfor; ?>
             </ul>
         </nav>
 
-        <div class="text-muted mt-3">
-            Total data: <?php echo $total_data; ?>
+        <div class="pagination-info-container">
+            <div>
+                <?php
+                $start_data = ($total_data > 0) ? ($offset + 1) : 0;
+                $end_data = min($page * $limit, $total_data);
+                echo "Menampilkan $start_data - $end_data dari $total_data";
+                ?>
+            </div>
+            <div>
+                <form method="GET" action="arsip_berkas.php" class="d-inline-block">
+                    <input type="hidden" name="dari" value="<?php echo $dari_tanggal; ?>">
+                    <input type="hidden" name="sampai" value="<?php echo $sampai_tanggal; ?>">
+                    <input type="hidden" name="keyword" value="<?php echo htmlspecialchars($keyword); ?>">
+                    <select name="limit" class="pagination-limit-select" onchange="this.form.submit()">
+                        <?php foreach ([10, 20, 30, 40, 50] as $opt) : ?>
+                            <option value="<?php echo $opt; ?>" <?php if ($limit == $opt) echo 'selected'; ?>><?php echo $opt; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
         </div>
     </div>
 </div>
