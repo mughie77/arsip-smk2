@@ -84,7 +84,7 @@
                         FROM surat_keluar WHERE kode_arsip = ? OR nomor_surat = ?)
                         UNION
                         (SELECT
-                            id, no_berkas as no_identitas, nama_berkas as nomor_surat, '-' as perihal, '-' as pihak_terkait, tanggal_berkas as tanggal, nama_file_pdf, 'Arsip Berkas' as jenis, 'arsip_berkas' as tipe_folder
+                            id, no_berkas as no_identitas, nama_berkas as nomor_surat, '-' as perihal, '-' as pihak_terkait, tanggal_berkas as tanggal, file_path as nama_file_pdf, 'Arsip Berkas' as jenis, 'arsip_berkas' as tipe_folder
                         FROM arsip_berkas WHERE no_berkas = ?)
                     ";
 
@@ -161,9 +161,6 @@
                     mysqli_close($koneksi);
                 }
                 ?>
-            </div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
