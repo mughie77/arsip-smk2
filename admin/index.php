@@ -36,34 +36,25 @@ $result_ab = mysqli_query($koneksi, $query_ab);
 $data_ab = mysqli_fetch_assoc($result_ab);
 $total_arsip_berkas = $data_ab['total_arsip_berkas'];
 
-// --- Ambil Data Bulanan untuk Grafik (Tahun Berjalan) ---
-$current_year = date('Y');
-$monthly_sm = array_fill(1, 12, 0);
-$monthly_sk = array_fill(1, 12, 0);
+// --- Ambil Data 30 Hari Terakhir untuk Grafik ---
+$labels = [];
+$daily_sm = [];
+$daily_sk = [];
 
-// Data Bulanan Surat Masuk
-$query_sm_monthly = "SELECT MONTH(tanggal_diterima) as bulan, COUNT(id) as total
-                     FROM surat_masuk
-                     WHERE YEAR(tanggal_diterima) = '$current_year'
-                     GROUP BY MONTH(tanggal_diterima)";
-$res_sm_monthly = mysqli_query($koneksi, $query_sm_monthly);
-while ($row = mysqli_fetch_assoc($res_sm_monthly)) {
-    $monthly_sm[(int)$row['bulan']] = (int)$row['total'];
+// Loop 30 hari terakhir
+for ($i = 29; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $display_date = date('d M', strtotime($date));
+    $labels[] = $display_date;
+
+    // Surat Masuk hari ini
+    $q_sm = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM surat_masuk WHERE DATE(tanggal_diterima) = '$date'");
+    $daily_sm[] = (int)mysqli_fetch_assoc($q_sm)['total'];
+
+    // Surat Keluar hari ini
+    $q_sk = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM surat_keluar WHERE DATE(tanggal_kirim) = '$date'");
+    $daily_sk[] = (int)mysqli_fetch_assoc($q_sk)['total'];
 }
-
-// Data Bulanan Surat Keluar
-$query_sk_monthly = "SELECT MONTH(tanggal_kirim) as bulan, COUNT(id) as total
-                     FROM surat_keluar
-                     WHERE YEAR(tanggal_kirim) = '$current_year'
-                     GROUP BY MONTH(tanggal_kirim)";
-$res_sk_monthly = mysqli_query($koneksi, $query_sk_monthly);
-while ($row = mysqli_fetch_assoc($res_sk_monthly)) {
-    $monthly_sk[(int)$row['bulan']] = (int)$row['total'];
-}
-
-$months_labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-$data_sm_values = array_values($monthly_sm);
-$data_sk_values = array_values($monthly_sk);
 ?>
 
 <!-- Judul Halaman -->
@@ -158,7 +149,7 @@ $data_sk_values = array_values($monthly_sk);
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="card-title mb-0">Grafik Entry Surat (<?php echo $current_year; ?>)</h5>
+                <h5 class="card-title mb-0">Statistik Entry Surat (30 Hari Terakhir)</h5>
             </div>
             <div class="card-body">
                 <canvas id="arsipChart"></canvas>
@@ -175,11 +166,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const arsipChart = new Chart(ctx, {
         type: 'line', // Tipe grafik adalah line chart
         data: {
-            labels: <?php echo json_encode($months_labels); ?>,
+            labels: <?php echo json_encode($labels); ?>,
             datasets: [
                 {
                     label: 'Surat Masuk',
-                    data: <?php echo json_encode($data_sm_values); ?>,
+                    data: <?php echo json_encode($daily_sm); ?>,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 2,
@@ -188,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 {
                     label: 'Surat Keluar',
-                    data: <?php echo json_encode($data_sk_values); ?>,
+                    data: <?php echo json_encode($daily_sk); ?>,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
@@ -217,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 title: {
                     display: true,
-                    text: 'Statistik Entry Surat Masuk & Keluar Bulanan'
+                    text: 'Statistik Entry Surat Masuk & Keluar 30 Hari Terakhir'
                 }
             }
         }
