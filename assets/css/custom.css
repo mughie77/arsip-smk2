@@ -110,20 +110,106 @@
 }
 
 /* Sortable Table Header Link Styles */
-.table-light th a {
-    color: inherit; /* Inherit color from the header */
-    text-decoration: none; /* Remove underline */
+.table thead th a {
+    color: inherit !important;
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
-.table-light th a:hover {
-    color: inherit; /* Keep color the same on hover */
+.table thead th a i {
+    margin-left: 8px;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+.table thead th a i.fa-sort-up,
+.table thead th a i.fa-sort-down {
+    opacity: 1;
+}
+
+/* Pagination Design (Amazon Style) */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.pagination-amazon {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15,17,17,.15);
+}
+
+.pagination-amazon .page-item {
+    display: flex;
+    align-items: center;
+}
+
+.pagination-amazon .page-link {
+    display: block;
+    padding: 8px 16px;
+    color: #0f1111;
     text-decoration: none;
+    border: none;
+    background: none;
+    border-right: 1px solid #d5d9d9;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.pagination-amazon .page-item:last-child .page-link {
+    border-right: none;
+}
+
+.pagination-amazon .page-item.active .page-link {
+    border: 2px solid #0f1111;
+    font-weight: 700;
+    margin: -1px;
+    position: relative;
+    z-index: 1;
+    background-color: #fff;
+}
+
+.pagination-amazon .page-item.disabled .page-link {
+    color: #565959;
+    cursor: not-allowed;
+}
+
+.pagination-amazon .page-item:not(.active):not(.disabled) .page-link:hover {
+    background-color: #f7fafa;
+}
+
+.pagination-amazon .page-link i {
+    font-size: 12px;
 }
 
 /* Responsive fix for main content area */
 @media (max-width: 991.98px) {
     #content {
-        width: 100%;
-        padding: 1rem;
+        width: 100% !important;
+        padding: 0.5rem !important;
+    }
+    .main-content {
+        padding: 0.5rem !important;
+    }
+    .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination-amazon .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }

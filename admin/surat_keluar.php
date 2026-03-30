@@ -10,7 +10,7 @@ $keyword = $_GET['keyword'] ?? '';
 $klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] : 0;
 
 // --- Logika Pengurutan ---
-$sort_columns = ['kode_arsip', 'nomor_surat', 'tujuan_surat', 'perihal', 'tanggal_kirim'];
+$sort_columns = ['nomor_surat'];
 $is_user_sort = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns);
 
 if ($is_user_sort) {
@@ -19,7 +19,7 @@ if ($is_user_sort) {
     $order_by_clause = "ORDER BY $sort_by $sort_dir";
 } else {
     // Urutan default
-    $sort_by = 'nomor_surat'; // Atur untuk header agar ikon ditampilkan dengan benar saat default
+    $sort_by = 'nomor_surat';
     $sort_dir = 'DESC';
     $order_by_clause = "ORDER BY sk.nomor_surat DESC";
 }
@@ -27,9 +27,11 @@ if ($is_user_sort) {
 // Fungsi bantuan untuk membuat link header tabel
 function sortable_header($title, $column, $current_sort, $current_dir) {
     $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
-    $icon = '';
+
     if ($current_sort == $column) {
         $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
+    } else {
+        $icon = ' <i class="fas fa-sort"></i>';
     }
 
     // Pertahankan parameter query yang ada
@@ -207,11 +209,11 @@ if (isset($_SESSION['error_message'])) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th><?php echo sortable_header('Kode Arsip', 'kode_arsip', $sort_by, $sort_dir); ?></th>
+                        <th>Kode Arsip</th>
                         <th><?php echo sortable_header('Nomor Surat', 'nomor_surat', $sort_by, $sort_dir); ?></th>
-                        <th><?php echo sortable_header('Tujuan', 'tujuan_surat', $sort_by, $sort_dir); ?></th>
-                        <th><?php echo sortable_header('Perihal', 'perihal', $sort_by, $sort_dir); ?></th>
-                        <th><?php echo sortable_header('Tgl. Kirim', 'tanggal_kirim', $sort_by, $sort_dir); ?></th>
+                        <th>Tujuan</th>
+                        <th>Perihal</th>
+                        <th>Tgl. Kirim</th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
@@ -265,18 +267,45 @@ if (isset($_SESSION['error_message'])) {
         </div>
 
         <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
+        <div class="pagination-container">
+            <ul class="pagination-amazon">
                 <?php
-                $query_params = http_build_query(array_filter(['limit' => $limit, 'dari' => $dari_tanggal, 'sampai' => $sampai_tanggal, 'keyword' => $keyword]));
-                for ($i = 1; $i <= $total_pages; $i++) :
+                $query_params_base = array_filter([
+                    'limit' => $limit,
+                    'dari' => $dari_tanggal,
+                    'sampai' => $sampai_tanggal,
+                    'klasifikasi_id' => $klasifikasi_id ?: null,
+                    'keyword' => $keyword,
+                    'sort' => $is_user_sort ? $sort_by : null,
+                    'dir' => $is_user_sort ? $sort_dir : null
+                ]);
+
+                // Tombol Sebelumnya
+                $prev_disabled = ($page <= 1) ? 'disabled' : '';
+                $prev_page = ($page > 1) ? $page - 1 : 1;
+                $prev_params = array_merge($query_params_base, ['page' => $prev_page]);
+                echo "<li class='page-item $prev_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($prev_params) . "'><i class='fas fa-chevron-left'></i> Sebelumnya</a></li>";
+
+                // Logika Halaman Terpotong
+                $range = 2;
+                for ($i = 1; $i <= $total_pages; $i++) {
+                    if ($i == 1 || $i == $total_pages || ($i >= $page - $range && $i <= $page + $range)) {
+                        $active = ($i == $page) ? 'active' : '';
+                        $page_params = array_merge($query_params_base, ['page' => $i]);
+                        echo "<li class='page-item $active'><a class='page-link' href='surat_keluar.php?" . http_build_query($page_params) . "'>$i</a></li>";
+                    } elseif ($i == $page - $range - 1 || $i == $page + $range + 1) {
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                    }
+                }
+
+                // Tombol Selanjutnya
+                $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
+                $next_page = ($page < $total_pages) ? $page + 1 : $total_pages;
+                $next_params = array_merge($query_params_base, ['page' => $next_page]);
+                echo "<li class='page-item $next_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($next_params) . "'>Selanjutnya <i class='fas fa-chevron-right'></i></a></li>";
                 ?>
-                    <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                        <a class="page-link" href="surat_keluar.php?page=<?php echo $i; ?>&<?php echo $query_params; ?>"><?php echo $i; ?></a>
-                    </li>
-                <?php endfor; ?>
             </ul>
-        </nav>
+        </div>
 
         <div class="text-muted mt-3">
             Total data: <?php echo $total_data; ?>
