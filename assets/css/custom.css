@@ -110,24 +110,28 @@
 }
 
 /* Sortable Table Header Link Styles */
-.table thead th a {
+table thead th a {
     color: inherit !important;
     text-decoration: none !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    gap: 8px;
 }
 
-.table thead th a i {
-    margin-left: 8px;
-    font-size: 0.8rem;
-    opacity: 0.5;
+table thead th a i {
+    font-size: 0.75rem;
+    opacity: 0.3;
+    transition: opacity 0.2s;
 }
 
-.table thead th a i.fa-sort-up,
-.table thead th a i.fa-sort-down {
+table thead th a:hover i {
+    opacity: 0.6;
+}
+
+table thead th a i.fa-sort-up,
+table thead th a i.fa-sort-down {
     opacity: 1;
+    color: var(--accent-color);
 }
 
 /* Pagination Design (New Style) */

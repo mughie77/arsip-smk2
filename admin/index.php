@@ -62,104 +62,71 @@ for ($i = 29; $i >= 0; $i--) {
 ?>
 
 <!-- Judul Halaman -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h1 class="h3">Dashboard</h1>
-        <p class="text-muted">Ringkasan data arsip digital Anda.</p>
-    </div>
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
+    <p class="text-slate-500 mt-1 font-medium text-lg">Ringkasan data arsip digital Anda secara real-time.</p>
 </div>
 
 <!-- Kartu Statistik -->
-<div class="row">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100 shadow-sm card-statistic">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <i class="fas fa-envelope-open-text fa-3x text-primary"></i>
-                    </div>
-                    <div class="col">
-                        <h5 class="card-title text-muted mb-1">Surat Masuk</h5>
-                        <h3 class="fw-bold"><?php echo $total_surat_masuk; ?></h3>
-                    </div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
+    <?php
+    $stats = [
+        ['label' => 'Surat Masuk', 'value' => $total_surat_masuk, 'icon' => 'envelope-open-text', 'color' => 'blue'],
+        ['label' => 'Surat Keluar', 'value' => $total_surat_keluar, 'icon' => 'paper-plane', 'color' => 'emerald'],
+        ['label' => 'Notulen', 'value' => $total_notulen, 'icon' => 'file-alt', 'color' => 'amber'],
+        ['label' => 'Klasifikasi', 'value' => $total_klasifikasi, 'icon' => 'indigo', 'color' => 'indigo'],
+        ['label' => 'Arsip Berkas', 'value' => $total_arsip_berkas, 'icon' => 'archive', 'color' => 'purple'],
+    ];
+
+    foreach ($stats as $stat):
+        $colorClass = [
+            'blue' => 'from-blue-500 to-blue-600 text-blue-500 bg-blue-50',
+            'emerald' => 'from-emerald-500 to-emerald-600 text-emerald-500 bg-emerald-50',
+            'amber' => 'from-amber-500 to-amber-600 text-amber-500 bg-amber-50',
+            'indigo' => 'from-indigo-500 to-indigo-600 text-indigo-500 bg-indigo-50',
+            'purple' => 'from-purple-500 to-purple-600 text-purple-500 bg-purple-50',
+        ][$stat['color']];
+
+        $gradient = explode(' ', $colorClass)[0] . ' ' . explode(' ', $colorClass)[1];
+        $textColor = explode(' ', $colorClass)[2];
+        $bgColor = explode(' ', $colorClass)[3];
+    ?>
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+            <div class="flex items-center justify-between">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center <?php echo $bgColor . ' ' . $textColor; ?> group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-<?php echo $stat['icon']; ?> text-2xl"></i>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1"><?php echo $stat['label']; ?></p>
+                    <h3 class="text-3xl font-black text-slate-900 leading-none"><?php echo $stat['value']; ?></h3>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100 shadow-sm card-statistic">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <i class="fas fa-paper-plane fa-3x text-success"></i>
-                    </div>
-                    <div class="col">
-                        <h5 class="card-title text-muted mb-1">Surat Keluar</h5>
-                        <h3 class="fw-bold"><?php echo $total_surat_keluar; ?></h3>
-                    </div>
-                </div>
+            <div class="mt-6 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r <?php echo $gradient; ?> h-full w-full opacity-70 group-hover:opacity-100 transition-opacity"></div>
             </div>
         </div>
-    </div>
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100 shadow-sm card-statistic">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <i class="fas fa-file-alt fa-3x text-warning"></i>
-                    </div>
-                    <div class="col">
-                        <h5 class="card-title text-muted mb-1">Notulen</h5>
-                        <h3 class="fw-bold"><?php echo $total_notulen; ?></h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100 shadow-sm card-statistic">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <i class="fas fa-tags fa-3x text-info"></i>
-                    </div>
-                    <div class="col">
-                        <h5 class="card-title text-muted mb-1">Klasifikasi</h5>
-                        <h3 class="fw-bold"><?php echo $total_klasifikasi; ?></h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100 shadow-sm card-statistic">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <i class="fas fa-archive fa-3x text-purple"></i>
-                    </div>
-                    <div class="col">
-                        <h5 class="card-title text-muted mb-1">Arsip Berkas</h5>
-                        <h3 class="fw-bold"><?php echo $total_arsip_berkas; ?></h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php endforeach; ?>
 </div>
 
 <!-- Grafik Entry Surat -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Statistik Entry Surat (30 Hari Terakhir)</h5>
+<div class="mt-10">
+    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h3 class="text-xl font-bold text-slate-900">Analisis Aktivitas Surat</h3>
+                <p class="text-slate-500 font-medium">Tren input surat masuk dan keluar dalam 30 hari terakhir.</p>
             </div>
-            <div class="card-body">
-                <div style="height: 400px; position: relative;">
-                    <canvas id="arsipChart"></canvas>
-                </div>
+            <div class="flex items-center gap-3">
+                <span class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> SURAT MASUK
+                </span>
+                <span class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> SURAT KELUAR
+                </span>
             </div>
+        </div>
+        <div class="relative h-[450px]">
+            <canvas id="arsipChart"></canvas>
         </div>
     </div>
 </div>

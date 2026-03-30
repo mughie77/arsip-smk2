@@ -6,10 +6,10 @@ Sistem Informasi Arsip Digital menyediakan API sederhana untuk membaca dan menul
 
 API menggunakan **API Key** sederhana untuk keamanan. Anda harus menyertakan kunci ini di setiap permintaan.
 
-- **API Key**: `ARSIP-DIGITAL-KEY-2024`
+- **API Key**: Ganti dengan kunci yang Anda atur di `api/config.php`.
 - **Metode**:
-  - Melalui Header: `X-API-KEY: ARSIP-DIGITAL-KEY-2024`
-  - Melalui Parameter GET: `?api_key=ARSIP-DIGITAL-KEY-2024`
+  - Melalui Header: `X-API-KEY: YOUR-API-KEY`
+  - Melalui Parameter GET: `?api_key=YOUR-API-KEY`
 
 ## Base URL
 
@@ -35,7 +35,7 @@ Gunakan parameter `resource` untuk menentukan data yang ingin diakses.
 Mengambil semua data dari sebuah resource.
 
 **Contoh Permintaan:**
-`GET /api/v1.php?resource=surat_masuk&api_key=ARSIP-DIGITAL-KEY-2024`
+`GET /api/v1.php?resource=surat_masuk&api_key=YOUR-API-KEY`
 
 **Respons Sukses (200 OK):**
 ```json
@@ -57,7 +57,7 @@ Mengambil semua data dari sebuah resource.
 Mengambil satu data berdasarkan ID.
 
 **Contoh Permintaan:**
-`GET /api/v1.php?resource=surat_masuk&id=1&api_key=ARSIP-DIGITAL-KEY-2024`
+`GET /api/v1.php?resource=surat_masuk&id=1&api_key=YOUR-API-KEY`
 
 **Respons Sukses (200 OK):**
 ```json
@@ -77,7 +77,7 @@ Mengambil satu data berdasarkan ID.
 Menambahkan data baru ke dalam database. Kirimkan data dalam format JSON di body permintaan.
 
 **Contoh Permintaan:**
-`POST /api/v1.php?resource=surat_masuk&api_key=ARSIP-DIGITAL-KEY-2024`
+`POST /api/v1.php?resource=surat_masuk&api_key=YOUR-API-KEY`
 
 **Body JSON:**
 ```json

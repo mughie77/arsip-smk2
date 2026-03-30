@@ -34,7 +34,7 @@ $resource_columns = [
     'surat_keluar' => ['kode_arsip', 'nomor_surat', 'perihal', 'tujuan_surat', 'tanggal_kirim', 'klasifikasi_id', 'nama_file_pdf'],
     'notulen' => ['tanggal', 'kegiatan', 'nama_file'],
     'klasifikasi' => ['kode', 'jenis_surat'],
-    'arsip_berkas' => ['no_berkas', 'nama_berkas', 'tanggal_berkas', 'nama_file_pdf']
+    'arsip_berkas' => ['no_berkas', 'nama_berkas', 'tanggal_berkas', 'file_path']
 ];
 
 switch ($method) {

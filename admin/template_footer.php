@@ -1,14 +1,15 @@
 <!-- Konten halaman berakhir di sini -->
         </div>
-    </div>
+
+        <!-- Footer Universal -->
+        <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+            <div class="px-8 text-center text-slate-500 text-sm font-medium">
+                &copy; 2024 Sistem Arsip Digital <span class="text-accent">Premium</span>. Hak Cipta Dilindungi.
+            </div>
+        </footer>
+    </main>
     <!-- End Main Content -->
 </div>
-<!-- Footer Universal -->
-<footer class="footer mt-auto py-3 bg-light border-top">
-    <div class="container-fluid text-center">
-        <span class="text-muted">&copy; 2024 Sistem Arsip Digital Premium. Hak Cipta Dilindungi.</span>
-    </div>
-</footer>
 
 <!-- JQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

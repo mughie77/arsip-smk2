@@ -3,8 +3,8 @@
 require_once __DIR__ . '/../config/koneksi.php';
 
 // Define a simple API Key for authentication.
-// IMPORTANT: Change this key for production environments!
-define('API_KEY', 'ARSIP-DIGITAL-KEY-2024');
+// IMPORTANT: Change this key to a strong, unique secret for production environments!
+define('API_KEY', 'YOUR-UNIQUE-API-KEY-HERE');
 
 // Set headers for JSON response
 header('Content-Type: application/json');
