@@ -74,22 +74,22 @@ for ($i = 29; $i >= 0; $i--) {
         ['label' => 'Surat Masuk', 'value' => $total_surat_masuk, 'icon' => 'envelope-open-text', 'color' => 'blue'],
         ['label' => 'Surat Keluar', 'value' => $total_surat_keluar, 'icon' => 'paper-plane', 'color' => 'emerald'],
         ['label' => 'Notulen', 'value' => $total_notulen, 'icon' => 'file-alt', 'color' => 'amber'],
-        ['label' => 'Klasifikasi', 'value' => $total_klasifikasi, 'icon' => 'indigo', 'color' => 'indigo'],
+        ['label' => 'Klasifikasi', 'value' => $total_klasifikasi, 'icon' => 'tags', 'color' => 'indigo'],
         ['label' => 'Arsip Berkas', 'value' => $total_arsip_berkas, 'icon' => 'archive', 'color' => 'purple'],
     ];
 
     foreach ($stats as $stat):
-        $colorClass = [
-            'blue' => 'from-blue-500 to-blue-600 text-blue-500 bg-blue-50',
-            'emerald' => 'from-emerald-500 to-emerald-600 text-emerald-500 bg-emerald-50',
-            'amber' => 'from-amber-500 to-amber-600 text-amber-500 bg-amber-50',
-            'indigo' => 'from-indigo-500 to-indigo-600 text-indigo-500 bg-indigo-50',
-            'purple' => 'from-purple-500 to-purple-600 text-purple-500 bg-purple-50',
+        $colorConfig = [
+            'blue' => ['grad' => 'from-blue-500 to-blue-600', 'text' => 'text-blue-500', 'bg' => 'bg-blue-50'],
+            'emerald' => ['grad' => 'from-emerald-500 to-emerald-600', 'text' => 'text-emerald-500', 'bg' => 'bg-emerald-50'],
+            'amber' => ['grad' => 'from-amber-500 to-amber-600', 'text' => 'text-amber-500', 'bg' => 'bg-amber-50'],
+            'indigo' => ['grad' => 'from-indigo-500 to-indigo-600', 'text' => 'text-indigo-500', 'bg' => 'bg-indigo-50'],
+            'purple' => ['grad' => 'from-purple-500 to-purple-600', 'text' => 'text-purple-500', 'bg' => 'bg-purple-50'],
         ][$stat['color']];
 
-        $gradient = explode(' ', $colorClass)[0] . ' ' . explode(' ', $colorClass)[1];
-        $textColor = explode(' ', $colorClass)[2];
-        $bgColor = explode(' ', $colorClass)[3];
+        $gradient = $colorConfig['grad'];
+        $textColor = $colorConfig['text'];
+        $bgColor = $colorConfig['bg'];
     ?>
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
             <div class="flex items-center justify-between">

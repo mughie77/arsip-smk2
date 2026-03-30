@@ -148,15 +148,15 @@ if (!$result) {
                         <?php $no = 1; ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr class="hover:bg-slate-50/80 transition-colors group text-sm md:text-base">
-                                <td class="px-8 py-5 text-sm font-bold text-slate-400"><?php echo $no++; ?></td>
-                                <td class="px-6 py-5 text-sm font-bold text-slate-900"><?php echo htmlspecialchars($row['no_berkas']); ?></td>
-                                <td class="px-6 py-5 text-sm font-semibold text-slate-700"><?php echo htmlspecialchars($row['nama_berkas']); ?></td>
-                                <td class="px-6 py-5">
+                                <td data-label="No" class="px-8 py-5 text-sm font-bold text-slate-400"><?php echo $no++; ?></td>
+                                <td data-label="Nomor Berkas" class="px-6 py-5 text-sm font-bold text-slate-900"><?php echo htmlspecialchars($row['no_berkas']); ?></td>
+                                <td data-label="Nama Berkas" class="px-6 py-5 text-sm font-semibold text-slate-700"><?php echo htmlspecialchars($row['nama_berkas']); ?></td>
+                                <td data-label="Tanggal" class="px-6 py-5">
                                     <span class="inline-flex bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-xs font-bold tracking-tight border border-purple-100">
                                         <?php echo date('d M Y', strtotime($row['tanggal_berkas'])); ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-5 text-center">
+                                <td data-label="Berkas" class="px-6 py-5 text-center md:text-left">
                                     <?php if (!empty($row['file_path'])) : ?>
                                         <a href="../uploads/berkas/<?php echo htmlspecialchars($row['file_path']); ?>" target="_blank" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-bold text-xs transition-colors">
                                             <i class="fas fa-file-alt text-lg"></i> LIHAT
@@ -165,17 +165,17 @@ if (!$result) {
                                         <span class="text-[10px] font-black text-slate-300 italic uppercase">TIDAK ADA</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-8 py-5 text-right">
-                                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <a href="arsip_berkas_edit.php?id=<?php echo $row['id']; ?>" class="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white transition-all shadow-sm">
-                                            <i class="fas fa-edit text-sm"></i>
+                                <td data-label="Aksi" class="px-8 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-2 transition-opacity">
+                                        <a href="arsip_berkas_edit.php?id=<?php echo $row['id']; ?>" class="w-10 h-10 flex items-center justify-center rounded-xl bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white transition-all shadow-md">
+                                            <i class="fas fa-edit text-base"></i>
                                         </a>
                                         <form action="../core/arsip_berkas_aksi.php" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
-                                                <i class="fas fa-trash text-sm"></i>
+                                            <button type="submit" class="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-md">
+                                                <i class="fas fa-trash text-base"></i>
                                             </button>
                                         </form>
                                     </div>

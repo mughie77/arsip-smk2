@@ -27,6 +27,12 @@ $csrf_token = $_SESSION['csrf_token'];
 
 // Mendapatkan path skrip saat ini untuk menandai menu aktif
 $current_page = basename($_SERVER['SCRIPT_NAME']);
+
+// Ambil data pengaturan untuk sidebar
+$q_sidebar_pengaturan = mysqli_query($koneksi, "SELECT * FROM pengaturan LIMIT 1");
+$d_sidebar_pengaturan = mysqli_fetch_assoc($q_sidebar_pengaturan);
+$sidebar_nama_sekolah = $d_sidebar_pengaturan['nama_sekolah'] ?? 'Institusi Digital';
+$sidebar_kode_sekolah = $d_sidebar_pengaturan['kode_sekolah'] ?? 'KODE-UNIK';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -74,31 +80,53 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 
 <div class="flex min-h-screen bg-slate-50">
     <!-- Sidebar -->
-    <aside class="hidden lg:flex flex-col w-72 bg-primary text-white shadow-2xl transition-all duration-300">
-        <div class="p-8 flex items-center gap-3 border-b border-secondary">
-            <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent/50">
-                <i class="fas fa-archive text-xl text-white"></i>
+    <aside class="hidden lg:flex flex-col w-80 bg-slate-900 text-white shadow-2xl transition-all duration-300 ring-1 ring-white/10">
+        <div class="p-8 flex flex-col gap-6 border-b border-white/5 bg-slate-950/50">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30 rotate-3">
+                    <i class="fas fa-archive text-3xl text-white"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-3xl font-black tracking-tighter italic leading-none">ARSIP<span class="text-blue-400">DIGITAL.</span></span>
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1 ml-0.5">V2.0 PRO</span>
+                </div>
             </div>
-            <span class="text-2xl font-bold tracking-tight">Arsip<span class="text-accent">Digital</span></span>
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-5 rounded-[1.5rem] border border-white/5 shadow-inner">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i class="fas fa-university text-xs"></i>
+                    </div>
+                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">Data Institusi</p>
+                </div>
+                <p class="text-sm font-black text-white leading-tight mb-1"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-slate-700 text-[9px] font-black text-slate-300 tracking-wider">ID: <?php echo htmlspecialchars($sidebar_kode_sekolah); ?></span>
+                </div>
+            </div>
         </div>
 
-        <nav class="flex-1 px-4 py-8 space-y-2">
+        <nav class="flex-1 px-4 py-8 space-y-3">
             <?php
             $menus = [
-                ['url' => './', 'icon' => 'tachometer-alt', 'label' => 'Dashboard', 'active' => $current_page == 'index.php'],
-                ['url' => 'surat_masuk', 'icon' => 'envelope-open-text', 'label' => 'Surat Masuk', 'active' => $current_page == 'surat_masuk.php'],
-                ['url' => 'surat_keluar', 'icon' => 'paper-plane', 'label' => 'Surat Keluar', 'active' => $current_page == 'surat_keluar.php'],
-                ['url' => 'notulen', 'icon' => 'file-alt', 'label' => 'Daftar Notulen', 'active' => $current_page == 'notulen.php'],
-                ['url' => 'arsip_berkas.php', 'icon' => 'archive', 'label' => 'Arsip Berkas', 'active' => $current_page == 'arsip_berkas.php'],
-                ['url' => 'klasifikasi_surat.php', 'icon' => 'tags', 'label' => 'Klasifikasi Surat', 'active' => $current_page == 'klasifikasi_surat.php'],
+                ['url' => './', 'icon' => 'tachometer-alt', 'label' => 'Dashboard', 'active' => $current_page == 'index.php', 'color' => 'blue-500'],
+                ['url' => 'surat_masuk', 'icon' => 'envelope-open-text', 'label' => 'Surat Masuk', 'active' => $current_page == 'surat_masuk.php', 'color' => 'indigo-500'],
+                ['url' => 'surat_keluar', 'icon' => 'paper-plane', 'label' => 'Surat Keluar', 'active' => $current_page == 'surat_keluar.php', 'color' => 'emerald-500'],
+                ['url' => 'notulen', 'icon' => 'file-alt', 'label' => 'Daftar Notulen', 'active' => $current_page == 'notulen.php', 'color' => 'amber-500'],
+                ['url' => 'arsip_berkas.php', 'icon' => 'archive', 'label' => 'Arsip Berkas', 'active' => $current_page == 'arsip_berkas.php', 'color' => 'purple-500'],
+                ['url' => 'klasifikasi_surat.php', 'icon' => 'tags', 'label' => 'Klasifikasi Surat', 'active' => $current_page == 'klasifikasi_surat.php', 'color' => 'rose-500'],
             ];
 
             foreach ($menus as $menu):
-                $activeClass = $menu['active'] ? 'bg-accent text-white shadow-lg shadow-accent/40' : 'text-slate-400 hover:bg-secondary hover:text-white';
+                $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500 shadow-xl' : 'text-slate-400 hover:bg-white/5 hover:text-white';
+                $iconColor = 'bg-' . $menu['color'];
+                $shadowColor = 'shadow-' . $menu['color'] . '/20';
+                $activeIconClass = $menu['active'] ? 'scale-110 shadow-lg ' . $shadowColor : 'opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0';
             ?>
-                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 font-medium <?php echo $activeClass; ?>">
-                    <i class="fas fa-<?php echo $menu['icon']; ?> w-6 text-center text-lg"></i>
-                    <span><?php echo $menu['label']; ?></span>
+                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-black group <?php echo $activeClass; ?>">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 <?php echo $iconColor; ?> <?php echo $activeIconClass; ?> group-hover:scale-110">
+                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-lg"></i>
+                    </div>
+                    <span class="tracking-widest uppercase text-[11px]"><?php echo $menu['label']; ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>
@@ -136,24 +164,33 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
         <div class="flex-1 p-4 md:p-8">
             <!-- Konten halaman akan dimulai di sini -->
 
-<div class="offcanvas offcanvas-start bg-primary text-white" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-    <div class="offcanvas-header border-b border-secondary p-6">
-        <h5 class="offcanvas-title text-xl font-bold" id="mobileMenuLabel">Arsip<span class="text-accent">Digital</span></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+<div class="offcanvas offcanvas-start bg-slate-900 text-white w-80" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header border-b border-white/5 p-8 flex flex-col gap-4">
+        <div class="flex items-center justify-between w-full">
+            <h5 class="offcanvas-title text-2xl font-black italic" id="mobileMenuLabel">ARSIP<span class="text-blue-400">DIGITAL.</span></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 w-full text-left">
+            <p class="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Institusi</p>
+            <p class="text-sm font-bold text-white leading-tight"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
+        </div>
     </div>
     <div class="offcanvas-body p-4">
-        <nav class="space-y-2">
+        <nav class="space-y-3">
             <?php
             foreach ($menus as $menu):
-                $activeClass = $menu['active'] ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:bg-secondary hover:text-white';
+                $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500' : 'text-slate-400 hover:bg-white/5 hover:text-white';
+                $iconColor = $menu['color'];
             ?>
-                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 font-medium <?php echo $activeClass; ?>">
-                    <i class="fas fa-<?php echo $menu['icon']; ?> w-6 text-center text-lg"></i>
-                    <span><?php echo $menu['label']; ?></span>
+                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 font-black <?php echo $activeClass; ?>">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center <?php echo $iconColor; ?>">
+                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-lg"></i>
+                    </div>
+                    <span class="tracking-widest uppercase text-[10px]"><?php echo $menu['label']; ?></span>
                 </a>
             <?php endforeach; ?>
 
-            <div class="pt-4 mt-4 border-t border-secondary">
+            <div class="pt-6 mt-6 border-t border-white/5">
                 <a href="pengaturan.php" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-400 hover:bg-secondary hover:text-white transition-all font-medium">
                     <i class="fas fa-cog w-6 text-center"></i>
                     <span>Pengaturan</span>

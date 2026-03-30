@@ -2,9 +2,22 @@
         </div>
 
         <!-- Footer Universal -->
-        <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
-            <div class="px-8 text-center text-slate-500 text-sm font-medium">
-                &copy; 2024 Sistem Arsip Digital <span class="text-accent">Premium</span>. Hak Cipta Dilindungi.
+        <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+            <div class="px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white text-xs">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <span class="font-black text-slate-900 text-sm italic">ARSIP<span class="text-blue-500">DIGITAL.</span></span>
+                </div>
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                    &copy; 2024 Premium Archive System <span class="mx-2 text-slate-200">|</span> V2.0 PRO
+                </div>
+                <div class="flex items-center gap-4 text-slate-300">
+                    <i class="fab fa-php text-xl"></i>
+                    <i class="fab fa-html5 text-xl"></i>
+                    <i class="fab fa-js text-xl"></i>
+                </div>
             </div>
         </footer>
     </main>
