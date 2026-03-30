@@ -93,9 +93,9 @@ if (!$result) {
 
 <!-- Area Aksi dan Filter -->
 <div class="flex flex-col xl:flex-row gap-6 mb-8">
-    <div class="flex flex-wrap gap-3">
-        <button type="button" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-accent/30 transition-all active:scale-95" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
-            <i class="fas fa-plus"></i> Tambah Data
+    <div class="flex flex-wrap gap-2">
+        <button type="button" class="inline-flex items-center gap-1.5 bg-accent hover:bg-accent/90 text-white px-3.5 py-2 rounded-lg text-sm font-bold shadow-md shadow-accent/20 transition-all active:scale-95" data-bs-toggle="modal" data-bs-target="#arsipBerkasModal" id="btnTambah">
+            <i class="fas fa-plus text-xs"></i> Tambah Data
         </button>
     </div>
 

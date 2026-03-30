@@ -83,32 +83,24 @@ $sidebar_kode_sekolah = $d_sidebar_pengaturan['kode_sekolah'] ?? 'KODE-UNIK';
 
 <div class="flex min-h-screen bg-slate-50">
     <!-- Sidebar -->
-    <aside class="hidden lg:flex flex-col w-80 bg-slate-900 text-white shadow-2xl transition-all duration-300 ring-1 ring-white/10">
-        <div class="p-8 flex flex-col gap-6 border-b border-white/5 bg-slate-950/50">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/30 rotate-3">
-                    <i class="fas fa-archive text-3xl text-white"></i>
+    <aside class="hidden lg:flex flex-col w-72 bg-slate-900 text-white shadow-2xl transition-all duration-300 ring-1 ring-white/10">
+        <div class="p-6 flex flex-col gap-4 border-b border-white/5 bg-slate-950/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-archive text-xl text-white"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-3xl font-black tracking-tighter italic leading-none">ARSIP<span class="text-blue-400">DIGITAL.</span></span>
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1 ml-0.5">V2.0 PRO</span>
+                    <span class="text-xl font-black tracking-tighter italic leading-none">ARSIP<span class="text-blue-400">DIGITAL.</span></span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Data Institusi</span>
                 </div>
             </div>
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-5 rounded-[1.5rem] border border-white/5 shadow-inner">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-                        <i class="fas fa-university text-xs"></i>
-                    </div>
-                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">Data Institusi</p>
-                </div>
-                <p class="text-sm font-black text-white leading-tight mb-1"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded bg-slate-700 text-[9px] font-black text-slate-300 tracking-wider">ID: <?php echo htmlspecialchars($sidebar_kode_sekolah); ?></span>
-                </div>
+            <div class="pl-1">
+                <p class="text-xs font-bold text-white leading-tight mb-1"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
+                <span class="text-[9px] font-black text-blue-400 uppercase tracking-widest">ID: <?php echo htmlspecialchars($sidebar_kode_sekolah); ?></span>
             </div>
         </div>
 
-        <nav class="flex-1 px-4 py-8 space-y-3">
+        <nav class="flex-1 px-3 py-6 space-y-2">
             <?php
             $menus = [
                 ['url' => './', 'icon' => 'tachometer-alt', 'label' => 'Dashboard', 'active' => $current_page == 'index.php', 'color' => 'blue-500'],
@@ -120,16 +112,16 @@ $sidebar_kode_sekolah = $d_sidebar_pengaturan['kode_sekolah'] ?? 'KODE-UNIK';
             ];
 
             foreach ($menus as $menu):
-                $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500 shadow-xl' : 'text-slate-400 hover:bg-white/5 hover:text-white';
+                $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500 shadow-md' : 'text-slate-400 hover:bg-white/5 hover:text-white';
                 $iconColor = 'bg-' . $menu['color'];
                 $shadowClass = 'shadow-' . $menu['color'] . '/20';
                 $activeIconClass = $menu['active'] ? 'scale-110 shadow-lg ' . $shadowClass : 'opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0';
             ?>
-                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-black group <?php echo $activeClass; ?>">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 <?php echo $iconColor; ?> <?php echo $activeIconClass; ?> group-hover:scale-110">
-                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-lg"></i>
+                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 font-bold group <?php echo $activeClass; ?>">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 <?php echo $iconColor; ?> <?php echo $activeIconClass; ?> group-hover:scale-110">
+                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-base"></i>
                     </div>
-                    <span class="tracking-widest uppercase text-[11px]"><?php echo $menu['label']; ?></span>
+                    <span class="tracking-widest uppercase text-[10px]"><?php echo $menu['label']; ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>
@@ -167,29 +159,30 @@ $sidebar_kode_sekolah = $d_sidebar_pengaturan['kode_sekolah'] ?? 'KODE-UNIK';
         <div class="flex-1 p-4 md:p-8">
             <!-- Konten halaman akan dimulai di sini -->
 
-<div class="offcanvas offcanvas-start bg-slate-900 text-white w-80" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-    <div class="offcanvas-header border-b border-white/5 p-8 flex flex-col gap-4">
+<div class="offcanvas offcanvas-start bg-slate-900 text-white w-72" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header border-b border-white/5 p-6 flex flex-col gap-4">
         <div class="flex items-center justify-between w-full">
-            <h5 class="offcanvas-title text-2xl font-black italic" id="mobileMenuLabel">ARSIP<span class="text-blue-400">DIGITAL.</span></h5>
+            <h5 class="offcanvas-title text-xl font-black italic" id="mobileMenuLabel">ARSIP<span class="text-blue-400">DIGITAL.</span></h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 w-full text-left">
-            <p class="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Institusi</p>
-            <p class="text-sm font-bold text-white leading-tight"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10 w-full text-left">
+                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Institusi</p>
+                <p class="text-xs font-bold text-white leading-tight mb-1"><?php echo htmlspecialchars($sidebar_nama_sekolah); ?></p>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">ID: <?php echo htmlspecialchars($sidebar_kode_sekolah); ?></span>
         </div>
     </div>
     <div class="offcanvas-body p-4">
-        <nav class="space-y-3">
+        <nav class="space-y-2">
             <?php
             foreach ($menus as $menu):
                 $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500' : 'text-slate-400 hover:bg-white/5 hover:text-white';
-                $iconColor = $menu['color'];
+                $iconBg = 'bg-' . $menu['color'];
             ?>
-                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 font-black <?php echo $activeClass; ?>">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center <?php echo $iconColor; ?>">
-                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-lg"></i>
+                <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-bold <?php echo $activeClass; ?>">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center <?php echo $iconBg; ?>">
+                        <i class="fas fa-<?php echo $menu['icon']; ?> text-white text-base"></i>
                     </div>
-                    <span class="tracking-widest uppercase text-[10px]"><?php echo $menu['label']; ?></span>
+                    <span class="tracking-widest uppercase text-[9px]"><?php echo $menu['label']; ?></span>
                 </a>
             <?php endforeach; ?>
 
