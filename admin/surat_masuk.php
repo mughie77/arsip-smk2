@@ -161,20 +161,20 @@ if (!$result) {
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr class="hover:bg-slate-50/80 transition-colors group text-sm md:text-base">
                                 <td data-label="No" class="px-8 py-5 text-sm font-bold text-slate-400"><?php echo $no++; ?></td>
-                                <td data-label="Nomor Arsip" class="px-6 py-5 text-sm font-bold text-slate-900"><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
+                                <td data-label="Nomor Arsip" class="px-6 py-5 text-xs font-bold text-slate-900"><?php echo htmlspecialchars($row['nomor_arsip']); ?></td>
                                 <td data-label="Nomor Surat" class="px-6 py-5">
-                                    <span class="text-sm font-semibold text-slate-700 block"><?php echo htmlspecialchars($row['nomor_surat']); ?></span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">REF: #<?php echo $row['id']; ?></span>
+                                    <span class="text-xs font-semibold text-slate-700 block leading-tight"><?php echo htmlspecialchars($row['nomor_surat']); ?></span>
+                                    <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider leading-tight">REF: #<?php echo $row['id']; ?></span>
                                 </td>
                                 <td data-label="Perihal" class="px-6 py-5">
-                                    <span class="text-sm text-slate-600 font-medium line-clamp-1"><?php echo htmlspecialchars($row['perihal']); ?></span>
+                                    <span class="text-sm text-slate-600 font-medium line-clamp-1" title="<?php echo htmlspecialchars($row['perihal']); ?>"><?php echo htmlspecialchars($row['perihal']); ?></span>
                                 </td>
                                 <td data-label="Asal Surat" class="px-6 py-5">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 text-xs uppercase font-bold">
                                             <?php echo substr($row['asal_surat'], 0, 1); ?>
                                         </div>
-                                        <span class="text-sm text-slate-700 font-bold"><?php echo htmlspecialchars($row['asal_surat']); ?></span>
+                                        <span class="text-sm text-slate-700"><?php echo htmlspecialchars($row['asal_surat']); ?></span>
                                     </div>
                                 </td>
                                 <td data-label="Diterima" class="px-6 py-5 text-center">

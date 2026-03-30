@@ -200,16 +200,16 @@ if (isset($_SESSION['success_message'])) {
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr class="hover:bg-slate-50/80 transition-colors group text-sm md:text-base">
                                 <td data-label="No" class="px-8 py-5 text-sm font-bold text-slate-400"><?php echo $no++; ?></td>
-                                <td data-label="Kode Arsip" class="px-6 py-5 text-sm font-bold text-slate-900"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
+                                <td data-label="Kode Arsip" class="px-6 py-5 text-xs font-bold text-slate-900"><?php echo htmlspecialchars($row['kode_arsip']); ?></td>
                                 <td data-label="Nomor Surat" class="px-6 py-5">
-                                    <span class="text-sm font-semibold text-slate-700 block"><?php echo htmlspecialchars($row['nomor_surat']); ?></span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></span>
+                                    <span class="text-sm font-semibold text-slate-700 block leading-tight"><?php echo htmlspecialchars($row['nomor_surat']); ?></span>
+                                    <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider leading-tight"><?php echo htmlspecialchars($row['kode_klasifikasi']); ?> - <?php echo htmlspecialchars($row['jenis_surat']); ?></span>
                                 </td>
                                 <td data-label="Tujuan" class="px-6 py-5">
-                                    <span class="text-sm text-slate-700 font-bold"><?php echo htmlspecialchars($row['tujuan_surat']); ?></span>
+                                    <span class="text-sm text-slate-700"><?php echo htmlspecialchars($row['tujuan_surat']); ?></span>
                                 </td>
                                 <td data-label="Perihal" class="px-6 py-5">
-                                    <span class="text-sm text-slate-600 font-medium line-clamp-1"><?php echo htmlspecialchars($row['perihal']); ?></span>
+                                    <span class="text-sm text-slate-600 font-medium line-clamp-1" title="<?php echo htmlspecialchars($row['perihal']); ?>"><?php echo htmlspecialchars($row['perihal']); ?></span>
                                 </td>
                                 <td data-label="Dikirim" class="px-6 py-5 text-center">
                                     <span class="inline-flex bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold tracking-tight border border-emerald-100">
