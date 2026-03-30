@@ -40,4 +40,22 @@ function sanitize_input($data) {
 function generate_nomor_arsip($prefix) {
     return $prefix . '-' . date('Ymd') . '-' . substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
 }
-?>
+
+/**
+ * Fungsi bantuan untuk membuat link header tabel yang dapat diurutkan.
+ */
+function sortable_header($title, $column, $current_sort, $current_dir) {
+    $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
+
+    if ($current_sort == $column) {
+        $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
+    } else {
+        $icon = ' <i class="fas fa-sort"></i>';
+    }
+
+    $query_params = $_GET;
+    $query_params['sort'] = $column;
+    $query_params['dir'] = $dir;
+
+    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
+}

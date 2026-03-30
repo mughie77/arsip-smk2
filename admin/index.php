@@ -36,24 +36,28 @@ $result_ab = mysqli_query($koneksi, $query_ab);
 $data_ab = mysqli_fetch_assoc($result_ab);
 $total_arsip_berkas = $data_ab['total_arsip_berkas'];
 
-// --- Ambil Data 30 Hari Terakhir untuk Grafik ---
+// --- Ambil Data 30 Hari Terakhir untuk Grafik (Dioptimalkan) ---
 $labels = [];
+$daily_sm_raw = [];
+$daily_sk_raw = [];
+$start_date = date('Y-m-d', strtotime('-29 days'));
+
+// 1. Ambil Data Surat Masuk (Satu Query)
+$q_sm = mysqli_query($koneksi, "SELECT DATE(tanggal_diterima) as tgl, COUNT(id) as total FROM surat_masuk WHERE tanggal_diterima >= '$start_date' GROUP BY DATE(tanggal_diterima)");
+while($row = mysqli_fetch_assoc($q_sm)) { $daily_sm_raw[$row['tgl']] = (int)$row['total']; }
+
+// 2. Ambil Data Surat Keluar (Satu Query)
+$q_sk = mysqli_query($koneksi, "SELECT DATE(tanggal_kirim) as tgl, COUNT(id) as total FROM surat_keluar WHERE tanggal_kirim >= '$start_date' GROUP BY DATE(tanggal_kirim)");
+while($row = mysqli_fetch_assoc($q_sk)) { $daily_sk_raw[$row['tgl']] = (int)$row['total']; }
+
+// 3. Gabungkan Data untuk 30 Hari Terakhir
 $daily_sm = [];
 $daily_sk = [];
-
-// Loop 30 hari terakhir
 for ($i = 29; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
-    $display_date = date('d M', strtotime($date));
-    $labels[] = $display_date;
-
-    // Surat Masuk hari ini
-    $q_sm = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM surat_masuk WHERE DATE(tanggal_diterima) = '$date'");
-    $daily_sm[] = (int)mysqli_fetch_assoc($q_sm)['total'];
-
-    // Surat Keluar hari ini
-    $q_sk = mysqli_query($koneksi, "SELECT COUNT(id) as total FROM surat_keluar WHERE DATE(tanggal_kirim) = '$date'");
-    $daily_sk[] = (int)mysqli_fetch_assoc($q_sk)['total'];
+    $labels[] = date('d M', strtotime($date));
+    $daily_sm[] = $daily_sm_raw[$date] ?? 0;
+    $daily_sk[] = $daily_sk_raw[$date] ?? 0;
 }
 ?>
 

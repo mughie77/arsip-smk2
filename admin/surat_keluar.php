@@ -24,23 +24,6 @@ if ($is_user_sort) {
     $order_by_clause = "ORDER BY sk.nomor_surat DESC";
 }
 
-// Fungsi bantuan untuk membuat link header tabel
-function sortable_header($title, $column, $current_sort, $current_dir) {
-    $dir = ($current_sort == $column && $current_dir == 'ASC') ? 'DESC' : 'ASC';
-
-    if ($current_sort == $column) {
-        $icon = $current_dir == 'ASC' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>';
-    } else {
-        $icon = ' <i class="fas fa-sort"></i>';
-    }
-
-    // Pertahankan parameter query yang ada
-    $query_params = $_GET;
-    $query_params['sort'] = $column;
-    $query_params['dir'] = $dir;
-
-    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
-}
 // --- Akhir Logika Pengurutan ---
 
 
