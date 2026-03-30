@@ -57,5 +57,8 @@ function sortable_header($title, $column, $current_sort, $current_dir) {
     $query_params['sort'] = $column;
     $query_params['dir'] = $dir;
 
-    return '<a href="?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
+    // Use basename to get the current file name for the link
+    $current_file = basename($_SERVER['PHP_SELF']);
+
+    return '<a href="' . $current_file . '?' . http_build_query($query_params) . '">' . htmlspecialchars($title) . $icon . '</a>';
 }

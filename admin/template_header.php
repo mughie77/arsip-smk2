@@ -18,6 +18,9 @@ header("Content-Security-Policy: " . $csp);
 // Memulai session dan memeriksa status login
 require_once 'cek_sesi.php';
 
+// Koneksi database wajib di-include di sini agar variabel $koneksi tersedia secara global di header
+require_once '../config/koneksi.php';
+
 // --- Perlindungan CSRF ---
 // Buat token CSRF jika belum ada
 if (empty($_SESSION['csrf_token'])) {
@@ -119,8 +122,8 @@ $sidebar_kode_sekolah = $d_sidebar_pengaturan['kode_sekolah'] ?? 'KODE-UNIK';
             foreach ($menus as $menu):
                 $activeClass = $menu['active'] ? 'bg-white/10 text-white border-l-4 border-blue-500 shadow-xl' : 'text-slate-400 hover:bg-white/5 hover:text-white';
                 $iconColor = 'bg-' . $menu['color'];
-                $shadowColor = 'shadow-' . $menu['color'] . '/20';
-                $activeIconClass = $menu['active'] ? 'scale-110 shadow-lg ' . $shadowColor : 'opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0';
+                $shadowClass = 'shadow-' . $menu['color'] . '/20';
+                $activeIconClass = $menu['active'] ? 'scale-110 shadow-lg ' . $shadowClass : 'opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0';
             ?>
                 <a href="<?php echo $menu['url']; ?>" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-black group <?php echo $activeClass; ?>">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 <?php echo $iconColor; ?> <?php echo $activeIconClass; ?> group-hover:scale-110">

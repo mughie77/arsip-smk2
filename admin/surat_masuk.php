@@ -274,7 +274,6 @@ if (!$result) {
             </a>
         </nav>
     </div>
-    </div>
 </div>
 
 <!-- Modal Tambah Surat Masuk -->

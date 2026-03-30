@@ -309,7 +309,6 @@ if (isset($_SESSION['success_message'])) {
             </a>
         </nav>
     </div>
-    </div>
 </div>
 
 <!-- Modal Tambah Surat Keluar -->

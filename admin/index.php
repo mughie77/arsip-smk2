@@ -74,7 +74,7 @@ for ($i = 29; $i >= 0; $i--) {
         ['label' => 'Surat Masuk', 'value' => $total_surat_masuk, 'icon' => 'envelope-open-text', 'color' => 'blue'],
         ['label' => 'Surat Keluar', 'value' => $total_surat_keluar, 'icon' => 'paper-plane', 'color' => 'emerald'],
         ['label' => 'Notulen', 'value' => $total_notulen, 'icon' => 'file-alt', 'color' => 'amber'],
-        ['label' => 'Klasifikasi', 'value' => $total_klasifikasi, 'icon' => 'tags', 'color' => 'indigo'],
+        ['label' => 'Klasifikasi', 'value' => $total_klasifikasi, 'icon' => 'tags', 'color' => 'rose'],
         ['label' => 'Arsip Berkas', 'value' => $total_arsip_berkas, 'icon' => 'archive', 'color' => 'purple'],
     ];
 
@@ -83,7 +83,7 @@ for ($i = 29; $i >= 0; $i--) {
             'blue' => ['grad' => 'from-blue-500 to-blue-600', 'text' => 'text-blue-500', 'bg' => 'bg-blue-50'],
             'emerald' => ['grad' => 'from-emerald-500 to-emerald-600', 'text' => 'text-emerald-500', 'bg' => 'bg-emerald-50'],
             'amber' => ['grad' => 'from-amber-500 to-amber-600', 'text' => 'text-amber-500', 'bg' => 'bg-amber-50'],
-            'indigo' => ['grad' => 'from-indigo-500 to-indigo-600', 'text' => 'text-indigo-500', 'bg' => 'bg-indigo-50'],
+            'rose' => ['grad' => 'from-rose-500 to-rose-600', 'text' => 'text-rose-500', 'bg' => 'bg-rose-50'],
             'purple' => ['grad' => 'from-purple-500 to-purple-600', 'text' => 'text-purple-500', 'bg' => 'bg-purple-50'],
         ][$stat['color']];
 

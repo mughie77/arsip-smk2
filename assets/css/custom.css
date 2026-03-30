@@ -46,6 +46,7 @@
         padding: 0.75rem 0.5rem !important;
         border: none !important;
         border-bottom: 1px solid #f8fafc !important;
+        min-height: 3.5rem;
     }
     td:last-child {
         border-bottom: none !important;
@@ -59,11 +60,13 @@
         color: #94a3b8;
         float: left;
         text-align: left;
+        padding-right: 1rem;
+        flex-shrink: 0;
     }
 
     /* Force Action buttons to stay visible and aligned */
     td:last-child {
-        justify-content: center;
+        justify-content: flex-end;
         padding-top: 1.5rem !important;
     }
     td:last-child .opacity-0 {

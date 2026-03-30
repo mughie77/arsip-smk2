@@ -245,9 +245,6 @@ if (!$result) {
             </a>
         </nav>
     </div>
-    </div>
-</div>
-    </div>
 </div>
 
 <!-- Modal Tambah Arsip Berkas -->
