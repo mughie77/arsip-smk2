@@ -186,7 +186,7 @@ body {
 
 .main-content {
     width: 100%;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .card-statistic {
@@ -238,7 +238,7 @@ body {
 
 #content {
     width: calc(100% - 250px);
-    padding: 20px;
+    padding: 10px;
     min-height: 100vh;
     transition: all 0.3s;
 }

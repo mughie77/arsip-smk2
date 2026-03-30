@@ -10,7 +10,7 @@ $keyword = $_GET['keyword'] ?? '';
 $klasifikasi_id = isset($_GET['klasifikasi_id']) ? (int)$_GET['klasifikasi_id'] : 0;
 
 // --- Logika Pengurutan ---
-$sort_columns = ['nomor_surat'];
+$sort_columns = ['kode_arsip', 'nomor_surat', 'tujuan_surat', 'perihal', 'tanggal_kirim'];
 $is_user_sort = isset($_GET['sort']) && in_array($_GET['sort'], $sort_columns);
 
 if ($is_user_sort) {
@@ -209,11 +209,11 @@ if (isset($_SESSION['error_message'])) {
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kode Arsip</th>
+                        <th><?php echo sortable_header('Kode Arsip', 'kode_arsip', $sort_by, $sort_dir); ?></th>
                         <th><?php echo sortable_header('Nomor Surat', 'nomor_surat', $sort_by, $sort_dir); ?></th>
-                        <th>Tujuan</th>
-                        <th>Perihal</th>
-                        <th>Tgl. Kirim</th>
+                        <th><?php echo sortable_header('Tujuan', 'tujuan_surat', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Perihal', 'perihal', $sort_by, $sort_dir); ?></th>
+                        <th><?php echo sortable_header('Tgl. Kirim', 'tanggal_kirim', $sort_by, $sort_dir); ?></th>
                         <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
@@ -284,7 +284,7 @@ if (isset($_SESSION['error_message'])) {
                 $prev_disabled = ($page <= 1) ? 'disabled' : '';
                 $prev_page = ($page > 1) ? $page - 1 : 1;
                 $prev_params = array_merge($query_params_base, ['page' => $prev_page]);
-                echo "<li class='page-item $prev_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($prev_params) . "'><i class='fas fa-chevron-left'></i> Sebelumnya</a></li>";
+                echo "<li class='page-item $prev_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($prev_params) . "'><i class='fas fa-chevron-left'></i></a></li>";
 
                 // Logika Halaman Terpotong
                 $range = 2;
@@ -302,7 +302,7 @@ if (isset($_SESSION['error_message'])) {
                 $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
                 $next_page = ($page < $total_pages) ? $page + 1 : $total_pages;
                 $next_params = array_merge($query_params_base, ['page' => $next_page]);
-                echo "<li class='page-item $next_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($next_params) . "'>Selanjutnya <i class='fas fa-chevron-right'></i></a></li>";
+                echo "<li class='page-item $next_disabled'><a class='page-link' href='surat_keluar.php?" . http_build_query($next_params) . "'><i class='fas fa-chevron-right'></i></a></li>";
                 ?>
             </ul>
         </div>

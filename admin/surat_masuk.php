@@ -238,7 +238,7 @@ if (!$result) {
                 $prev_disabled = ($page <= 1) ? 'disabled' : '';
                 $prev_page = ($page > 1) ? $page - 1 : 1;
                 $prev_params = array_merge($query_params_base, ['page' => $prev_page]);
-                echo "<li class='page-item $prev_disabled'><a class='page-link' href='surat_masuk.php?" . http_build_query($prev_params) . "'><i class='fas fa-chevron-left'></i> Sebelumnya</a></li>";
+                echo "<li class='page-item $prev_disabled'><a class='page-link' href='surat_masuk.php?" . http_build_query($prev_params) . "'><i class='fas fa-chevron-left'></i></a></li>";
 
                 // Logika Halaman Terpotong
                 $range = 2;
@@ -256,7 +256,7 @@ if (!$result) {
                 $next_disabled = ($page >= $total_pages) ? 'disabled' : '';
                 $next_page = ($page < $total_pages) ? $page + 1 : $total_pages;
                 $next_params = array_merge($query_params_base, ['page' => $next_page]);
-                echo "<li class='page-item $next_disabled'><a class='page-link' href='surat_masuk.php?" . http_build_query($next_params) . "'>Selanjutnya <i class='fas fa-chevron-right'></i></a></li>";
+                echo "<li class='page-item $next_disabled'><a class='page-link' href='surat_masuk.php?" . http_build_query($next_params) . "'><i class='fas fa-chevron-right'></i></a></li>";
                 ?>
             </ul>
         </div>
