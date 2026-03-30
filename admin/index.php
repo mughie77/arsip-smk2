@@ -36,6 +36,34 @@ $result_ab = mysqli_query($koneksi, $query_ab);
 $data_ab = mysqli_fetch_assoc($result_ab);
 $total_arsip_berkas = $data_ab['total_arsip_berkas'];
 
+// --- Ambil Data Bulanan untuk Grafik (Tahun Berjalan) ---
+$current_year = date('Y');
+$monthly_sm = array_fill(1, 12, 0);
+$monthly_sk = array_fill(1, 12, 0);
+
+// Data Bulanan Surat Masuk
+$query_sm_monthly = "SELECT MONTH(tanggal_diterima) as bulan, COUNT(id) as total
+                     FROM surat_masuk
+                     WHERE YEAR(tanggal_diterima) = '$current_year'
+                     GROUP BY MONTH(tanggal_diterima)";
+$res_sm_monthly = mysqli_query($koneksi, $query_sm_monthly);
+while ($row = mysqli_fetch_assoc($res_sm_monthly)) {
+    $monthly_sm[(int)$row['bulan']] = (int)$row['total'];
+}
+
+// Data Bulanan Surat Keluar
+$query_sk_monthly = "SELECT MONTH(tanggal_kirim) as bulan, COUNT(id) as total
+                     FROM surat_keluar
+                     WHERE YEAR(tanggal_kirim) = '$current_year'
+                     GROUP BY MONTH(tanggal_kirim)";
+$res_sk_monthly = mysqli_query($koneksi, $query_sk_monthly);
+while ($row = mysqli_fetch_assoc($res_sk_monthly)) {
+    $monthly_sk[(int)$row['bulan']] = (int)$row['total'];
+}
+
+$months_labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+$data_sm_values = array_values($monthly_sm);
+$data_sk_values = array_values($monthly_sk);
 ?>
 
 <!-- Judul Halaman -->
@@ -125,12 +153,12 @@ $total_arsip_berkas = $data_ab['total_arsip_berkas'];
     </div>
 </div>
 
-<!-- Grafik Perbandingan -->
+<!-- Grafik Entry Surat -->
 <div class="row mt-4">
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="card-title mb-0">Grafik Perbandingan Arsip</h5>
+                <h5 class="card-title mb-0">Grafik Entry Surat (<?php echo $current_year; ?>)</h5>
             </div>
             <div class="card-body">
                 <canvas id="arsipChart"></canvas>
@@ -145,34 +173,29 @@ $total_arsip_berkas = $data_ab['total_arsip_berkas'];
 document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('arsipChart').getContext('2d');
     const arsipChart = new Chart(ctx, {
-        type: 'bar', // Tipe grafik adalah bar chart
+        type: 'line', // Tipe grafik adalah line chart
         data: {
-            labels: ['Surat Masuk', 'Surat Keluar', 'Notulen', 'Klasifikasi', 'Arsip Berkas'],
-            datasets: [{
-                label: 'Jumlah Arsip',
-                data: [
-                    <?php echo $total_surat_masuk; ?>,
-                    <?php echo $total_surat_keluar; ?>,
-                    <?php echo $total_notulen; ?>,
-                    <?php echo $total_klasifikasi; ?>,
-                    <?php echo $total_arsip_berkas; ?>
-                ],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.5)',
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(255, 206, 86, 0.5)',
-                    'rgba(23, 162, 184, 0.5)',
-                    'rgba(153, 102, 255, 0.5)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(23, 162, 184, 1)',
-                    'rgba(153, 102, 255, 1)'
-                ],
-                borderWidth: 1
-            }]
+            labels: <?php echo json_encode($months_labels); ?>,
+            datasets: [
+                {
+                    label: 'Surat Masuk',
+                    data: <?php echo json_encode($data_sm_values); ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Surat Keluar',
+                    data: <?php echo json_encode($data_sk_values); ?>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -189,11 +212,12 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             plugins: {
                 legend: {
-                    display: false // Menyembunyikan legenda karena sudah jelas dari label
+                    display: true,
+                    position: 'top'
                 },
                 title: {
                     display: true,
-                    text: 'Total Jumlah Arsip Berdasarkan Kategori'
+                    text: 'Statistik Entry Surat Masuk & Keluar Bulanan'
                 }
             }
         }
