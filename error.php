@@ -45,114 +45,62 @@ $message = $user_message ?? $details['message'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error <?php echo $error_code; ?> - Arsip Digital</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Error <?php echo $error_code; ?> - Premium Archive</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
-        :root {
-            --primary-color: #0A2647;
-            --secondary-color: #144272;
-            --accent-color: #FFD700;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .error-wrapper {
-            text-align: center;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .error-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem 4rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .error-icon {
-            font-size: 5rem;
-            color: var(--accent-color);
-            animation: float 4s ease-in-out infinite;
-        }
-
-        .error-code {
-            font-family: 'Playfair Display', serif;
-            font-size: 6rem;
-            font-weight: 700;
-            color: #fff;
-            margin: 1rem 0;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .error-heading {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .error-message {
-            font-size: 1.1rem;
-            max-width: 400px;
-            margin: 0 auto 2.5rem auto;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .home-link {
-            background: var(--accent-color);
-            color: var(--primary-color);
-            border: none;
-            border-radius: 50px;
-            padding: 0.8rem 2.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .home-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-    </style>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body>
-    <div class="error-wrapper">
-        <div class="error-card">
-            <i class="fa-solid <?php echo $icon_class; ?> error-icon"></i>
-            <div class="error-code"><?php echo $error_code; ?></div>
-            <h1 class="error-heading"><?php echo $heading; ?></h1>
-            <p class="error-message"><?php echo $message; ?></p>
-            <a href="/" class="home-link">Kembali ke Beranda</a>
-        </div>
+<body class="bg-primary text-white min-h-screen flex items-center justify-center p-6 overflow-hidden">
+
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 overflow-hidden -z-10">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/10 blur-[150px] rounded-full"></div>
     </div>
+
+    <div class="max-w-2xl w-full text-center">
+        <div class="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-12 md:p-20 shadow-2xl relative">
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-accent rounded-[2rem] flex items-center justify-center text-4xl shadow-2xl shadow-accent/40 rotate-12">
+                <i class="fas <?php echo $icon_class; ?>"></i>
+            </div>
+
+            <h1 class="text-[8rem] md:text-[12rem] font-black tracking-tighter leading-none text-white/10 select-none">
+                <?php echo $error_code; ?>
+            </h1>
+
+            <h2 class="text-3xl md:text-5xl font-black tracking-tight mb-6 -mt-8">
+                <?php echo $heading; ?>
+            </h2>
+
+            <p class="text-slate-400 text-lg md:text-xl font-medium mb-12 max-w-md mx-auto italic leading-relaxed">
+                "<?php echo $message; ?>"
+            </p>
+
+            <a href="/" class="inline-flex items-center gap-4 bg-white text-primary px-12 py-5 rounded-2xl font-black hover:scale-105 active:scale-95 transition-all shadow-xl">
+                KEMBALI KE BERANDA <i class="fas fa-arrow-right text-sm"></i>
+            </a>
+        </div>
+
+        <p class="mt-12 text-slate-500 text-xs font-bold uppercase tracking-[0.4em]">
+            Premium Information Systems &copy; 2024
+        </p>
+    </div>
+
 </body>
 </html>

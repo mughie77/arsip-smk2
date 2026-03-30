@@ -23,53 +23,71 @@ if (!$berkas) {
 }
 ?>
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Edit Berkas Arsip</h1>
+<div class="mb-8">
+    <a href="arsip_berkas.php" class="inline-flex items-center gap-2 text-slate-500 hover:text-primary font-bold text-sm transition-colors mb-4">
+        <i class="fas fa-arrow-left"></i> KEMBALI KE DAFTAR
+    </a>
+    <h1 class="text-3xl font-black text-slate-900 tracking-tighter">Edit <span class="text-purple-500 italic">Berkas Arsip.</span></h1>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <form id="editBerkasForm" action="../core/arsip_berkas_aksi.php" method="POST" enctype="multipart/form-data">
+<div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+    <div class="p-8 md:p-12">
+        <form id="editBerkasForm" action="../core/arsip_berkas_aksi.php" method="POST" enctype="multipart/form-data" class="space-y-8">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             <input type="hidden" name="id" value="<?php echo $berkas['id']; ?>">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="file_path_existing" value="<?php echo htmlspecialchars($berkas['file_path']); ?>">
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="no_berkas" class="form-label">Nomor Berkas</label>
-                    <input type="text" class="form-control" id="no_berkas" name="no_berkas" value="<?php echo htmlspecialchars($berkas['no_berkas']); ?>" required>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Berkas</label>
+                    <input type="text" name="no_berkas" value="<?php echo htmlspecialchars($berkas['no_berkas']); ?>" class="w-full bg-slate-50 border-2 border-slate-100 focus:border-accent focus:bg-white rounded-2xl px-6 py-4 font-bold text-slate-700 transition-all outline-none" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="nama_berkas" class="form-label">Nama Berkas</label>
-                    <input type="text" class="form-control" id="nama_berkas" name="nama_berkas" value="<?php echo htmlspecialchars($berkas['nama_berkas']); ?>" required>
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nama Berkas</label>
+                    <input type="text" name="nama_berkas" value="<?php echo htmlspecialchars($berkas['nama_berkas']); ?>" class="w-full bg-slate-50 border-2 border-slate-100 focus:border-accent focus:bg-white rounded-2xl px-6 py-4 font-bold text-slate-700 transition-all outline-none" required>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="tanggal_berkas" class="form-label">Tanggal Berkas</label>
-                <input type="date" class="form-control" id="tanggal_berkas" name="tanggal_berkas" value="<?php echo htmlspecialchars($berkas['tanggal_berkas']); ?>" required>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Tanggal Berkas</label>
+                    <input type="date" name="tanggal_berkas" value="<?php echo htmlspecialchars($berkas['tanggal_berkas']); ?>" class="w-full bg-slate-50 border-2 border-slate-100 focus:border-accent focus:bg-white rounded-2xl px-6 py-4 font-bold text-slate-700 transition-all outline-none" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="uraian" class="form-label">Uraian</label>
-                <textarea class="form-control" id="uraian" name="uraian" rows="3" required><?php echo htmlspecialchars($berkas['uraian']); ?></textarea>
+            <div class="space-y-2">
+                <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Uraian / Deskripsi</label>
+                <textarea name="uraian" rows="4" class="w-full bg-slate-50 border-2 border-slate-100 focus:border-accent focus:bg-white rounded-2xl px-6 py-4 font-bold text-slate-700 transition-all outline-none" required><?php echo htmlspecialchars($berkas['uraian']); ?></textarea>
             </div>
 
+            <div class="space-y-4">
+                <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 text-center block">Berkas Digital (PDF)</label>
+                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center group hover:border-purple-500 transition-colors">
+                    <i class="fas fa-file-pdf text-4xl text-slate-300 group-hover:text-purple-500 transition-colors mb-4 block"></i>
+                    <input type="file" name="nama_file_pdf" accept=".pdf" class="hidden" id="fileUpload">
+                    <label for="fileUpload" class="cursor-pointer">
+                        <span class="bg-white border-2 border-slate-100 text-slate-600 px-6 py-2 rounded-xl font-bold text-sm shadow-sm hover:shadow-md transition-all">Pilih Berkas Baru</span>
+                    </label>
+                    <p class="mt-4 text-xs font-medium text-slate-400">PDF maksimal 5MB. Kosongkan jika tidak ingin mengubah.</p>
 
-            <div class="mb-3">
-                <label for="nama_file_pdf" class="form-label">Unggah Berkas Baru (PDF, max 5MB)</label>
-                <input class="form-control" type="file" id="nama_file_pdf" name="nama_file_pdf" accept=".pdf">
-                <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah berkas.
                     <?php if (!empty($berkas['file_path'])) : ?>
-                        Berkas saat ini: <a href="../uploads/berkas/<?php echo htmlspecialchars($berkas['file_path']); ?>" target="_blank">Lihat File</a>
+                        <div class="mt-6 inline-flex items-center gap-3 bg-purple-50 text-purple-600 px-4 py-2 rounded-xl border border-purple-100">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="text-xs font-black uppercase tracking-tight">Berkas Saat Ini:</span>
+                            <a href="../uploads/berkas/<?php echo htmlspecialchars($berkas['file_path']); ?>" target="_blank" class="text-xs font-bold underline hover:text-purple-700">Lihat File</a>
+                        </div>
                     <?php endif; ?>
-                </small>
+                </div>
             </div>
 
-            <div class="modal-footer">
-                <a href="arsip_berkas.php" class="btn btn-secondary">Batal</a>
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <div class="pt-10 border-t border-slate-100 flex flex-col md:flex-row gap-4">
+                <button type="submit" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-5 rounded-2xl text-lg font-black shadow-2xl shadow-purple-500/30 transition-all active:scale-95">
+                    SIMPAN PERUBAHAN
+                </button>
+                <a href="arsip_berkas.php" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-10 py-5 rounded-2xl text-lg font-bold transition-all text-center">
+                    BATAL
+                </a>
             </div>
         </form>
     </div>

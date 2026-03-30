@@ -14,47 +14,66 @@
 }
 
 @media (max-width: 768px) {
-    .table-responsive .table {
+    .overflow-x-auto {
+        border-radius: 1.5rem !important;
+    }
+    table {
         display: block;
         width: 100%;
     }
-    .table-responsive thead,
-    .table-responsive tbody,
-    .table-responsive th,
-    .table-responsive td,
-    .table-responsive tr {
-        display: block;
-    }
-    .table-responsive thead {
+    thead {
         display: none;
     }
-    .table-responsive tr {
-        margin-bottom: 1rem;
-        border: 1px solid #ddd;
-    }
-    .table-responsive td {
-        border: none;
-        border-bottom: 1px solid #eee;
-        padding: 0.8rem 0.8rem 0.8rem 40%; /* Top, Right, Bottom, Left */
-        position: relative;
-        text-align: left; /* Align wrapped content cleanly */
+    tbody {
         display: block;
-        font-size: 0.9rem; /* Smaller font for content */
+        width: 100%;
     }
-    .table-responsive td::before {
+    tr {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 1rem !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 0.5rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    }
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 0.5rem 0.25rem !important;
+        border: none !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        min-height: 2.75rem;
+        font-size: 0.8125rem;
+    }
+    td:last-child {
+        border-bottom: none !important;
+    }
+    td::before {
         content: attr(data-label);
-        position: absolute;
-        top: 0.8rem; /* Align label to the top */
-        left: 0.8rem;
-        width: calc(40% - 1.6rem); /* Adjust width for padding */
-        font-weight: bold;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 9px;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        float: left;
         text-align: left;
-        font-size: 0.8rem; /* Smaller, distinct font for label */
-        white-space: normal; /* Allow labels to wrap */
+        padding-right: 0.75rem;
+        flex-shrink: 0;
     }
 
-    body {
-        font-size: 1rem;
+    /* Force Action buttons to stay visible and aligned */
+    td:last-child {
+        justify-content: flex-end;
+        padding-top: 1rem !important;
+        background-color: #f8fafc;
+        border-radius: 0 0 1rem 1rem;
+    }
+    td:last-child .opacity-0 {
+        opacity: 1 !important;
     }
 }
 
@@ -110,20 +129,115 @@
 }
 
 /* Sortable Table Header Link Styles */
-.table-light th a {
-    color: inherit; /* Inherit color from the header */
-    text-decoration: none; /* Remove underline */
+table thead th a {
+    color: inherit !important;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.table-light th a:hover {
-    color: inherit; /* Keep color the same on hover */
+table thead th a i {
+    font-size: 0.75rem;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+
+table thead th a:hover i {
+    opacity: 0.6;
+}
+
+table thead th a i.fa-sort-up,
+table thead th a i.fa-sort-down {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* Pagination Design (New Style) */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.pagination-amazon {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px;
+}
+
+.pagination-amazon .page-item {
+    display: flex;
+    align-items: center;
+}
+
+.pagination-amazon .page-link {
+    display: block;
+    padding: 10px 18px;
+    color: #0d121c;
     text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.2s;
 }
 
-/* Responsive fix for main content area */
+.pagination-amazon .page-item.active .page-link {
+    background-color: #3b5bdb;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(59,91,219,0.3);
+}
+
+.pagination-amazon .page-item.disabled .page-link {
+    color: #adb5bd;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pagination-amazon .page-item:not(.active):not(.disabled) .page-link:hover {
+    background-color: #f1f3f5;
+    transform: translateY(-2px);
+}
+
+.pagination-amazon .page-link i {
+    font-size: 12px;
+}
+
+/* Full Width and Responsive Layout Fixes */
+.container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+#content {
+    width: calc(100% - 250px);
+    transition: all 0.3s;
+}
+
 @media (max-width: 991.98px) {
     #content {
-        width: 100%;
-        padding: 1rem;
+        width: 100% !important;
+        padding: 0.5rem !important;
+    }
+    .main-content {
+        padding: 0.5rem !important;
+    }
+    .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination-amazon .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }
