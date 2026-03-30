@@ -152,7 +152,9 @@ for ($i = 29; $i >= 0; $i--) {
                 <h5 class="card-title mb-0">Statistik Entry Surat (30 Hari Terakhir)</h5>
             </div>
             <div class="card-body">
-                <canvas id="arsipChart"></canvas>
+                <div style="height: 400px; position: relative;">
+                    <canvas id="arsipChart"></canvas>
+                </div>
             </div>
         </div>
     </div>

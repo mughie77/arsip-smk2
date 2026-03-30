@@ -8,8 +8,8 @@ header("X-Content-Type-Options: nosniff");
 header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 // Kebijakan Keamanan Konten (CSP) yang lebih ketat
 $csp = "default-src 'self'; " .
-       "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
-       "style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "script-src 'self' 'unsafe-inline' https://code.jquery.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
+       "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
        "font-src 'self' https://cdnjs.cloudflare.com; " .
        "img-src 'self' data:;";
 header("Content-Security-Policy: " . $csp);
